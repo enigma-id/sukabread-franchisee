@@ -15,7 +15,6 @@ import {
   ChevronDown,
   User,
   Receipt,
-  Store,
   Banknote,
 } from "lucide-react";
 
