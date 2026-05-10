@@ -1,7 +1,9 @@
 import { Page } from "@/components/app/layout";
 import EmptyState from "@/components/ui/table/empty-state";
+import { useDocumentMeta } from "@/hooks/useDocumentMeta";
 
 export function Stock() {
+  useDocumentMeta("Stock | Sukabread Franchisee", "Manage your Stock efficiently within the Sukabread Franchisee portal.");
   return (
     <Page className="h-full flex flex-col min-h-0 bg-slate-50">
       <Page.Header

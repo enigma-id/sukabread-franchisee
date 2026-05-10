@@ -5,8 +5,10 @@ import { Input, Button } from "@/components/ui";
 import { useUser } from "@/services/user/hooks";
 import { useAppSelector } from "@/hooks";
 import { User, Lock } from "lucide-react";
+import { useDocumentMeta } from "@/hooks/useDocumentMeta";
 
 export function UserCreate() {
+  useDocumentMeta("UserCreate | Sukabread Franchisee", "Manage your UserCreate efficiently within the Sukabread Franchisee portal.");
   const navigate = useNavigate();
   const FormState = useAppSelector((s) => s.form);
   const { create, createResult } = useUser();

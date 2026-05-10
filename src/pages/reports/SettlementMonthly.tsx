@@ -7,8 +7,10 @@ import createTableConfig from "./table/settlement-monthly.config";
 import TableFilter from "./table/settlement-monthly.filter";
 import { useLazyGetSettlementSummaryQuery } from "@/services/report/api";
 import { SettlementSummaryCards } from "@/components/app";
+import { useDocumentMeta } from "@/hooks/useDocumentMeta";
 
 export function SettlementMonthly() {
+  useDocumentMeta("SettlementMonthly | Sukabread Franchisee", "Manage your SettlementMonthly efficiently within the Sukabread Franchisee portal.");
   const navigate = useNavigate();
 
   const tableConfig = useMemo(() => {

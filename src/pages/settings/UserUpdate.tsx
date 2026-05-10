@@ -4,8 +4,10 @@ import { Page } from "@/components/app/layout";
 import { Input, Button, Loading } from "@/components/ui";
 import { useUser } from "@/services/user/hooks";
 import { useAppSelector } from "@/hooks";
+import { useDocumentMeta } from "@/hooks/useDocumentMeta";
 
 export function UserUpdate() {
+  useDocumentMeta("UserUpdate | Sukabread Franchisee", "Manage your UserUpdate efficiently within the Sukabread Franchisee portal.");
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const FormState = useAppSelector((s) => s.form);

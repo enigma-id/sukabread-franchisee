@@ -4,8 +4,10 @@ import { Input, Button } from "@/components/ui";
 import { useAppSelector } from "@/hooks";
 import { useAuth } from "@/services/auth/hooks";
 import { User, Lock } from "lucide-react";
+import { useDocumentMeta } from "@/hooks/useDocumentMeta";
 
 export function Profile() {
+  useDocumentMeta("Profile | Sukabread Franchisee", "Manage your Profile efficiently within the Sukabread Franchisee portal.");
   const user = useAppSelector((s) => s.auth.session?.user);
   const FormState = useAppSelector((s) => s.form);
   const { doUpdateMe, updateMeResult } = useAuth();

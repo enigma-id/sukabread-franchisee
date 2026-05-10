@@ -8,8 +8,10 @@ import createTableConfig from "./table/settlement-daily.config";
 import TableFilter from "./table/settlement-daily.filter";
 import { useLazyGetSettlementSummaryQuery } from "@/services/report/api";
 import { SettlementSummaryCards } from "@/components/app";
+import { useDocumentMeta } from "@/hooks/useDocumentMeta";
 
 export function SettlementDaily() {
+  useDocumentMeta("SettlementDaily | Sukabread Franchisee", "Manage your SettlementDaily efficiently within the Sukabread Franchisee portal.");
   const [params] = useSearchParams();
   const navigate = useNavigate();
   const month = params.get("month");

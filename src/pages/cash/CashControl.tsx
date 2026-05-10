@@ -8,6 +8,7 @@ import TableFilter from "./table/cash-control.filter";
 import type { OverviewCash } from "@/services/report/hooks";
 import { currencyFormat } from "@/utils";
 import { SummaryCard } from "@/components/app";
+import { useDocumentMeta } from "@/hooks/useDocumentMeta";
 
 const THEMES: Record<string, any> = {
   blue: { text: "text-blue-500", iconBg: "#dbeafe", wave: "#3b82f6" },
@@ -51,6 +52,7 @@ const OverviewCards = ({ data }: { data: OverviewCash | null }) => {
 };
 
 export function CashControl() {
+  useDocumentMeta("CashControl | Sukabread Franchisee", "Manage your CashControl efficiently within the Sukabread Franchisee portal.");
   const tableConfig = useMemo(() => {
     return createTableConfig({});
   }, []);

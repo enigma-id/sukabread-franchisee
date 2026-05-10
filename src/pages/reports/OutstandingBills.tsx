@@ -4,8 +4,10 @@ import useTable from "@/services/table/hooks";
 import type { TableConfig } from "@/services/table/const";
 import createTableConfig from "./table/outstanding-bills.config";
 import TableFilter from "./table/outstanding-bills.filter";
+import { useDocumentMeta } from "@/hooks/useDocumentMeta";
 
 export function OutstandingBills() {
+  useDocumentMeta("OutstandingBills | Sukabread Franchisee", "Manage your OutstandingBills efficiently within the Sukabread Franchisee portal.");
   const tableConfig = useMemo(() => {
     return createTableConfig({});
   }, []);

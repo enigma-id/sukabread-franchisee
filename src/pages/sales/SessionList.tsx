@@ -5,8 +5,10 @@ import { useMemo } from "react";
 import { Page } from "@/components/app/layout";
 import createTableConfig from "./table/session.config";
 import TableFilter from "./table/session.filter";
+import { useDocumentMeta } from "@/hooks/useDocumentMeta";
 
 export function SessionList() {
+  useDocumentMeta("SessionList | Sukabread Franchisee", "Manage your SessionList efficiently within the Sukabread Franchisee portal.");
   const navigate = useNavigate();
 
   const tableConfig = useMemo(() => {

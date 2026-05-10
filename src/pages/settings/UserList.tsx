@@ -7,8 +7,10 @@ import useTable from "@/services/table/hooks";
 import type { TableConfig } from "@/services/table/const";
 import { Page } from "@/components/app/layout";
 import createTableConfig from "./table/user.config";
+import { useDocumentMeta } from "@/hooks/useDocumentMeta";
 
 export function UserList() {
+  useDocumentMeta("UserList | Sukabread Franchisee", "Manage your UserList efficiently within the Sukabread Franchisee portal.");
   const navigate = useNavigate();
   const { activate, deactivate } = useUser();
 

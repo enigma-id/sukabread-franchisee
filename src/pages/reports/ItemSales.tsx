@@ -4,8 +4,10 @@ import useTable from "@/services/table/hooks";
 import type { TableConfig } from "@/services/table/const";
 import createTableConfig from "./table/item-sales.config";
 import TableFilter from "./table/report-filter";
+import { useDocumentMeta } from "@/hooks/useDocumentMeta";
 
 export function ItemSales() {
+  useDocumentMeta("ItemSales | Sukabread Franchisee", "Manage your ItemSales efficiently within the Sukabread Franchisee portal.");
   const tableConfig = useMemo(() => {
     return createTableConfig({});
   }, []);

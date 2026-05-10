@@ -15,8 +15,10 @@ import { Loading } from "@/components/ui";
 import { useOrder } from "@/services/sales/hooks";
 import { formatDateTime, displayPaymentMethod, currencyFormat } from "@/utils";
 import type { SalesOrder, SalesOrderItem } from "@/services/types";
+import { useDocumentMeta } from "@/hooks/useDocumentMeta";
 
 export function OrderDetail() {
+  useDocumentMeta("OrderDetail | Sukabread Franchisee", "Manage your OrderDetail efficiently within the Sukabread Franchisee portal.");
   const { orderId } = useParams<{ orderId: string }>();
   const navigate = useNavigate();
   const { show, showResult } = useOrder();

@@ -16,7 +16,18 @@ export function Login() {
 
   const redirectTo = "/sales/session"; // default ke dashboard
 
-  const onSubmit = async (e: React.SubmitEvent) => {
+  useEffect(() => {
+    document.title = "Login | Sukabread Franchisee";
+    let metaDescription = document.querySelector('meta[name="description"]');
+    if (!metaDescription) {
+      metaDescription = document.createElement('meta');
+      metaDescription.setAttribute('name', 'description');
+      document.head.appendChild(metaDescription);
+    }
+    metaDescription.setAttribute("content", "Secure login portal for Sukabread Franchisee owners and managers.");
+  }, []);
+
+  const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const payload = {
       username: username,
@@ -30,7 +41,8 @@ export function Login() {
     if (signinResult.isSuccess) {
       navigate(redirectTo, { replace: true });
     }
-  }, [signinResult]);
+  }, [signinResult, navigate, redirectTo]);
+
 
   return (
     <div className="min-h-screen w-full relative flex items-center bg-white overflow-hidden font-sans">
@@ -75,7 +87,7 @@ export function Login() {
                 type="text"
                 name="username"
                 className="bg-[#f4f7fc]! rounded-2xl! py-4! pl-12! pr-4! text-[15px]! text-gray-700! placeholder-[#a0aabf]!"
-                placeholder="Designer"
+                placeholder="Username"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 required

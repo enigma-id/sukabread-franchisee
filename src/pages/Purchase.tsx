@@ -1,8 +1,10 @@
+import { useDocumentMeta } from "@/hooks/useDocumentMeta";
 import { useAppSelector } from "@/hooks";
 import { Page } from "@/components/app/layout";
 import styles from "./Purchase.module.css";
 
 export function Purchase() {
+  useDocumentMeta("Purchase | Sukabread Franchisee", "Manage your Purchase efficiently within the Sukabread Franchisee portal.");
   const user = useAppSelector((s) => s.auth.session?.user);
 
   const iframeUrl = user?.username

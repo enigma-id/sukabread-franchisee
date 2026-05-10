@@ -21,8 +21,10 @@ import {
 import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import type { SalesSession } from "@/services/types";
+import { useDocumentMeta } from "@/hooks/useDocumentMeta";
 
 export function SessionDetail() {
+  useDocumentMeta("SessionDetail | Sukabread Franchisee", "Manage your SessionDetail efficiently within the Sukabread Franchisee portal.");
   const { id } = useParams<{ id: string }>();
   const { show, showResult } = useSession();
   const navigate = useNavigate();
