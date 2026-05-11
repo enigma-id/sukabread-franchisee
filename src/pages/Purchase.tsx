@@ -1,14 +1,23 @@
 import { useDocumentMeta } from "@/hooks/useDocumentMeta";
 import { useAppSelector } from "@/hooks";
 import { Page } from "@/components/app/layout";
+import { Button } from "@/components";
+import { ExternalLink } from "lucide-react";
 import styles from "./Purchase.module.css";
 
 export function Purchase() {
-  useDocumentMeta("Purchase | Sukabread Franchisee", "Manage your Purchase efficiently within the Sukabread Franchisee portal.");
+  useDocumentMeta(
+    "Purchase | Sukabread Franchisee",
+    "Manage your Purchase efficiently within the Sukabread Franchisee portal.",
+  );
   const user = useAppSelector((s) => s.auth.session?.user);
 
+  const baseUrl = import.meta.env.DEV
+    ? "http://localhost:5174"
+    : "https://sukabread-franchisorder.vercel.app";
+
   const iframeUrl = user?.username
-    ? `https://order.sukabread.com?source=share&username=${user.username}`
+    ? `${baseUrl}?username=${user.username}`
     : "";
 
   return (
@@ -17,6 +26,17 @@ export function Purchase() {
         category="Transactions"
         title="Pembelian"
         subtitle="Order bahan dan barang."
+        action={
+          iframeUrl && (
+            <Button
+              onClick={() => window.open(iframeUrl, "_blank")}
+              className="flex items-center gap-2"
+            >
+              <ExternalLink size={18} />
+              Buka di Tab Baru
+            </Button>
+          )
+        }
       />
       <Page.Body>
         <div className={styles.container}>
