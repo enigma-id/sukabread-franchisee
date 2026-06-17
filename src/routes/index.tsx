@@ -3,23 +3,30 @@ import { AuthorizedLayout } from "@/components/layout/AuthorizedLayout";
 import { UnauthorizedLayout } from "@/components/layout/UnauthorizedLayout";
 import { ProtectedRoute } from "./ProtectedRoute";
 import { Login } from "@/pages/Login";
+import { Dashboard } from "@/pages/Dashboard";
 import { Purchase } from "@/pages/Purchase";
 import { Stock } from "@/pages/Stock";
-import { Profile } from "@/pages/Profile";
+import { StockLog } from "@/pages/StockLog";
+import { Membership } from "@/pages/membership/MembershipList";
+import { MembershipDetail } from "@/pages/membership/MembershipDetail";
+import { WithdrawalList } from "@/pages/withdrawal/WithdrawalList";
+import { WithdrawalDetail } from "@/pages/withdrawal/WithdrawalDetail";
 import { SessionList } from "@/pages/sales/SessionList";
 import { SessionDetail } from "@/pages/sales/SessionDetail";
 import { OrderDetail } from "@/pages/sales/OrderDetail";
 import {
-  DailySales,
-  OutstandingBills,
-  SettlementMonthly,
-  SettlementDaily,
-  ItemSales,
+  Outstanding,
+  Settlement,
+  ProductSales,
+  CashControl,
 } from "@/pages/reports";
-import { CashControl } from "@/pages/cash/CashControl";
 import { UserList } from "@/pages/settings/UserList";
 import { UserCreate } from "@/pages/settings/UserCreate";
 import { UserUpdate } from "@/pages/settings/UserUpdate";
+import { OutletCatalog } from "@/pages/settings/OutletCatalog";
+import { OutletSettings } from "@/pages/settings/OutletSettings";
+import { OutletBalanceLog } from "@/pages/settings/OutletBalanceLog";
+import { Profile } from "@/pages/Profile";
 
 export function AppRoutes() {
   return (
@@ -37,32 +44,36 @@ export function AppRoutes() {
           </ProtectedRoute>
         }
       >
+        <Route index element={<Navigate to="/dashboard" replace />} />
+        <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/sales/session" element={<SessionList />} />
         <Route path="/sales/session/:id" element={<SessionDetail />} />
         <Route
           path="/sales/session/:id/order/:orderId"
           element={<OrderDetail />}
         />
-        <Route path="/stock" element={<Stock />} />
-        <Route path="/report/sales/daily" element={<DailySales />} />
-        <Route
-          path="/report/sales/outstanding"
-          element={<OutstandingBills />}
-        />
-        <Route path="/report/sales/payment" element={<SettlementMonthly />} />
-        <Route
-          path="/report/sales/payment/daily"
-          element={<SettlementDaily />}
-        />
-        <Route path="/report/sales/item" element={<ItemSales />} />
-        <Route path="/cash/control" element={<CashControl />} />
         <Route path="/purchase" element={<Purchase />} />
+        <Route path="/stock" element={<Stock />} />
+        <Route path="/stock/log" element={<StockLog />} />
+        <Route path="/membership" element={<Membership />} />
+        <Route path="/membership/:id" element={<MembershipDetail />} />
+        <Route path="/report/product-sales" element={<ProductSales />} />
+        <Route path="/report/outstanding" element={<Outstanding />} />
+        <Route path="/report/settlement" element={<Settlement />} />
+        <Route path="/report/cash-control" element={<CashControl />} />
+        <Route path="/withdrawal" element={<WithdrawalList />} />
+        <Route path="/withdrawal/:id" element={<WithdrawalDetail />} />
         <Route path="/setting/user" element={<UserList />} />
         <Route path="/setting/user/create" element={<UserCreate />} />
         <Route path="/setting/user/:id/update" element={<UserUpdate />} />
+        <Route path="/setting/catalog" element={<OutletCatalog />} />
+        <Route path="/setting/outlet" element={<OutletSettings />} />
+        <Route
+          path="/setting/outlet/balance-log"
+          element={<OutletBalanceLog />}
+        />
         <Route path="/auth/me" element={<Profile />} />
-        <Route path="*" element={<SessionList />} />
-        <Route path="*" element={<Navigate to="/sales/session" replace />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
     </Routes>
   );

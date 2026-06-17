@@ -1,34 +1,33 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useMemo } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { Page } from "@/components/app/layout";
 import useTable from "@/services/table/hooks";
 import type { TableConfig } from "@/services/table/const";
-import createTableConfig from "./table/settlement-daily.config";
-import TableFilter from "./table/settlement-daily.filter";
+import createTableConfig from "./table/settlement.config";
+import TableFilter from "./table/settlement.filter";
 import { useLazyGetSettlementSummaryQuery } from "@/services/report/api";
 import { SettlementSummaryCards } from "@/components/app";
 import { useDocumentMeta } from "@/hooks/useDocumentMeta";
 
-export function SettlementDaily() {
-  useDocumentMeta("SettlementDaily | Sukabread Franchisee", "Manage your SettlementDaily efficiently within the Sukabread Franchisee portal.");
+export function Settlement() {
+  useDocumentMeta(
+    "Settlement | Sukabread Franchisee",
+    "Manage your Settlement efficiently within the Sukabread Franchisee portal.",
+  );
   const [params] = useSearchParams();
   const navigate = useNavigate();
   const month = params.get("month");
 
-  useEffect(() => {
-    if (!month) navigate("/report/sales/payment", { replace: true });
-  }, [month, navigate]);
-
   const tableConfig = useMemo(() => {
     return createTableConfig({
-      lockedFilter: { params_type: "monthly" },
       filter: { periode: month ?? "" },
     });
   }, [month]);
 
   const Table = useTable(
-    "settlement_daily",
+    "report_settlement",
     tableConfig as TableConfig<unknown>,
   );
 
@@ -88,7 +87,7 @@ export function SettlementDaily() {
     <Page className="h-full flex flex-col min-h-0 bg-slate-50">
       <Page.Header
         category="Report"
-        title={`Settlement Daily — ${month}`}
+        title={`Settlement`}
         subtitle=""
         backTo={() => navigate(-1)}
       />

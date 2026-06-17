@@ -1,5 +1,6 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { baseQuery } from "../baseQuery";
+import type { LoginRequest } from "../types";
 
 /**
  * TMS Onward - Authentication API
@@ -10,43 +11,18 @@ export const authApi = createApi({
   endpoints: (builder) => ({
     /**
      * POST /auth/login
-     * User login with username and password
+     * User login with identifier and password
      */
     login: builder.mutation({
-      query: (credentials: { username: string; password: string }) => ({
-        url: "/auth/signin",
+      query: (credentials: LoginRequest) => ({
+        url: "/auth/login",
         method: "POST",
         body: credentials,
       }),
     }),
 
-    /**
-     * GET /auth/me
-     * Get data user login
-     */
-    getMe: builder.query({
-      query: (params) => ({
-        url: "/auth/me",
-        method: "GET",
-        params,
-      }),
-    }),
-
-    /**
-     * PUT /auth/me
-     * Change data user login
-     * Body: { name, password, confirm_password }
-     */
-    updateMe: builder.mutation({
-      query: (payload) => ({
-        url: "/auth/me",
-        method: "PUT",
-        body: payload,
-      }),
-    }),
   }),
 });
 
 // Export RTK Query hooks
-export const { useLoginMutation, useLazyGetMeQuery, useUpdateMeMutation } =
-  authApi;
+export const { useLoginMutation } = authApi;

@@ -4,42 +4,42 @@ import { baseQuery } from "../baseQuery";
 export const reportApi = createApi({
   reducerPath: "reportApi",
   baseQuery,
-  tagTypes: ["Report", "Cash"],
+  tagTypes: ["Report"],
   endpoints: (builder) => ({
     /**
-     * GET /report/sales/daily
+     * GET /report/product-sales
      * List daily sales with pagination
      */
-    getDailySales: builder.query({
-      query: (params) => ({ url: "/report/sales/daily", params }),
+    getProductSales: builder.query({
+      query: (params) => ({ url: "/report/product-sales", params }),
     }),
 
     /**
-     * GET /report/sales/item
+     * GET /report/product-sales/summary
      * List item sales with pagination
      */
-    getItemSales: builder.query({
-      query: (params) => ({ url: "/report/sales/item", params }),
+    getProductSalesSummary: builder.query({
+      query: (params) => ({ url: "/report/product-sales/summary", params }),
     }),
 
     /**
-     * GET /report/sales/outstanding
+     * GET /report/outstanding
      * List outstanding bills with pagination
      */
-    getOutstandingBills: builder.query({
+    getOutstanding: builder.query({
       query: (params) => ({
-        url: "/report/sales/outstanding",
+        url: "/report/outstanding",
         params,
       }),
     }),
 
     /**
-     * GET /report/sales/outstanding/summary
+     * GET /report/outstanding/summary
      * Get outstanding bills summary
      */
     getOutstandingSummary: builder.query({
       query: (params) => ({
-        url: "/report/sales/outstanding/summary",
+        url: "/report/outstanding/summary",
         params,
       }),
     }),
@@ -61,22 +61,29 @@ export const reportApi = createApi({
     }),
 
     /**
-     * GET /report/cash/control
+     * GET /report/cash-control
      * Get cash control data
      */
     getCashControl: builder.query({
-      query: (params) => ({ url: "/report/cash/control", params }),
+      query: (params) => ({ url: "/report/cash-control", params }),
+    }),
+    /**
+     * GET /report/cash-control/summary
+     * Get settlement summary
+     */
+    getCashControlSummary: builder.query({
+      query: (params) => ({ url: "/report/cash-control/summary", params }),
     }),
   }),
 });
 
 export const {
-  useLazyGetDailySalesQuery,
-  useLazyGetItemSalesQuery,
-  useLazyGetOutstandingBillsQuery,
+  useLazyGetProductSalesQuery,
+  useLazyGetProductSalesSummaryQuery,
+  useLazyGetOutstandingQuery,
   useLazyGetOutstandingSummaryQuery,
   useLazyGetSettlementQuery,
   useLazyGetSettlementSummaryQuery,
-  useGetSettlementSummaryQuery,
   useLazyGetCashControlQuery,
+  useLazyGetCashControlSummaryQuery,
 } = reportApi;

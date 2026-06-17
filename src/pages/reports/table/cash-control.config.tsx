@@ -5,10 +5,12 @@ import { Badge } from "@/components";
 const getStatusVariant = (status: string) => {
   if (!status) return "default";
   const s = String(status).toUpperCase();
-  if (s === "COMPLETED" || s === "FINISHED" || s === "CLOSED" || s === "MATCH") return "success";
+  if (s === "COMPLETED" || s === "FINISHED" || s === "CLOSED" || s === "MATCH")
+    return "success";
   if (s === "ONGOING" || s === "OPEN" || s === "ACTIVE") return "primary";
   if (s === "PENDING" || s === "WAITING") return "warning";
-  if (s === "CANCELLED" || s === "FAILED" || s === "VOID" || s === "UNMATCH") return "error";
+  if (s === "CANCELLED" || s === "FAILED" || s === "VOID" || s === "UNMATCH")
+    return "error";
   return "default";
 };
 
@@ -18,9 +20,8 @@ const createTableConfig = ({
   filter?: Record<string, unknown>;
 }) => ({
   ...config,
-  url: "/report/cash/control",
+  url: "/report/cash-control",
   filter,
-  dataKey: "session_data", // Extract array from nested response
   columns: {
     session: {
       title: "Session",

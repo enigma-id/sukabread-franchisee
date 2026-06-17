@@ -640,16 +640,20 @@ export const AnimatedSystemSvg: React.FC = () => {
             r="6"
             fill="currentColor"
             className="text-primary"
-            style={{ animation: "pulse-glow 3s infinite 0s" }}
-            transform="translateZ(90px)"
+            style={{
+              animation: "pulse-glow 3s infinite 0s",
+              transform: "translateZ(90px)",
+            }}
           />
           <circle
             cx="650"
             cy="220"
             r="4"
             fill="#10b981"
-            style={{ animation: "pulse-glow 4s infinite 1s" }}
-            transform="translateZ(70px)"
+            style={{
+              animation: "pulse-glow 4s infinite 1s",
+              transform: "translateZ(70px)",
+            }}
           />
           <circle
             cx="450"
@@ -657,16 +661,20 @@ export const AnimatedSystemSvg: React.FC = () => {
             r="8"
             fill="currentColor"
             className="text-primary"
-            style={{ animation: "pulse-glow 2.5s infinite 0.5s" }}
-            transform="translateZ(100px)"
+            style={{
+              animation: "pulse-glow 2.5s infinite 0.5s",
+              transform: "translateZ(100px)",
+            }}
           />
           <circle
             cx="280"
             cy="380"
             r="5"
             fill="#3b82f6"
-            style={{ animation: "pulse-glow 3.5s infinite 2s" }}
-            transform="translateZ(120px)"
+            style={{
+              animation: "pulse-glow 3.5s infinite 2s",
+              transform: "translateZ(120px)",
+            }}
           />
 
           <circle
@@ -674,8 +682,10 @@ export const AnimatedSystemSvg: React.FC = () => {
             cy="250"
             r="3"
             fill="#f59e0b"
-            style={{ animation: "pulse-glow 2s infinite 0.3s" }}
-            transform="translateZ(150px)"
+            style={{
+              animation: "pulse-glow 2s infinite 0.3s",
+              transform: "translateZ(150px)",
+            }}
           />
           <circle
             cx="580"
@@ -683,32 +693,40 @@ export const AnimatedSystemSvg: React.FC = () => {
             r="7"
             fill="currentColor"
             className="text-primary"
-            style={{ animation: "pulse-glow 5s infinite 1.2s" }}
-            transform="translateZ(80px)"
+            style={{
+              animation: "pulse-glow 5s infinite 1.2s",
+              transform: "translateZ(80px)",
+            }}
           />
           <circle
             cx="180"
             cy="520"
             r="4"
             fill="#8b5cf6"
-            style={{ animation: "pulse-glow 3s infinite 0.7s" }}
-            transform="translateZ(110px)"
+            style={{
+              animation: "pulse-glow 3s infinite 0.7s",
+              transform: "translateZ(110px)",
+            }}
           />
           <circle
             cx="500"
             cy="180"
             r="5"
             fill="#ec4899"
-            style={{ animation: "pulse-glow 4.5s infinite 2.5s" }}
-            transform="translateZ(140px)"
+            style={{
+              animation: "pulse-glow 4.5s infinite 2.5s",
+              transform: "translateZ(140px)",
+            }}
           />
           <circle
             cx="680"
             cy="380"
             r="6"
             fill="#14b8a6"
-            style={{ animation: "pulse-glow 2.8s infinite 1.8s" }}
-            transform="translateZ(95px)"
+            style={{
+              animation: "pulse-glow 2.8s infinite 1.8s",
+              transform: "translateZ(95px)",
+            }}
           />
           <circle
             cx="220"
@@ -716,16 +734,20 @@ export const AnimatedSystemSvg: React.FC = () => {
             r="4"
             fill="currentColor"
             className="text-primary"
-            style={{ animation: "pulse-glow 3.2s infinite 0.9s" }}
-            transform="translateZ(130px)"
+            style={{
+              animation: "pulse-glow 3.2s infinite 0.9s",
+              transform: "translateZ(130px)",
+            }}
           />
           <circle
             cx="380"
             cy="680"
             r="5"
             fill="#f43f5e"
-            style={{ animation: "pulse-glow 4s infinite 1.5s" }}
-            transform="translateZ(60px)"
+            style={{
+              animation: "pulse-glow 4s infinite 1.5s",
+              transform: "translateZ(60px)",
+            }}
           />
 
           {/* Connecting Animated Data Lines (Massively Increased Web) */}
@@ -735,8 +757,10 @@ export const AnimatedSystemSvg: React.FC = () => {
             stroke="#ffffff"
             strokeWidth="3"
             strokeDasharray="10 10"
-            style={{ animation: "dash-flow 2s linear infinite" }}
-            transform="translateZ(40px)"
+            style={{
+              animation: "dash-flow 2s linear infinite",
+              transform: "translateZ(40px)",
+            }}
           />
           <path
             d="M 420 300 L 460 300 L 460 250"
@@ -745,8 +769,10 @@ export const AnimatedSystemSvg: React.FC = () => {
             className="text-primary"
             strokeWidth="4"
             strokeDasharray="8 8"
-            style={{ animation: "dash-flow 1.5s linear infinite reverse" }}
-            transform="translateZ(35px)"
+            style={{
+              animation: "dash-flow 1.5s linear infinite reverse",
+              transform: "translateZ(35px)",
+            }}
           />
           <path
             d="M 160 360 L 200 360 L 200 480 L 260 480"
@@ -754,8 +780,10 @@ export const AnimatedSystemSvg: React.FC = () => {
             stroke="#94a3b8"
             strokeWidth="2"
             strokeDasharray="6 6"
-            style={{ animation: "dash-flow 3s linear infinite" }}
-            transform="translateZ(20px)"
+            style={{
+              animation: "dash-flow 3s linear infinite",
+              transform: "translateZ(20px)",
+            }}
           />
           <path
             d="M 520 430 L 520 380 L 600 380"
@@ -765,8 +793,10 @@ export const AnimatedSystemSvg: React.FC = () => {
             opacity="0.4"
             strokeWidth="3"
             strokeDasharray="5 5"
-            style={{ animation: "dash-flow 2.5s linear infinite reverse" }}
-            transform="translateZ(45px)"
+            style={{
+              animation: "dash-flow 2.5s linear infinite reverse",
+              transform: "translateZ(45px)",
+            }}
           />
 
           {/* New Deep Network Connections */}
@@ -776,8 +806,10 @@ export const AnimatedSystemSvg: React.FC = () => {
             stroke="#10b981"
             strokeWidth="2"
             strokeDasharray="4 4"
-            style={{ animation: "dash-flow 4s linear infinite" }}
-            transform="translateZ(25px)"
+            style={{
+              animation: "dash-flow 4s linear infinite",
+              transform: "translateZ(25px)",
+            }}
           />
           <path
             d="M 640 180 L 640 250 L 580 250"
@@ -785,8 +817,10 @@ export const AnimatedSystemSvg: React.FC = () => {
             stroke="#3b82f6"
             strokeWidth="2"
             strokeDasharray="8 4"
-            style={{ animation: "dash-flow 2.2s linear infinite reverse" }}
-            transform="translateZ(55px)"
+            style={{
+              animation: "dash-flow 2.2s linear infinite reverse",
+              transform: "translateZ(55px)",
+            }}
           />
           <path
             d="M 180 220 L 180 300 L 250 300 L 250 250"
@@ -795,8 +829,10 @@ export const AnimatedSystemSvg: React.FC = () => {
             className="text-primary"
             strokeWidth="3"
             strokeDasharray="12 6"
-            style={{ animation: "dash-flow 1.8s linear infinite" }}
-            transform="translateZ(65px)"
+            style={{
+              animation: "dash-flow 1.8s linear infinite",
+              transform: "translateZ(65px)",
+            }}
           />
           <path
             d="M 400 130 L 400 250 L 360 250"
@@ -804,8 +840,10 @@ export const AnimatedSystemSvg: React.FC = () => {
             stroke="#f59e0b"
             strokeWidth="2"
             strokeDasharray="5 10"
-            style={{ animation: "dash-flow 3.5s linear infinite reverse" }}
-            transform="translateZ(85px)"
+            style={{
+              animation: "dash-flow 3.5s linear infinite reverse",
+              transform: "translateZ(85px)",
+            }}
           />
         </g>
       </svg>

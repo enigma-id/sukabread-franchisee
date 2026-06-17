@@ -14,23 +14,26 @@ export function Login() {
   const [password, setPassword] = useState(String);
   const { doSignin, signinResult } = useAuth();
 
-  const redirectTo = "/sales/session"; // default ke dashboard
+  const redirectTo = "/dashboard"; // default ke dashboard
 
   useEffect(() => {
     document.title = "Login | Sukabread Franchisee";
     let metaDescription = document.querySelector('meta[name="description"]');
     if (!metaDescription) {
-      metaDescription = document.createElement('meta');
-      metaDescription.setAttribute('name', 'description');
+      metaDescription = document.createElement("meta");
+      metaDescription.setAttribute("name", "description");
       document.head.appendChild(metaDescription);
     }
-    metaDescription.setAttribute("content", "Secure login portal for Sukabread Franchisee owners and managers.");
+    metaDescription.setAttribute(
+      "content",
+      "Secure login portal for Sukabread Franchisee owners and managers.",
+    );
   }, []);
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const payload = {
-      username: username,
+      identifier: username,
       password,
     };
 
@@ -42,7 +45,6 @@ export function Login() {
       navigate(redirectTo, { replace: true });
     }
   }, [signinResult, navigate, redirectTo]);
-
 
   return (
     <div className="min-h-screen w-full relative flex items-center bg-white overflow-hidden font-sans">
@@ -95,8 +97,8 @@ export function Login() {
                   <User size={18} className="text-[#a0aabf]" strokeWidth={2} />
                 }
                 error={
-                  typeof FormState?.errors?.username === "string"
-                    ? FormState.errors.username
+                  typeof FormState?.errors?.identifier === "string"
+                    ? FormState.errors.identifier
                     : undefined
                 }
               />
@@ -107,7 +109,7 @@ export function Login() {
                 variant="primary"
                 name="password"
                 className="bg-[#f4f7fc]! rounded-2xl! py-4! pl-12! pr-4! text-[15px]! text-gray-700! placeholder-[#a0aabf]!"
-                placeholder="........"
+                placeholder="············"
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}

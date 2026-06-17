@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { configureStore } from "@reduxjs/toolkit";
 import { persistReducer, persistStore } from "redux-persist";
 
@@ -30,7 +31,20 @@ const storage = createSyncStorage();
 const persistConfig = {
   key: "root",
   storage,
-  blacklist: ["authApi", "userApi", "salesApi", "reportApi", "tableApi"],
+  blacklist: [
+    "authApi",
+    "dashboardApi",
+    "userApi",
+    "salesApi",
+    "reportApi",
+    "tableApi",
+    "catalogApi",
+    "profileApi",
+    "outletApi",
+    "membershipApi",
+    "stockApi",
+    "withdrawalApi",
+  ],
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

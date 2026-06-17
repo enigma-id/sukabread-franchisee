@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useMemo } from "react";
 import { Banknote, ArrowUpCircle, Landmark, AlertTriangle } from "lucide-react";
 import { Page } from "@/components/app/layout";
@@ -5,10 +6,10 @@ import useTable from "@/services/table/hooks";
 import type { TableConfig } from "@/services/table/const";
 import createTableConfig from "./table/cash-control.config";
 import TableFilter from "./table/cash-control.filter";
-import type { OverviewCash } from "@/services/report/hooks";
 import { currencyFormat } from "@/utils";
 import { SummaryCard } from "@/components/app";
 import { useDocumentMeta } from "@/hooks/useDocumentMeta";
+import type { CashOverview } from "@/services/types";
 
 const THEMES: Record<string, any> = {
   blue: { text: "text-blue-500", iconBg: "#dbeafe", wave: "#3b82f6" },
@@ -18,7 +19,7 @@ const THEMES: Record<string, any> = {
   orange: { text: "text-orange-500", iconBg: "#ffedd5", wave: "#f97316" },
 };
 
-const OverviewCards = ({ data }: { data: OverviewCash | null }) => {
+const OverviewCards = ({ data }: { data: CashOverview | null }) => {
   if (!data) return null;
 
   return (
@@ -52,7 +53,10 @@ const OverviewCards = ({ data }: { data: OverviewCash | null }) => {
 };
 
 export function CashControl() {
-  useDocumentMeta("CashControl | Sukabread Franchisee", "Manage your CashControl efficiently within the Sukabread Franchisee portal.");
+  useDocumentMeta(
+    "CashControl | Sukabread Franchisee",
+    "Manage your CashControl efficiently within the Sukabread Franchisee portal.",
+  );
   const tableConfig = useMemo(() => {
     return createTableConfig({});
   }, []);

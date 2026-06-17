@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Page } from "@/components/app/layout";
 import { Input, Button } from "@/components/ui";
 import { useAppSelector } from "@/hooks";
-import { useAuth } from "@/services/auth/hooks";
+import { useProfile } from "@/services/profile/hooks";
 import { User, Lock } from "lucide-react";
 import { useDocumentMeta } from "@/hooks/useDocumentMeta";
 
@@ -10,12 +10,18 @@ export function Profile() {
   useDocumentMeta("Profile | Sukabread Franchisee", "Manage your Profile efficiently within the Sukabread Franchisee portal.");
   const user = useAppSelector((s) => s.auth.session?.user);
   const FormState = useAppSelector((s) => s.form);
-  const { doUpdateMe, updateMeResult } = useAuth();
+  const { update, updateResult } = useProfile();
 
   const [form, setForm] = useState({
     password: "",
     confirm_password: "",
   });
+
+  useEffect(() => {
+    if (updateResult.isSuccess) {
+      setForm({ password: "", confirm_password: "" });
+    }
+  }, [updateResult.isSuccess]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -25,9 +31,13 @@ export function Profile() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    doUpdateMe({
-      password: form.password,
-      confirm_password: form.confirm_password,
+    await update({
+      id: user?.id ?? "",
+      payload: {
+        name: user?.name,
+        password: form.password,
+        confirm_password: form.confirm_password,
+      },
     });
   };
 
@@ -124,7 +134,7 @@ export function Profile() {
                 <Button
                   type="submit"
                   variant="primary"
-                  isLoading={updateMeResult?.isLoading}
+                  isLoading={updateResult?.isLoading}
                   className="w-full"
                 >
                   Simpan Perubahan

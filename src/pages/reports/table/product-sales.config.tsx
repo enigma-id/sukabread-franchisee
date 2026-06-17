@@ -7,7 +7,7 @@ const createTableConfig = ({
   filter?: Record<string, unknown>;
 }) => ({
   ...config,
-  url: "/report/sales/daily",
+  url: "/report/product-sales",
   filter,
   columns: {
     dates: {

@@ -2,18 +2,21 @@ import { useMemo } from "react";
 import { Page } from "@/components/app/layout";
 import useTable from "@/services/table/hooks";
 import type { TableConfig } from "@/services/table/const";
-import createTableConfig from "./table/outstanding-bills.config";
-import TableFilter from "./table/outstanding-bills.filter";
+import createTableConfig from "./table/outstanding.config";
+import TableFilter from "./table/outstanding.filter";
 import { useDocumentMeta } from "@/hooks/useDocumentMeta";
 
-export function OutstandingBills() {
-  useDocumentMeta("OutstandingBills | Sukabread Franchisee", "Manage your OutstandingBills efficiently within the Sukabread Franchisee portal.");
+export function Outstanding() {
+  useDocumentMeta(
+    "Outstanding | Sukabread Franchisee",
+    "Manage your Outstanding efficiently within the Sukabread Franchisee portal.",
+  );
   const tableConfig = useMemo(() => {
     return createTableConfig({});
   }, []);
 
   const Table = useTable(
-    "outstanding_bills",
+    "report_outstanding",
     tableConfig as TableConfig<unknown>,
   );
 

@@ -14,8 +14,10 @@ import {
   X,
   ChevronDown,
   User,
+  Users,
   Receipt,
   Banknote,
+  History,
 } from "lucide-react";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -41,18 +43,57 @@ interface MenuSection {
 // ─── Menu Config ──────────────────────────────────────────────────────────────
 const menuSections: MenuSection[] = [
   {
-    label: "Operasional",
+    label: "Main",
     items: [
       {
-        label: "Penjualan",
-        path: "/sales/session",
+        label: "Dashboard",
+        path: "/dashboard",
         icon: <LayoutDashboard size={18} />,
       },
-      { label: "Stok", path: "/stock", icon: <Package size={18} /> },
+    ],
+  },
+  {
+    label: "Inventory",
+    items: [
       {
         label: "Purchase",
         path: "/purchase",
         icon: <ShoppingCart size={18} />,
+      },
+      {
+        label: "Daftar Stok",
+        path: "/stock",
+        icon: <Package size={18} />,
+      },
+      {
+        label: "Log Stok",
+        path: "/stock/log",
+        icon: <History size={18} />,
+      },
+    ],
+  },
+  {
+    label: "Finance",
+    items: [
+      {
+        label: "Penjualan",
+        path: "/sales/session",
+        icon: <ShoppingCart size={18} />,
+      },
+      {
+        label: "Penarikan",
+        path: "/withdrawal",
+        icon: <Wallet size={18} />,
+      },
+    ],
+  },
+  {
+    label: "Customers",
+    items: [
+      {
+        label: "Membership",
+        path: "/membership",
+        icon: <Users size={18} />,
       },
     ],
   },
@@ -60,24 +101,24 @@ const menuSections: MenuSection[] = [
     label: "Laporan",
     items: [
       {
-        label: "Penjualan Harian",
-        path: "/report/sales/daily",
+        label: "Product Sales",
+        path: "/report/product-sales",
         icon: <Receipt size={16} />,
       },
       {
-        label: "Outstanding Bills",
-        path: "/report/sales/outstanding",
+        label: "Outstanding",
+        path: "/report/outstanding",
         icon: <Banknote size={16} />,
       },
       {
         label: "Settlement",
-        path: "/report/sales/payment",
+        path: "/report/settlement",
         icon: <FileBarChart size={16} />,
       },
       {
-        label: "Penjualan Barang",
-        path: "/report/sales/item",
-        icon: <Receipt size={16} />,
+        label: "Cash Control",
+        path: "/report/cash-control",
+        icon: <Wallet size={16} />,
       },
     ],
   },
@@ -85,25 +126,29 @@ const menuSections: MenuSection[] = [
     label: "Sistem",
     items: [
       {
-        label: "Cash Control",
-        path: "/cash/control",
-        icon: <Wallet size={18} />,
+        label: "Pengaturan Outlet",
+        path: "/setting/outlet",
+        icon: <Settings size={18} />,
       },
       {
-        label: "Pengaturan",
-        icon: <Settings size={18} />,
-        children: [
-          {
-            label: "Manajemen User",
-            path: "/setting/user",
-            icon: <User size={16} />,
-          },
-          {
-            label: "Update Profile",
-            path: "/auth/me",
-            icon: <User size={16} />,
-          },
-        ],
+        label: "Log Saldo",
+        path: "/setting/outlet/balance-log",
+        icon: <History size={18} />,
+      },
+      {
+        label: "Katalog Outlet",
+        path: "/setting/catalog",
+        icon: <Package size={18} />,
+      },
+      {
+        label: "Manajemen User",
+        path: "/setting/user",
+        icon: <User size={18} />,
+      },
+      {
+        label: "Update Profile",
+        path: "/auth/me",
+        icon: <User size={18} />,
       },
     ],
   },
@@ -147,7 +192,7 @@ function NavItem({
   onNavigate: () => void;
 }) {
   const location = useLocation();
-  const isActive = location.pathname.startsWith(item.path!);
+  const isActive = location.pathname.split("/").pop() === item.path?.split("/").pop();
 
   return (
     <NavLink
@@ -184,7 +229,9 @@ function ParentItem({
   const location = useLocation();
   const [expanded, setExpanded] = useState(false);
   const isChildActive =
-    item.children?.some((c) => location.pathname.startsWith(c.path)) ?? false;
+    item.children?.some(
+      (c) => location.pathname.split("/").pop() === c.path.split("/").pop(),
+    ) ?? false;
 
   return (
     <div className="mb-1">
@@ -224,7 +271,8 @@ function ParentItem({
       >
         <div className="ml-9 pl-5 border-l border-base-300 space-y-1 py-1 mr-4">
           {item.children!.map((child) => {
-            const isActive = location.pathname.startsWith(child.path);
+            const isActive =
+              location.pathname.split("/").pop() === child.path.split("/").pop();
             return (
               <NavLink
                 key={child.path}

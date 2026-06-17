@@ -13,7 +13,7 @@ export interface AuthUser extends User {
 }
 
 export interface LoginRequest {
-  username: string;
+  identifier: string;
   password: string;
 }
 

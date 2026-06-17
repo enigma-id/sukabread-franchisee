@@ -7,7 +7,7 @@ const createTableConfig = ({
   filter?: Record<string, unknown>;
 }) => ({
   ...config,
-  url: "/report/sales/outstanding",
+  url: "/report/outstanding",
   filter,
   columns: {
     code: {
