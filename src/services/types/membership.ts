@@ -1,16 +1,10 @@
 export interface Membership {
   id: string;
+  brand_id: string;
+  card_id: string;
+  reff_code: string;
   name: string;
-  phone: string;
-  email?: string | null;
-  points: number;
-  joined_at: string;
-}
-
-export interface MembershipLog {
-  id: string;
-  action: string;
-  points_change: number;
+  saldo: number;
   created_at: string;
-  description: string;
+  updated_at: string;
 }

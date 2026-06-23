@@ -63,7 +63,7 @@ const TablePagination: React.FC<PaginationProps> = ({
   if (!stateTotal || numberOfPages <= 1) return null;
 
   return (
-    <div className="border border-gray-200 border-t-0 bg-white min-h-[60px] w-full grid grid-cols-1 xl:grid-cols-3 items-center px-6 py-4 rounded-b-xl gap-4 xl:gap-0">
+    <div className="border border-gray-200 border-t-0 bg-white min-h-15 w-full grid grid-cols-1 xl:grid-cols-3 items-center px-6 py-4 rounded-b-xl gap-4 xl:gap-0">
       <div className="flex items-center gap-4 justify-center xl:justify-start">
         <div className="text-[13px] text-gray-500 font-medium">
           Showing{" "}

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import config from "@/services/table/const";
 import { formatDateTime, isNeverLoggedIn } from "@/utils";
 import { Check } from "lucide-react";

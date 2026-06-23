@@ -20,16 +20,3 @@ export interface CashControl {
   overview_cash: CashOverview;
   session_data: CashSessionData[];
 }
-
-export interface Cashier {
-  id: string;
-  brand_id: string;
-  outlet_id: string;
-  username: string;
-  name: string;
-  role: string;
-  is_active: boolean;
-  last_activity_at: string | null;
-  created_at: string;
-  updated_at: string;
-}

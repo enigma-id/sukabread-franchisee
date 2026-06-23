@@ -8,12 +8,15 @@ import TableFilter from "./table/session.filter";
 import { useDocumentMeta } from "@/hooks/useDocumentMeta";
 
 export function SessionList() {
-  useDocumentMeta("SessionList | Sukabread Franchisee", "Manage your SessionList efficiently within the Sukabread Franchisee portal.");
+  useDocumentMeta(
+    "SessionList | Sukabread Franchisee",
+    "Manage your SessionList efficiently within the Sukabread Franchisee portal.",
+  );
   const navigate = useNavigate();
 
   const tableConfig = useMemo(() => {
     return createTableConfig({
-      onClick: (e: any) => {
+      onClick: (e) => {
         navigate(`/sales/session/${e?.id}`);
       },
     });

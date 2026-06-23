@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import config from "@/services/table/const";
 import { currencyFormat, formatDateTime } from "@/utils";
 

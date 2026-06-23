@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/set-state-in-effect */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Page } from "@/components/app/layout";
@@ -7,7 +9,10 @@ import { useAppSelector } from "@/hooks";
 import { useDocumentMeta } from "@/hooks/useDocumentMeta";
 
 export function UserUpdate() {
-  useDocumentMeta("UserUpdate | Sukabread Franchisee", "Manage your UserUpdate efficiently within the Sukabread Franchisee portal.");
+  useDocumentMeta(
+    "UserUpdate | Sukabread Franchisee",
+    "Manage your UserUpdate efficiently within the Sukabread Franchisee portal.",
+  );
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const FormState = useAppSelector((s) => s.form);

@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/set-state-in-effect */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useMemo, useState } from "react";
 import dayjs, { Dayjs } from "dayjs";
 

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   ClipboardList,
   ShoppingBag,
@@ -14,11 +15,14 @@ import { Page } from "@/components/app/layout";
 import { Loading } from "@/components/ui";
 import { useOrder } from "@/services/sales/hooks";
 import { formatDateTime, displayPaymentMethod, currencyFormat } from "@/utils";
-import type { SalesOrder, SalesOrderItem } from "@/services/types";
+// import type { SalesOrder, SalesOrderItem } from "@/services/types";
 import { useDocumentMeta } from "@/hooks/useDocumentMeta";
 
 export function OrderDetail() {
-  useDocumentMeta("OrderDetail | Sukabread Franchisee", "Manage your OrderDetail efficiently within the Sukabread Franchisee portal.");
+  useDocumentMeta(
+    "Order Detail | Sukabread Franchisee",
+    "Manage your OrderDetail efficiently within the Sukabread Franchisee portal.",
+  );
   const { orderId } = useParams<{ orderId: string }>();
   const navigate = useNavigate();
   const { show, showResult } = useOrder();
@@ -39,7 +43,7 @@ export function OrderDetail() {
       </div>
     );
 
-  const order = data as SalesOrder;
+  const order = data as any;
 
   return (
     <Page className="h-full flex flex-col min-h-0 bg-slate-50">
@@ -87,35 +91,33 @@ export function OrderDetail() {
                     </tr>
                   </thead>
                   <tbody>
-                    {order.sales_order_items.map(
-                      (item: SalesOrderItem, idx: number) => (
-                        <tr
-                          key={item.id}
-                          className="hover:bg-gray-50/50 border-b border-gray-100 last:border-0 transition-colors group"
-                        >
-                          <td className="px-6 py-3 align-middle text-[13px] font-medium text-gray-700">
-                            {idx + 1}
-                          </td>
-                          <td className="px-6 py-3 align-middle">
-                            <span
-                              className={`text-[14px] font-semibold ${item.additional_id ? "text-blue-600" : "text-base-content"}`}
-                            >
-                              {item.additional_id ? "+ " : ""}
-                              {item.catalog.name}
-                            </span>
-                          </td>
-                          <td className="px-6 py-3 align-middle text-right text-[14px] font-mono font-medium text-base-content">
-                            {item.quantity}
-                          </td>
-                          <td className="px-6 py-3 align-middle text-right text-[14px] font-mono font-medium text-base-content">
-                            {currencyFormat(item.unit_nett)}
-                          </td>
-                          <td className="px-6 py-3 align-middle text-right text-[14px] font-mono font-bold text-base-content">
-                            {currencyFormat(item.total_nett)}
-                          </td>
-                        </tr>
-                      ),
-                    )}
+                    {order.sales_order_items.map((item: any, idx: number) => (
+                      <tr
+                        key={item.id}
+                        className="hover:bg-gray-50/50 border-b border-gray-100 last:border-0 transition-colors group"
+                      >
+                        <td className="px-6 py-3 align-middle text-[13px] font-medium text-gray-700">
+                          {idx + 1}
+                        </td>
+                        <td className="px-6 py-3 align-middle">
+                          <span
+                            className={`text-[14px] font-semibold ${item.additional_id ? "text-blue-600" : "text-base-content"}`}
+                          >
+                            {item.additional_id ? "+ " : ""}
+                            {item.catalog.name}
+                          </span>
+                        </td>
+                        <td className="px-6 py-3 align-middle text-right text-[14px] font-mono font-medium text-base-content">
+                          {item.quantity}
+                        </td>
+                        <td className="px-6 py-3 align-middle text-right text-[14px] font-mono font-medium text-base-content">
+                          {currencyFormat(item.unit_nett)}
+                        </td>
+                        <td className="px-6 py-3 align-middle text-right text-[14px] font-mono font-bold text-base-content">
+                          {currencyFormat(item.total_nett)}
+                        </td>
+                      </tr>
+                    ))}
                   </tbody>
                 </table>
               </div>

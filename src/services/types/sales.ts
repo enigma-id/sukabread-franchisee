@@ -1,83 +1,81 @@
+import type { Outlet } from "./outlet";
+
+// Sales Order
+export interface SalesOrderSummary {
+  id: string;
+  code: string;
+  ordered_at: string;
+  channel: { name: string } | null;
+  payment_method: { name: string } | null;
+  total_charges: number;
+}
+
 // Sales Session
 export interface Cashier {
-  id: number
-  name: string
+  id: string;
+  brand_id: string;
+  outlet_id: string;
+  username: string;
+  name: string;
+  role: string;
+  is_active: boolean;
+  last_activity_at: string | null;
+  created_at: string;
+  updated_at: string;
 }
 
-export interface SummaryOrder {
-  total_nett: number
-  total_discount: number
-  total_service_charge: number
-  total_charges: number
-  total_openbill: number
-}
-
-export interface CashPayment {
-  payment_name: string | null
-  subtotal: number
+export interface PaymentMethod {
+  payment_name: string;
+  subtotal: number;
 }
 
 export interface CategorySold {
-  name: string
-  quantity: number
-  total_charges: number
+  name: string;
+  quantity: number;
+  total_charges: number;
+}
+
+export interface Topup {
+  type: string;
+  total_nominal: number;
+}
+
+export interface SessionSummary {
+  id: string;
+  session_id: string;
+  sales: {
+    total_sales: number;
+    total_discount: number;
+    total_after_discount: number;
+    total_service: number;
+    grand_total: number;
+    outstanding_bill: number;
+    outstanding_bill_payment: number;
+  };
+  payment_methods: PaymentMethod[];
+  category_solds: CategorySold[];
+  topups: Topup[];
+  cash: {
+    expected_cash: number;
+    topup_cash: number;
+  };
+  updated_at: string;
 }
 
 export interface SalesSession {
-  id: number
-  transaction_date: string
-  started_at: string
-  finished_at: string
-  status: string
-  cash_started: number
-  cash_finished: number
-  cash_due: number
-  cash_topup: number // API returns this as number, not topups array
-  bill_payment: number
-  cashier: Cashier
-  summary_order: SummaryOrder
-  cash_payments: CashPayment[]
-  category_solds: CategorySold[]
-  sales_orders: SalesOrderSummary[]
-}
-
-export interface SalesOrderSummary {
-  id: number
-  code: string
-  ordered_at: string
-  channel: { name: string } | null
-  payment_method: { name: string } | null
-  total_charges: number
-}
-
-// Sales Order Detail
-export interface SalesOrderItem {
-  id: number
-  catalog: { name: string }
-  additional_id: number | null
-  quantity: number
-  unit_nett: number
-  total_nett: number
-  note?: string | null
-}
-
-export interface SalesOrder {
-  id: number
-  code: string
-  ordered_at: string
-  payment_ref: string | null
-  note: string | null
-  channel: { name: string } | null
-  payment_method: { name: string } | null
-  session: {
-    id: number
-    cashier: Cashier
-  }
-  total_bill: number
-  discount_value: number
-  service_charge: boolean
-  service_charge_value: number
-  total_charges: number
-  subtotal_tax: number
-  sales_order_items: SalesOrderItem[]
+  id: string;
+  outlet_id: string;
+  cashier_id: string;
+  transaction_date: string;
+  started_at: string;
+  finished_at: string;
+  cash_started: number;
+  cash_finished: number;
+  status: string;
+  created_at: string;
+  updated_at: string;
+  outlet?: Outlet;
+  cashier?: Cashier;
+  summary?: SessionSummary;
+  sales_orders: SalesOrderSummary[];
 }

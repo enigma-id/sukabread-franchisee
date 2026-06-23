@@ -1,4 +1,4 @@
-import { useMemo, useCallback } from "react";
+import { useMemo, useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui";
 import { useUser } from "@/services/user/hooks";
@@ -10,9 +10,12 @@ import createTableConfig from "./table/user.config";
 import { useDocumentMeta } from "@/hooks/useDocumentMeta";
 
 export function UserList() {
-  useDocumentMeta("UserList | Sukabread Franchisee", "Manage your UserList efficiently within the Sukabread Franchisee portal.");
+  useDocumentMeta(
+    "User List | Sukabread Franchisee",
+    "Manage your UserList efficiently within the Sukabread Franchisee portal.",
+  );
   const navigate = useNavigate();
-  const { activate, deactivate } = useUser();
+  const { activate, activeResult, deactivate, deactiveResult } = useUser();
 
   const handleToggle = useCallback(
     async (userId: number, isActive: boolean) => {
@@ -21,7 +24,6 @@ export function UserList() {
       } else {
         await activate({ id: userId });
       }
-      Table.refetch();
     },
     [activate, deactivate],
   );
@@ -33,6 +35,18 @@ export function UserList() {
   }, [handleToggle]);
 
   const Table = useTable("users", tableConfig as TableConfig<unknown>);
+
+  useEffect(() => {
+    if (activeResult?.isSuccess) {
+      Table.boot();
+    }
+  }, [activeResult]);
+
+  useEffect(() => {
+    if (deactiveResult?.isSuccess) {
+      Table.boot();
+    }
+  }, [deactiveResult]);
 
   return (
     <Page className="h-full flex flex-col min-h-0 bg-slate-50">

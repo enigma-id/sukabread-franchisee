@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect } from "react";
 import { Page } from "@/components/app/layout";
 import { useLazyGetLogQuery } from "@/services/outlet/api";
@@ -47,7 +48,10 @@ export function OutletBalanceLog() {
                 ))}
                 {!data?.data?.length && (
                   <tr>
-                    <td colSpan={3} className="px-6 py-10 text-center text-base-content/50">
+                    <td
+                      colSpan={3}
+                      className="px-6 py-10 text-center text-base-content/50"
+                    >
                       Tidak ada log saldo.
                     </td>
                   </tr>

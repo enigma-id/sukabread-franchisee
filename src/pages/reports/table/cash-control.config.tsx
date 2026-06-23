@@ -1,5 +1,5 @@
 import config from "@/services/table/const";
-import { currencyFormat, formatDate, formatTime } from "@/utils";
+import { formatDate, formatTime } from "@/utils";
 import type { CashSessionData } from "@/services/types/cash";
 
 const createTableConfig = ({

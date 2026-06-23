@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 import { useState, useEffect } from "react";
 import { Page } from "@/components/app/layout";
 import { Input, Button } from "@/components/ui";
@@ -7,7 +8,10 @@ import { User, Lock } from "lucide-react";
 import { useDocumentMeta } from "@/hooks/useDocumentMeta";
 
 export function Profile() {
-  useDocumentMeta("Profile | Sukabread Franchisee", "Manage your Profile efficiently within the Sukabread Franchisee portal.");
+  useDocumentMeta(
+    "Profile | Sukabread Franchisee",
+    "Manage your Profile efficiently within the Sukabread Franchisee portal.",
+  );
   const user = useAppSelector((s) => s.auth.session?.user);
   const FormState = useAppSelector((s) => s.form);
   const { update, updateResult } = useProfile();

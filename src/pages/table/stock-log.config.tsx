@@ -39,12 +39,21 @@ const createTableConfig = () => ({
       class: "text-center",
       headerClass: "text-center",
       component: (row: StockLog) => {
-        const actionMap: Record<string, { label: string; variant: "default" | "success" | "warning" | "error" }> = {
+        const actionMap: Record<
+          string,
+          {
+            label: string;
+            variant: "default" | "success" | "warning" | "error";
+          }
+        > = {
           IN: { label: "Masuk", variant: "success" },
           OUT: { label: "Keluar", variant: "error" },
           ADJUST: { label: "Adjust", variant: "warning" },
         };
-        const { label, variant } = actionMap[row.action] || { label: row.action, variant: "default" };
+        const { label, variant } = actionMap[row.action] || {
+          label: row.action,
+          variant: "default",
+        };
 
         return (
           <div className="flex justify-center">
@@ -60,8 +69,11 @@ const createTableConfig = () => ({
       component: (row: StockLog) => {
         const isPositive = row.quantity >= 0;
         return (
-          <span className={`font-mono font-semibold ${isPositive ? "text-success" : "text-error"}`}>
-            {isPositive ? "+" : ""}{row.quantity.toLocaleString("id-ID")}
+          <span
+            className={`font-mono font-semibold ${isPositive ? "text-success" : "text-error"}`}
+          >
+            {isPositive ? "+" : ""}
+            {row.quantity.toLocaleString("id-ID")}
           </span>
         );
       },
@@ -81,7 +93,7 @@ const createTableConfig = () => ({
       class: "text-sm text-base-content/70",
       component: (row: StockLog) => {
         if (!row.notes) return <span className="text-base-content/30">-</span>;
-        return <span className="truncate max-w-[200px] block">{row.notes}</span>;
+        return <span className="truncate max-w-50 block">{row.notes}</span>;
       },
     },
   },

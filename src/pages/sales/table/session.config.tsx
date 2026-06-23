@@ -1,5 +1,6 @@
 import { Badge } from "@/components";
 import config from "@/services/table/const";
+import type { SalesSession } from "@/services/types/sales";
 import { currencyFormat, formatDate, formatTime, isOngoing } from "@/utils";
 import { ChevronRight } from "lucide-react";
 
@@ -18,22 +19,26 @@ const createTableConfig = ({
   filter,
 }: {
   filter?: Record<string, unknown>;
-  onClick: (e: any) => void;
+  onClick: (row: SalesSession) => void;
 }) => ({
   ...config,
   url: "/sales/session",
   filter,
-  onRowClick: (row: any) => onClick?.(row),
+  onRowClick: (row: SalesSession) => onClick?.(row),
   columns: {
+    outlet_id: {
+      title: "Outlet",
+      component: (row: SalesSession) => <div>{row.outlet?.name ?? "-"}</div>,
+    },
     transaction_date: {
       title: "Tanggal",
-      component: (row: any) => formatDate(row.transaction_date),
+      component: (row: SalesSession) => formatDate(row.transaction_date),
     },
     cashier_id: {
       alias: "cashier.id",
       title: "Kasir",
       class: "font-medium uppercase",
-      component: (row: any) => <div>{row.cashier?.name ?? "-"}</div>,
+      component: (row: SalesSession) => <div>{row.cashier?.name ?? "-"}</div>,
     },
     id: {
       title: "No. Session",
@@ -41,13 +46,15 @@ const createTableConfig = ({
     },
     started_at: {
       title: "Awal Session",
-      component: (row: any) => formatTime(row.started_at),
+      component: (row: SalesSession) => formatTime(row.started_at),
     },
     finished_at: {
       title: "Akhir Session",
-      component: (row: any) =>
+      component: (row: SalesSession) =>
         isOngoing(row.finished_at) ? (
-          <Badge variant="primary" appearance="soft">Ongoing</Badge>
+          <Badge variant="primary" appearance="soft">
+            Ongoing
+          </Badge>
         ) : (
           formatTime(row.finished_at)
         ),
@@ -56,11 +63,12 @@ const createTableConfig = ({
       title: "Total Transaksi",
       align: "right",
       class: "text-right font-mono font-medium",
-      component: (row: any) => currencyFormat(row.summary_order.total_charges),
+      component: (row: SalesSession) =>
+        currencyFormat(row.summary?.sales?.grand_total ?? 0),
     },
     status: {
       title: "Status",
-      component: (row: any) => (
+      component: (row: SalesSession) => (
         <Badge variant={getStatusVariant(row.status)} appearance="soft">
           {row.status}
         </Badge>
