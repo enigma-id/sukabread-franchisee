@@ -110,7 +110,7 @@ const TableFilter: React.FC<TableFilterProps> = ({ table }) => {
             })
           }
           hook={getResult as any}
-          getLabel={(item: any) => (item ? `Customer: ${item.name}` : "")}
+          getLabel={(item: any) => (item ? `Cashier: ${item.name}` : "")}
           renderItem={(item: any) => item?.name}
           getValue={(item: any) => item.id}
         />

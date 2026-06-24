@@ -43,7 +43,7 @@ input[disabled] {
 
 .input-default {
     --input-color: var(--color-base-content);
-    --tw-shadow-color: var(--color-base-300-shadow);
+    --tw-shadow-color: var(--color-base-content-shadow);
 }
 
 .input-neutral {

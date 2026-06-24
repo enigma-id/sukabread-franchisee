@@ -104,7 +104,6 @@ export function Profile() {
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <Input
-                variant="primary"
                 name="password"
                 type="password"
                 label="Password Baru"
@@ -119,7 +118,6 @@ export function Profile() {
                 placeholder="Masukkan password baru"
               />
               <Input
-                variant="primary"
                 name="confirm_password"
                 type="password"
                 label="Konfirmasi Password"

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useMemo } from "react";
-import { useSearchParams, useNavigate } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import { useEffect } from "react";
 import { Page } from "@/components/app/layout";
 import useTable from "@/services/table/hooks";
@@ -17,7 +17,6 @@ export function Settlement() {
     "Manage your Settlement efficiently within the Sukabread Franchisee portal.",
   );
   const [params] = useSearchParams();
-  const navigate = useNavigate();
   const month = params.get("month");
 
   const tableConfig = useMemo(() => {
@@ -85,12 +84,7 @@ export function Settlement() {
 
   return (
     <Page className="h-full flex flex-col min-h-0 bg-slate-50">
-      <Page.Header
-        category="Report"
-        title={`Settlement`}
-        subtitle=""
-        backTo={() => navigate(-1)}
-      />
+      <Page.Header category="Report" title={`Settlement`} subtitle="" />
       <Page.Body className="flex-1 flex flex-col min-h-0 ">
         <SettlementSummaryCards summary={summary} />
 

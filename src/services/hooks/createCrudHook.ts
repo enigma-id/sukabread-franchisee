@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * Generic CRUD hook factory
  * Creates a standardized hook for CRUD operations with consistent error handling
@@ -127,7 +128,7 @@ export interface CrudHookReturn<TEntity> {
 
   // Update operations
   update: (options: {
-    id: string | number;
+    id?: string | number;
     payload?: Record<string, unknown>;
   }) => Promise<void>;
   updateResult: MutationResult;
@@ -292,12 +293,12 @@ export function createCrudHook<TEntity = unknown>(
 
     const update = useCallback(
       async (options: {
-        id: string | number;
+        id?: string | number;
         payload?: Record<string, unknown>;
       }): Promise<void> => {
         try {
           const mutation = updateMutation as (options: {
-            id: string | number;
+            id?: string | number;
             [key: string]: unknown;
           }) => { unwrap: () => Promise<unknown> } & Promise<unknown>;
 

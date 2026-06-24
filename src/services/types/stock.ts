@@ -1,18 +1,26 @@
-export interface StockItem {
+export interface Ingredient {
   id: string;
-  catalog_name: string;
-  current_stock: number;
-  min_stock: number;
-  max_stock: number;
+  ref_id: string;
+  brand_id: string;
+  code: string;
+  name: string;
+  fraction: number;
+  measurement: string;
+  unit_price: number;
+  unit: number;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface StockLog {
   id: string;
-  catalog_name: string;
-  action: string; // e.g., "IN", "OUT", "ADJUST"
-  quantity: number;
-  previous_stock: number;
-  current_stock: number;
+  brand_id: string;
+  outlet_id: string;
+  ingredient_id: string;
+  reference_id: string;
+  reference_type: string;
+  qty_after: number;
   created_at: string;
-  notes?: string | null;
+  ingredient: Ingredient;
 }

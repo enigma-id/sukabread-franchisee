@@ -26,7 +26,7 @@ export function SessionList() {
 
   return (
     <Page className="h-full flex flex-col min-h-0 bg-slate-50">
-      <Page.Header category="Session" title="Daftar Session" subtitle="" />
+      <Page.Header category="Sales" title="Daftar Session" subtitle="" />
       <Page.Body className="flex-1 flex flex-col min-h-0 ">
         <Table.Tools>
           <TableFilter table={Table} />

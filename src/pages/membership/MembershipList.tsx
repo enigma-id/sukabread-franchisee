@@ -28,7 +28,7 @@ export function Membership() {
   return (
     <Page className="h-full flex flex-col min-h-0 bg-slate-50">
       <Page.Header
-        category="CRM"
+        category="Membership"
         title="Manajemen Membership"
         subtitle="Daftar pelanggan setia dan riwayat poin mereka."
       />

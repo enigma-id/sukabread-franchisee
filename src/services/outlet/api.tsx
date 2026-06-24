@@ -1,6 +1,5 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { baseQuery } from "../baseQuery";
-import type { OutletUpdatePayload, Outlet } from "../types";
 
 export const outletApi = createApi({
   reducerPath: "outletApi",
@@ -11,13 +10,15 @@ export const outletApi = createApi({
      * PUT /outlet
      * Update outlet service charges config
      */
-    updateOutlet: builder.mutation<Outlet, OutletUpdatePayload>({
-      query: (payload) => ({
-        url: "/outlet",
-        method: "PUT",
-        body: payload,
-      }),
-      invalidatesTags: ["Outlet"],
+    updateOutlet: builder.mutation({
+      query: ({ ...payload }) => (
+        console.log("updateOutlet", payload),
+        {
+          url: "/outlet",
+          method: "PUT",
+          body: payload,
+        }
+      ),
     }),
 
     getLog: builder.query({
@@ -26,7 +27,6 @@ export const outletApi = createApi({
         method: "GET",
         params,
       }),
-      providesTags: ["Outlet"],
     }),
   }),
 });

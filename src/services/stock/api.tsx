@@ -1,6 +1,5 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { baseQuery } from "../baseQuery";
-import type { StockItem, StockLog } from "../types";
 
 export const stockApi = createApi({
   reducerPath: "stockApi",
@@ -11,7 +10,7 @@ export const stockApi = createApi({
      * GET /stock
      * List current stock inventory levels
      */
-    getStock: builder.query<{ data: StockItem[] }, any>({
+    getStock: builder.query({
       query: (params) => ({
         url: "/stock",
         method: "GET",
@@ -24,7 +23,7 @@ export const stockApi = createApi({
      * GET /stock/log
      * List stock movement transaction logs
      */
-    getStockLogs: builder.query<{ data: StockLog[] }, any>({
+    getStockLogs: builder.query({
       query: (params) => ({
         url: "/stock/log",
         method: "GET",

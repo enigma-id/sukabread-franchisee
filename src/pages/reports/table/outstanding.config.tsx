@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import config from "@/services/table/const";
 import { currencyFormat, formatDateTime } from "@/utils";
+import type { OutstandingBill } from "@/services/types/reports";
 
 const createTableConfig = ({
   filter,
@@ -13,33 +14,34 @@ const createTableConfig = ({
   columns: {
     code: {
       title: "Code",
-      component: (row: any) => (
+      component: (row: OutstandingBill) => (
         <span className="font-medium uppercase">{row.code}</span>
       ),
     },
-    ordered_at: {
+    date: {
       title: "Tanggal",
-      component: (row: any) => formatDateTime(row.ordered_at),
+      component: (row: OutstandingBill) => formatDateTime(row.date),
+    },
+    outlet: {
+      title: "Outlet",
     },
     cashier: {
       title: "Kasir",
-      component: (row: any) => (
-        <span className="uppercase">{row.session?.cashier?.name}</span>
+      component: (row: OutstandingBill) => (
+        <span className="uppercase">{row.cashier}</span>
       ),
     },
-    ticket: {
-      title: "Bill",
-      component: (row: any) => <span className="uppercase">{row.ticket}</span>,
-    },
-    membership: {
-      title: "Customer",
-      component: (row: any) => row.membership?.name ?? "-",
+    bill_name: {
+      title: "Bill Name",
+      component: (row: OutstandingBill) => (
+        <span className="uppercase">{row.bill_name}</span>
+      ),
     },
     total_charges: {
       title: "Total Charges",
-      align: "right",
-      class: "text-right font-mono font-medium",
-      component: (row: any) => currencyFormat(row.total_charges),
+      headerClass: "!text-end",
+      class: "text-end font-mono font-medium",
+      component: (row: OutstandingBill) => currencyFormat(row.total_charges),
     },
   },
 });

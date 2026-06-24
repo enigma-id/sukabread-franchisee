@@ -20,7 +20,7 @@ export function StockLog() {
   return (
     <Page className="h-full flex flex-col min-h-0 bg-slate-50">
       <Page.Header
-        category="Inventaris"
+        category="Stock"
         title="Log Pergerakan Stok"
         subtitle="Lihat riwayat masuk, keluar, dan penyesuaian stok secara mendetail."
       />

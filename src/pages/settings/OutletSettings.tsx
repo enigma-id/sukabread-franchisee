@@ -12,7 +12,7 @@ export function OutletSettings() {
     "Kelola pengaturan operasional outlet Anda.",
   );
 
-  const { update, updateResult } = useOutlet();
+  const { update, setUpdate } = useOutlet();
   const outlet = useAppSelector((s) => s.auth.session?.outlet); // Assuming outlet info is here
   const FormState = useAppSelector((s) => s.form);
 
@@ -26,20 +26,23 @@ export function OutletSettings() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await update(form);
+
+    const payload = {
+      service_charges: Number(form),
+    };
+    await update({ payload });
   };
 
   return (
     <Page className="h-full flex flex-col min-h-0 bg-slate-50">
       <Page.Header category="Settings" title="Pengaturan Outlet" />
       <Page.Body className="p-6">
-        <div className="w-full max-w-md bg-white rounded-2xl border border-base-300 p-6 shadow-sm">
+        <div className="w-full max-w-md mx-auto bg-white rounded-2xl border border-base-300 p-6 shadow-sm">
           <h3 className="text-base font-semibold text-base-content mb-6">
             Konfigurasi Operasional
           </h3>
           <form onSubmit={handleSubmit} className="space-y-4">
             <Input
-              variant="primary"
               name="service_charges"
               type="number"
               label="Biaya Layanan (%)"
@@ -55,7 +58,7 @@ export function OutletSettings() {
             <Button
               type="submit"
               variant="primary"
-              isLoading={updateResult?.isLoading}
+              isLoading={setUpdate?.isLoading}
               className="w-full"
             >
               Simpan Perubahan

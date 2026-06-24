@@ -1,6 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import config from "@/services/table/const";
 import { Badge } from "@/components/ui/badge";
-import type { StockItem } from "@/services/types/stock";
 
 const createTableConfig = () => ({
   ...config,
@@ -14,7 +14,7 @@ const createTableConfig = () => ({
       title: "Stok Saat Ini",
       class: "text-center font-mono",
       headerClass: "text-center",
-      component: (row: StockItem) => {
+      component: (row: any) => {
         const stock = row.current_stock;
         const min = row.min_stock;
         const max = row.max_stock;

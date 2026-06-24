@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { Banknote, ArrowUpCircle, Landmark, AlertTriangle } from "lucide-react";
 import { Page } from "@/components/app/layout";
 import useTable from "@/services/table/hooks";
@@ -10,6 +10,7 @@ import { currencyFormat } from "@/utils";
 import { SummaryCard } from "@/components/app";
 import { useDocumentMeta } from "@/hooks/useDocumentMeta";
 import type { CashOverview } from "@/services/types";
+import { useReport } from "@/services/report/hooks";
 
 const THEMES: Record<string, any> = {
   blue: { text: "text-blue-500", iconBg: "#dbeafe", wave: "#3b82f6" },
@@ -26,25 +27,25 @@ const OverviewCards = ({ data }: { data: CashOverview | null }) => {
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
       <SummaryCard
         label="Total Transaksi Cash"
-        value={currencyFormat(data.total_transaction)}
+        value={currencyFormat(data.transaction_cash)}
         icon={Banknote}
         theme={THEMES.orange}
       />
       <SummaryCard
-        label="Total Topup Cash"
-        value={currencyFormat(data.total_topup)}
+        label="Total Variance"
+        value={currencyFormat(data.variance)}
         icon={ArrowUpCircle}
         theme={THEMES.blue}
       />
       <SummaryCard
         label="Total Setoran Cash"
-        value={currencyFormat(data.total_session)}
+        value={currencyFormat(data.finished_cash)}
         icon={Landmark}
         theme={THEMES.green}
       />
       <SummaryCard
         label="Kekurangan"
-        value={currencyFormat(data.deficient)}
+        value={currencyFormat(data.cash_deposit)}
         icon={AlertTriangle}
         theme={THEMES.red}
       />
@@ -63,14 +64,30 @@ export function CashControl() {
 
   const Table = useTable("cash_control", tableConfig as TableConfig<unknown>);
 
-  const overviewCash = Table.State?.payload?.overview_cash;
+  const currentFilter = useMemo(() => {
+    return {
+      ...(Table.State?.lockedFilter || {}),
+      ...(Table.State?.filter || {}),
+    };
+  }, [Table.State?.lockedFilter, Table.State?.filter]);
+
+  const currentFilterString = JSON.stringify(currentFilter);
+  const { cashControlSummary, cashControlSummaryResult } = useReport();
+
+  useEffect(() => {
+    if (Table.State) {
+      cashControlSummary(JSON.parse(currentFilterString));
+    }
+  }, [currentFilterString, Table.State !== undefined]);
+
+  const summary = cashControlSummaryResult.data?.data;
 
   return (
     <Page className="h-full flex flex-col min-h-0 bg-slate-50">
-      <Page.Header category="Cash" title="Cash Control" subtitle="" />
+      <Page.Header category="Report" title="Cash Control" subtitle="" />
       <Page.Body>
         {/* Overview Cards */}
-        <OverviewCards data={overviewCash ?? null} />
+        <OverviewCards data={summary} />
 
         {/* Table */}
         <div className="flex-1 flex flex-col min-h-0">

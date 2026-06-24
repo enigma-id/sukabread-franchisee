@@ -14,14 +14,14 @@ const createTableConfig = () => ({
         return (
           <div className="flex flex-col">
             <span className="font-medium text-base-content">
-              {date.toLocaleDateString("id-ID", {
+              {date?.toLocaleDateString("id-ID", {
                 day: "2-digit",
                 month: "short",
                 year: "numeric",
               })}
             </span>
             <span className="text-xs text-base-content/50">
-              {date.toLocaleTimeString("id-ID", {
+              {date?.toLocaleTimeString("id-ID", {
                 hour: "2-digit",
                 minute: "2-digit",
               })}
@@ -30,70 +30,27 @@ const createTableConfig = () => ({
         );
       },
     },
-    catalog_name: {
+    ingredient_name: {
       title: "Item",
       class: "font-medium",
+      component: (row: StockLog) => <span>{row.ingredient.name}</span>,
     },
-    action: {
-      title: "Aksi",
+    reference_type: {
+      title: "Tipe Referensi",
       class: "text-center",
       headerClass: "text-center",
-      component: (row: StockLog) => {
-        const actionMap: Record<
-          string,
-          {
-            label: string;
-            variant: "default" | "success" | "warning" | "error";
-          }
-        > = {
-          IN: { label: "Masuk", variant: "success" },
-          OUT: { label: "Keluar", variant: "error" },
-          ADJUST: { label: "Adjust", variant: "warning" },
-        };
-        const { label, variant } = actionMap[row.action] || {
-          label: row.action,
-          variant: "default",
-        };
-
-        return (
-          <div className="flex justify-center">
-            <Badge variant={variant}>{label}</Badge>
-          </div>
-        );
-      },
+      component: (row: StockLog) => (
+        <Badge variant="info" className="lowercase!">
+          {row.reference_type?.replaceAll("_", " ")}
+        </Badge>
+      ),
     },
-    quantity: {
-      title: "Qty",
+    qty_after: {
+      title: "Stok Akhir",
       class: "text-center font-mono",
       headerClass: "text-center",
       component: (row: StockLog) => {
-        const isPositive = row.quantity >= 0;
-        return (
-          <span
-            className={`font-mono font-semibold ${isPositive ? "text-success" : "text-error"}`}
-          >
-            {isPositive ? "+" : ""}
-            {row.quantity.toLocaleString("id-ID")}
-          </span>
-        );
-      },
-    },
-    previous_stock: {
-      title: "Stok Sebelum",
-      class: "text-center font-mono text-base-content/60",
-      headerClass: "text-center",
-    },
-    current_stock: {
-      title: "Stok Sesudah",
-      class: "text-center font-mono",
-      headerClass: "text-center",
-    },
-    notes: {
-      title: "Catatan",
-      class: "text-sm text-base-content/70",
-      component: (row: StockLog) => {
-        if (!row.notes) return <span className="text-base-content/30">-</span>;
-        return <span className="truncate max-w-50 block">{row.notes}</span>;
+        return <span className="font-mono font-semibold">{row.qty_after}</span>;
       },
     },
   },

@@ -20,7 +20,7 @@ export function Stock() {
   return (
     <Page className="h-full flex flex-col min-h-0 bg-slate-50">
       <Page.Header
-        category="Inventaris"
+        category="Stock"
         title="Manajemen Stok"
         subtitle="Pantau stok saat ini dan pastikan ketersediaan item di outlet Anda."
       />

@@ -1,3 +1,5 @@
+/* eslint-disable react-refresh/only-export-components */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useMemo } from "react";
 import {
   Banknote,
@@ -12,7 +14,7 @@ import {
 import { currencyFormat } from "@/utils";
 import { SummaryCard } from "./SummaryCard";
 
-const THEMES: Record<string, any> = {
+export const THEMES: Record<string, any> = {
   blue: { text: "text-blue-500", iconBg: "#dbeafe", wave: "#3b82f6" },
   green: { text: "text-green-500", iconBg: "#dcfce7", wave: "#22c55e" },
   red: { text: "text-red-500", iconBg: "#fee2e2", wave: "#ef4444" },
@@ -117,7 +119,7 @@ export function SettlementSummaryCards({ summary }: { summary: any[] }) {
               return (
                 <SummaryCard
                   key={i}
-                  label={item.method}
+                  label={item.method?.replaceAll("_", " ")}
                   value={currencyFormat(item.total)}
                   icon={item.icon}
                   theme={theme}

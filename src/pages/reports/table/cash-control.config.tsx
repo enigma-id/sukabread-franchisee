@@ -1,6 +1,6 @@
 import config from "@/services/table/const";
 import { formatDate, formatTime } from "@/utils";
-import type { CashSessionData } from "@/services/types/cash";
+import type { CashControlRow } from "@/services/types/reports";
 
 const createTableConfig = ({
   filter,
@@ -13,11 +13,15 @@ const createTableConfig = ({
   columns: {
     transaction_date: {
       title: "Tanggal",
-      component: (row: CashSessionData) => formatDate(row.transaction_date),
+      component: (row: CashControlRow) => formatDate(row.transaction_date),
     },
     started_at: {
       title: "Mulai",
-      component: (row: CashSessionData) => formatTime(row.started_at),
+      component: (row: CashControlRow) => formatTime(row.started_at),
+    },
+    finished_at: {
+      title: "Selesai",
+      component: (row: CashControlRow) => formatTime(row.finished_at),
     },
     transaction_cash: {
       title: "Transaksi Cash",

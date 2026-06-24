@@ -6,13 +6,12 @@ export interface DailySalesRow {
 
 // Outstanding Bills
 export interface OutstandingBill {
-  id: number
-  code: string
-  ordered_at: string
-  cashier: { name: string }
-  ticket: string
-  membership: { name: string } | null
-  total_charges: number
+  code: string;
+  date: string;
+  outlet: string;
+  cashier: string;
+  bill_name: string;
+  total_charges: number;
 }
 
 export interface OutstandingSummary {
@@ -33,8 +32,27 @@ export interface SettlementSummaryItem {
   nominal: number
 }
 
-// Item Sales
-export interface ItemSalesRow {
-  name: string
+// Cash Control
+export interface CashControlRow {
+  transaction_date: string;
+  started_at: string;
+  finished_at: string;
+  transaction_cash: number;
+  cash_deposit: number;
+  finished_cash: number;
+  variance: number;
+}
+
+// Product Sales
+export interface ProductSalesRow {
+  date: string
+  channel: string
+  payment: string
+  outlet: string
+  code: string
+  menu: string
   quantity: number
+  unit_nett: number
+  discount: number
+  total_nett: number
 }

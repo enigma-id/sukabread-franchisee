@@ -1,9 +1,9 @@
 // Cash Control
 export interface CashOverview {
-  total_transaction: number;
-  total_topup: number;
-  total_session: number;
-  deficient: number;
+  cash_deposit: number;
+  finished_cash: number;
+  transaction_cash: number;
+  variance: number;
 }
 
 export interface CashSessionData {

@@ -103,14 +103,14 @@ export function Dashboard() {
     get();
   }, []);
 
-  const data = getResult?.data?.data as DashboardData | undefined;
+  const data = getResult?.data?.data as DashboardData;
   const isLoading = getResult?.isLoading;
 
   const seriesData = useMemo(() => {
     if (!data?.sales_graph?.labels || !data?.sales_graph?.data) return [];
     return data.sales_graph.labels.map((label: string, index: number) => ({
       date: label,
-      "Omset Penjualan": Number(data.sales_graph.data[index]) || 0,
+      "Omset Penjualan": Number(data.sales_graph?.data[index]) || 0,
     }));
   }, [data]);
 
