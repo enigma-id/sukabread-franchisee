@@ -10,7 +10,6 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  Legend,
 } from "recharts";
 import {
   TrendingUp,
@@ -18,16 +17,13 @@ import {
   Users,
   AlertTriangle,
   Wallet,
-  Zap,
   BarChart2,
-  TrendingDown,
 } from "lucide-react";
 import { Page } from "@/components/app/layout";
 import { SummaryCard } from "@/components/app";
 import { useDashboard } from "@/services/dashboard/hooks";
 import { currencyFormat } from "@/utils";
 import { useDocumentMeta } from "@/hooks/useDocumentMeta";
-import clsx from "clsx";
 import type { DashboardData } from "@/services/types";
 
 // ─── Constants ───────────────────────────────────────────────────────────────
@@ -96,34 +92,6 @@ const CustomTooltip = ({ active, payload, label }: any) => {
   return null;
 };
 
-const MiniStatCard = ({ label, value, trend, trendValue }: any) => (
-  <div className="flex items-center justify-between p-3 rounded-xl bg-slate-50/80 border border-slate-100">
-    <div>
-      <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">
-        {label}
-      </p>
-      <p className="text-sm font-bold text-slate-800 mt-0.5">{value}</p>
-    </div>
-    <div
-      className={clsx(
-        "flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-semibold",
-        trend === "up"
-          ? "bg-green-100 text-green-600"
-          : trend === "down"
-            ? "bg-red-100 text-red-600"
-            : "bg-slate-100 text-slate-500",
-      )}
-    >
-      {trend === "up" ? (
-        <TrendingUp className="w-3 h-3" />
-      ) : trend === "down" ? (
-        <TrendingDown className="w-3 h-3" />
-      ) : null}
-      {trendValue}
-    </div>
-  </div>
-);
-
 // ─── Main Dashboard Page ─────────────────────────────────────────────────────
 
 export function Dashboard() {
@@ -132,10 +100,10 @@ export function Dashboard() {
   const { get, getResult } = useDashboard();
 
   useEffect(() => {
-    get({});
+    get();
   }, []);
 
-  const data = getResult?.data as DashboardData | undefined;
+  const data = getResult?.data?.data as DashboardData | undefined;
   const isLoading = getResult?.isLoading;
 
   const seriesData = useMemo(() => {
@@ -145,10 +113,6 @@ export function Dashboard() {
       "Omset Penjualan": Number(data.sales_graph.data[index]) || 0,
     }));
   }, [data]);
-
-  const hasData = useMemo(() => {
-    return seriesData.some((item: any) => item["Omset Penjualan"] > 0);
-  }, [seriesData]);
 
   const seriesConfig = [{ name: "Omset Penjualan" }];
 
@@ -170,123 +134,87 @@ export function Dashboard() {
   return (
     <Page className="h-full flex flex-col min-h-0 bg-slate-50">
       <Page.Header
-        category="Overview"
+        category="Dashboard"
         title="Dashboard"
         subtitle="Selamat datang kembali di panel franchisee Anda."
       />
       <Page.Body className="p-4 sm:p-6 overflow-y-auto">
-        {/* Main Stats Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-          <SummaryCard
-            label="Omzet Hari Ini"
-            value={currencyFormat(data?.omzet_hari_ini || 0)}
-            icon={TrendingUp}
-            theme={THEMES.green}
-          />
-          <SummaryCard
-            label="Total Transaksi"
-            value={data?.total_transaksi || 0}
-            icon={ShoppingCart}
-            theme={THEMES.blue}
-          />
-          <SummaryCard
-            label="Sesi Kasir Aktif"
-            value={data?.sesi_kasir_aktif || 0}
-            icon={Users}
-            theme={THEMES.purple}
-          />
-          <SummaryCard
-            label="Stok Kritis"
-            value={data?.stok_kritis || 0}
-            icon={AlertTriangle}
-            theme={THEMES.red}
-          />
-        </div>
+        {/* Bento Grid Container */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {/* Main Stats */}
+          <div className="col-span-1 md:col-span-2 lg:col-span-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <SummaryCard
+              label="Omzet Hari Ini"
+              value={currencyFormat(data?.omzet_hari_ini || 0)}
+              icon={TrendingUp}
+              theme={THEMES.green}
+            />
+            <SummaryCard
+              label="Omzet Total"
+              value={currencyFormat(data?.omzet || 0)}
+              icon={TrendingUp}
+              theme={THEMES.green}
+            />
+            <SummaryCard
+              label="Total Transaksi"
+              value={data?.total_transaksi || 0}
+              icon={ShoppingCart}
+              theme={THEMES.blue}
+            />
+            <SummaryCard
+              label="AOV"
+              value={currencyFormat(data?.aov || 0)}
+              icon={BarChart2}
+              theme={THEMES.cyan}
+            />
+            <SummaryCard
+              label="Sesi Kasir Aktif"
+              value={data?.sesi_kasir_aktif || 0}
+              icon={Users}
+              theme={THEMES.purple}
+            />
+            <SummaryCard
+              label="Saldo Outlet"
+              value={currencyFormat(data?.saldo_outlet || 0)}
+              icon={Wallet}
+              theme={THEMES.blue}
+            />
+            <SummaryCard
+              label="Stok Kritis"
+              value={data?.stok_kritis || 0}
+              icon={AlertTriangle}
+              theme={THEMES.red}
+            />
+            <SummaryCard
+              label="Total Hutang"
+              value={currencyFormat(
+                data?.outstanding_bill_tracker?.total_outstanding || 0,
+              )}
+              icon={Wallet}
+              theme={THEMES.orange}
+            />
+          </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-          {/* Advanced Sales Chart Card */}
-          <div className="lg:col-span-2 bg-white rounded-3xl border border-slate-200/60 shadow-xl shadow-slate-200/20 overflow-hidden">
+          {/* Sales Chart Area - Spans 2 rows on lg */}
+          <div className="md:col-span-2 lg:col-span-2 row-span-2 bg-white rounded-3xl border border-slate-200/60 shadow-xl shadow-slate-200/20 overflow-hidden">
             <div className="px-6 py-5 border-b border-slate-100 bg-linear-to-r from-white to-slate-50/50">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-2xl bg-linear-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/30">
                   <BarChart2 className="w-5 h-5 text-white" />
                 </div>
-                <div>
-                  <h3 className="text-lg font-bold text-slate-800">
-                    Tren Penjualan
-                  </h3>
-                </div>
+                <h3 className="text-lg font-bold text-slate-800">
+                  Tren Penjualan
+                </h3>
               </div>
             </div>
-
-            <div className="p-6 pt-4">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-5">
-                <MiniStatCard
-                  label="Growth Omzet"
-                  value={`${data?.weekly_comparison?.omzet_growth || 0}%`}
-                  trend={
-                    data?.weekly_comparison?.trend === "up"
-                      ? "up"
-                      : data?.weekly_comparison?.trend === "down"
-                        ? "down"
-                        : "neutral"
-                  }
-                  trendValue="Mingguan"
-                />
-                <MiniStatCard
-                  label="Avg Order Value"
-                  value={currencyFormat(data?.aov || 0)}
-                  trend="neutral"
-                  trendValue="Rerata"
-                />
-                <MiniStatCard
-                  label="Outstanding"
-                  value={currencyFormat(
-                    data?.outstanding_bill_tracker?.total_outstanding || 0,
-                  )}
-                  trend="neutral"
-                  trendValue="Piutang"
-                />
-              </div>
-
-              <div
-                className="w-full outline-none focus:outline-none relative"
-                style={{ height: "300px", minHeight: "300px" }}
-              >
+            <div className="p-6">
+              <div className="w-full" style={{ height: "300px" }}>
                 {seriesData.length > 0 ? (
                   <ResponsiveContainer width="100%" height="100%">
                     <AreaChart
                       data={seriesData}
                       margin={{ top: 10, right: 10, left: 0, bottom: 5 }}
                     >
-                      <defs>
-                        {seriesConfig.map((_, i) => (
-                          <linearGradient
-                            key={i}
-                            id={`gradient-${i}`}
-                            x1="0"
-                            y1="0"
-                            x2="0"
-                            y2="1"
-                          >
-                            <stop
-                              offset="0%"
-                              stopColor={COLORS[i % COLORS.length]}
-                              stopOpacity={0.4}
-                            />
-                            <stop
-                              offset="50%"
-                              stopColor={COLORS[i % COLORS.length]}
-                              stopOpacity={0.15}
-                            />
-                            <stop
-                              offset="100%"
-                              stopColor={COLORS[i % COLORS.length]}
-                              stopOpacity={0}
-                            />
-                          </linearGradient>
-                        ))}
-                      </defs>
                       <CartesianGrid
                         strokeDasharray="2 4"
                         vertical={false}
@@ -295,75 +223,29 @@ export function Dashboard() {
                       />
                       <XAxis
                         dataKey="date"
-                        axisLine={false}
-                        tickLine={false}
-                        tick={{
-                          fontSize: 10,
-                          fill: "#94a3b8",
-                          fontWeight: 500,
-                        }}
                         tickFormatter={(value) => dayjs(value).format("DD/MM")}
-                        dy={8}
-                        tickMargin={8}
-                        interval={Math.floor(seriesData.length / 7)}
                       />
                       <YAxis
-                        axisLine={false}
-                        tickLine={false}
-                        tick={{
-                          fontSize: 10,
-                          fill: "#94a3b8",
-                          fontWeight: 500,
-                        }}
-                        domain={hasData ? [0, "auto"] : [0, 100000]}
-                        tickFormatter={(value) => {
-                          if (value >= 1000000)
-                            return `${(value / 1000000).toFixed(1)}Jt`;
-                          if (value >= 1000)
-                            return `${(value / 1000).toFixed(0)}Rb`;
-                          return value;
-                        }}
-                        dx={-8}
-                        tickMargin={8}
+                        tickFormatter={(value) =>
+                          value >= 1000
+                            ? `${(value / 1000).toFixed(0)}Rb`
+                            : value
+                        }
                       />
                       <Tooltip content={<CustomTooltip />} />
-                      <Legend
-                        verticalAlign="top"
-                        align="right"
-                        height={32}
-                        iconType="circle"
-                        iconSize={8}
-                        wrapperStyle={{ paddingBottom: "12px" }}
-                        formatter={(value) => (
-                          <span className="text-[10px] font-medium text-slate-500 uppercase tracking-wider">
-                            {value}
-                          </span>
-                        )}
-                      />
                       {seriesConfig.map((s, i) => (
                         <Area
                           key={i}
                           type="monotone"
                           dataKey={s.name}
-                          name={s.name}
                           stroke={COLORS[i % COLORS.length]}
-                          strokeWidth={2.5}
                           fill={`url(#gradient-${i})`}
-                          animationDuration={1000}
-                          animationEasing="ease-out"
-                          dot={false}
-                          activeDot={{
-                            r: 5,
-                            fill: COLORS[i % COLORS.length],
-                            stroke: "#fff",
-                            strokeWidth: 2,
-                          }}
                         />
                       ))}
                     </AreaChart>
                   </ResponsiveContainer>
                 ) : (
-                  <div className="h-full w-full flex items-center justify-center bg-slate-50/50 rounded-2xl border-2 border-dashed border-slate-200">
+                  <div className="h-full flex items-center justify-center bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200">
                     <p className="text-slate-400 font-medium">
                       Data grafik tidak tersedia
                     </p>
@@ -373,108 +255,114 @@ export function Dashboard() {
             </div>
           </div>
 
-          {/* Right Column Metrics */}
-          <div className="flex flex-col gap-4">
-            <SummaryCard
-              label="Saldo Outlet"
-              value={currencyFormat(data?.saldo_outlet || 0)}
-              icon={Wallet}
-              theme={THEMES.orange}
-              variant="primary"
-            />
-
-            <div className="bg-white p-6 rounded-2xl shadow-md border border-slate-100 flex-1 flex flex-col">
+          {/* Remaining Detailed Cards (Bento) */}
+          <div className="md:col-span-2 lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="bg-white p-6 rounded-2xl shadow-md border border-slate-100">
               <h3 className="text-sm font-bold text-slate-500 uppercase tracking-widest mb-4">
-                Weekly Performance
+                Cashier Performance
               </h3>
-              <div className="space-y-6 flex-1">
-                {/* Revenue Growth Section */}
-                <div className="space-y-3">
-                  <div className="flex justify-between items-end">
-                    <p className="text-xs text-slate-500 font-medium">
-                      Pertumbuhan Omset
-                    </p>
-                    <p
-                      className={clsx(
-                        "text-lg font-black",
-                        (data?.weekly_comparison?.omzet_growth || 0) >= 0
-                          ? "text-green-600"
-                          : "text-red-600",
-                      )}
-                    >
-                      {data?.weekly_comparison?.omzet_growth || 0}%
-                    </p>
+              <div className="space-y-3">
+                {data?.cashier_performance?.slice(0, 3).map((cashier, i) => (
+                  <div
+                    key={i}
+                    className="flex justify-between items-center text-xs"
+                  >
+                    <span className="font-medium text-slate-700">
+                      {cashier.cashier_name}
+                    </span>
+                    <span className="font-bold text-slate-900">
+                      {cashier.total_transaksi} Trans /{" "}
+                      {currencyFormat(cashier.omzet)}
+                    </span>
                   </div>
-                  <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
-                    <div
-                      className={clsx(
-                        "h-full transition-all duration-1000",
-                        (data?.weekly_comparison?.omzet_growth || 0) >= 0
-                          ? "bg-green-500"
-                          : "bg-red-500",
-                      )}
-                      style={{
-                        width: `${Math.min(
-                          Math.abs(data?.weekly_comparison?.omzet_growth || 0),
-                          100,
-                        )}%`,
-                      }}
-                    />
-                  </div>
-                </div>
+                ))}
+              </div>
+            </div>
 
-                {/* Transaction Growth Section */}
-                <div className="space-y-3">
-                  <div className="flex justify-between items-end">
-                    <p className="text-xs text-slate-500 font-medium">
-                      Pertumbuhan Transaksi
-                    </p>
-                    <p
-                      className={clsx(
-                        "text-lg font-black",
-                        (data?.weekly_comparison?.transaksi_growth || 0) >= 0
-                          ? "text-green-600"
-                          : "text-red-600",
-                      )}
-                    >
-                      {data?.weekly_comparison?.transaksi_growth || 0}%
-                    </p>
+            <div className="bg-white p-6 rounded-2xl shadow-md border border-slate-100">
+              <h3 className="text-sm font-bold text-slate-500 uppercase tracking-widest mb-4">
+                Payment Method Split
+              </h3>
+              <div className="space-y-3">
+                {data?.payment_method_split?.slice(0, 3).map((method, i) => (
+                  <div
+                    key={i}
+                    className="flex justify-between items-center text-xs"
+                  >
+                    <span className="font-medium text-slate-700">
+                      {method.name}
+                    </span>
+                    <span className="font-bold text-slate-900">
+                      {currencyFormat(method.total_paid)} (
+                      {method.percentage.toFixed(1)}%)
+                    </span>
                   </div>
-                  <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
-                    <div
-                      className={clsx(
-                        "h-full transition-all duration-1000",
-                        (data?.weekly_comparison?.transaksi_growth || 0) >= 0
-                          ? "bg-green-500"
-                          : "bg-red-500",
-                      )}
-                      style={{
-                        width: `${Math.min(
-                          Math.abs(
-                            data?.weekly_comparison?.transaksi_growth || 0,
-                          ),
-                          100,
-                        )}%`,
-                      }}
-                    />
-                  </div>
-                </div>
+                ))}
+              </div>
+            </div>
 
-                <div className="mt-auto pt-6 border-t border-slate-100">
-                  <div className="flex items-center gap-3 p-3 bg-indigo-50 rounded-2xl border border-indigo-100">
-                    <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-indigo-600 shadow-sm">
-                      <Zap size={20} />
-                    </div>
-                    <div>
-                      <p className="text-[10px] font-bold text-indigo-400 uppercase tracking-wider">
-                        Trend Saat Ini
-                      </p>
-                      <p className="text-sm font-bold text-indigo-900 capitalize">
-                        {data?.weekly_comparison?.trend || "Flat"}
-                      </p>
-                    </div>
+            <div className="md:col-span-2 bg-white p-6 rounded-2xl shadow-md border border-slate-100">
+              <h3 className="text-sm font-bold text-slate-500 uppercase tracking-widest mb-4">
+                Top Members
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2">
+                {data?.top_member_by_saldo?.slice(0, 6).map((member, i) => (
+                  <div
+                    key={i}
+                    className="flex justify-between items-center text-xs"
+                  >
+                    <span className="font-medium text-slate-700 truncate">
+                      {member.member_name}
+                    </span>
+                    <span className="font-bold text-slate-900">
+                      {currencyFormat(member.saldo)}
+                    </span>
                   </div>
-                </div>
+                ))}
+              </div>
+            </div>
+
+            {/* New: Top Menu */}
+            <div className="bg-white p-6 rounded-2xl shadow-md border border-slate-100">
+              <h3 className="text-sm font-bold text-slate-500 uppercase tracking-widest mb-4">
+                Top Menu
+              </h3>
+              <div className="space-y-3">
+                {data?.top_menu?.slice(0, 5).map((item, i) => (
+                  <div
+                    key={i}
+                    className="flex justify-between items-center text-xs"
+                  >
+                    <span className="font-medium text-slate-700">
+                      {item.menu_name}
+                    </span>
+                    <span className="font-bold text-slate-900">
+                      {item.total_qty} x {currencyFormat(item.total_revenue)}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* New: Peak Hours */}
+            <div className="bg-white p-6 rounded-2xl shadow-md border border-slate-100">
+              <h3 className="text-sm font-bold text-slate-500 uppercase tracking-widest mb-4">
+                Peak Hours
+              </h3>
+              <div className="grid grid-cols-4 gap-2">
+                {data?.peak_hours?.map((hour, i) => (
+                  <div
+                    key={i}
+                    className="flex flex-col items-center p-2 bg-slate-50 rounded-lg"
+                  >
+                    <span className="text-[10px] text-slate-500 font-medium">
+                      {hour.hour}:00
+                    </span>
+                    <span className="text-sm font-bold text-slate-900">
+                      {hour.total_transaksi}
+                    </span>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
