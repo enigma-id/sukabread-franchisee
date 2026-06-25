@@ -8,7 +8,10 @@ import { User, Lock } from "lucide-react";
 import { useDocumentMeta } from "@/hooks/useDocumentMeta";
 
 export function UserCreate() {
-  useDocumentMeta("UserCreate | Sukabread Franchisee", "Manage your UserCreate efficiently within the Sukabread Franchisee portal.");
+  useDocumentMeta(
+    "UserCreate | Sukabread Franchisee",
+    "Manage your UserCreate efficiently within the Sukabread Franchisee portal.",
+  );
   const navigate = useNavigate();
   const FormState = useAppSelector((s) => s.form);
   const { create, createResult } = useUser();
@@ -88,7 +91,6 @@ export function UserCreate() {
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <Input
-                    variant="primary"
                     name="name"
                     type="text"
                     label="Nama Lengkap"
@@ -103,7 +105,6 @@ export function UserCreate() {
                     }
                   />
                   <Input
-                    variant="primary"
                     name="username"
                     type="text"
                     label="Username"
@@ -127,7 +128,6 @@ export function UserCreate() {
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <Input
-                    variant="primary"
                     name="password"
                     type="password"
                     label="Password"
@@ -143,7 +143,6 @@ export function UserCreate() {
                     autoComplete="new-password"
                   />
                   <Input
-                    variant="primary"
                     name="confirm_password"
                     type="password"
                     label="Konfirmasi Password"

@@ -10,7 +10,6 @@ import { StockLog } from "@/pages/StockLog";
 import { Membership } from "@/pages/membership/MembershipList";
 import { MembershipDetail } from "@/pages/membership/MembershipDetail";
 import { WithdrawalList } from "@/pages/withdrawal/WithdrawalList";
-import { WithdrawalDetail } from "@/pages/withdrawal/WithdrawalDetail";
 import { SessionList } from "@/pages/sales/SessionList";
 import { SessionDetail } from "@/pages/sales/SessionDetail";
 import { OrderDetail } from "@/pages/sales/OrderDetail";
@@ -27,6 +26,7 @@ import { OutletCatalog } from "@/pages/settings/OutletCatalog";
 import { OutletSettings } from "@/pages/settings/OutletSettings";
 import { OutletBalanceLog } from "@/pages/settings/OutletBalanceLog";
 import { Profile } from "@/pages/Profile";
+import WithdrawalCreate from "@/pages/withdrawal/WithdrawalCreate";
 
 export function AppRoutes() {
   return (
@@ -62,7 +62,7 @@ export function AppRoutes() {
         <Route path="/report/settlement" element={<Settlement />} />
         <Route path="/report/cash-control" element={<CashControl />} />
         <Route path="/withdrawal" element={<WithdrawalList />} />
-        <Route path="/withdrawal/:id" element={<WithdrawalDetail />} />
+        <Route path="/withdrawal/create" element={<WithdrawalCreate />} />
         <Route path="/setting/user" element={<UserList />} />
         <Route path="/setting/user/create" element={<UserCreate />} />
         <Route path="/setting/user/:id/update" element={<UserUpdate />} />

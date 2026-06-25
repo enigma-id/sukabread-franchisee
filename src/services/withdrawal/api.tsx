@@ -13,23 +13,16 @@ export const withdrawalApi = createApi({
         params,
       }),
     }),
-    showList: builder.query({
-      query: ({ id, ...params }) => ({
-        url: `/withdrawal-request/${id}`,
-        method: "GET",
-        params,
-      }),
-    }),
-    approve: builder.mutation({
-      query: ({ id, ...payload }) => ({
-        url: `/withdrawal-request/${id}/approve`,
-        method: "PUT",
+    create: builder.mutation({
+      query: (payload) => ({
+        url: "/withdrawal-request",
+        method: "POST",
         body: payload,
       }),
     }),
-    reject: builder.mutation({
+    cancel: builder.mutation({
       query: ({ id, ...payload }) => ({
-        url: `/withdrawal-request/${id}/reject`,
+        url: `/withdrawal-request/${id}/cancel`,
         method: "PUT",
         body: payload,
       }),
@@ -37,9 +30,5 @@ export const withdrawalApi = createApi({
   }),
 });
 
-export const {
-  useLazyGetListQuery,
-  useLazyShowListQuery,
-  useApproveMutation,
-  useRejectMutation,
-} = withdrawalApi;
+export const { useLazyGetListQuery, useCreateMutation, useCancelMutation } =
+  withdrawalApi;

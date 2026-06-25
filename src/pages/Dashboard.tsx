@@ -1,16 +1,6 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useMemo, useEffect } from "react";
-import dayjs from "dayjs";
-import {
-  AreaChart,
-  Area,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useEffect } from "react";
 import {
   TrendingUp,
   ShoppingCart,
@@ -18,6 +8,10 @@ import {
   AlertTriangle,
   Wallet,
   BarChart2,
+  User,
+  Medal,
+  ConciergeBell,
+  Clock10,
 } from "lucide-react";
 import { Page } from "@/components/app/layout";
 import { SummaryCard } from "@/components/app";
@@ -25,10 +19,7 @@ import { useDashboard } from "@/services/dashboard/hooks";
 import { currencyFormat } from "@/utils";
 import { useDocumentMeta } from "@/hooks/useDocumentMeta";
 import type { DashboardData } from "@/services/types";
-
-// ─── Constants ───────────────────────────────────────────────────────────────
-
-const COLORS = ["#3b82f6", "#8b5cf6", "#10b981", "#f59e0b", "#ef4444"];
+import SalesChart from "@/components/app/SalesChart";
 
 const THEMES = {
   blue: { text: "text-blue-500", iconBg: "#dbeafe", wave: "#3b82f6" },
@@ -39,58 +30,30 @@ const THEMES = {
   cyan: { text: "text-cyan-500", iconBg: "#cffafe", wave: "#06b6d4" },
 };
 
-// ─── Sub-Components ──────────────────────────────────────────────────────────
-
-const CustomTooltip = ({ active, payload, label }: any) => {
-  if (active && payload && payload.length) {
-    const total = payload.reduce(
-      (sum: number, entry: any) => sum + (entry.value || 0),
-      0,
-    );
-
-    return (
-      <div className="bg-white/95 backdrop-blur-xl p-4 rounded-2xl shadow-2xl border border-white/60 ring-1 ring-black/5">
-        <p className="text-xs font-semibold text-slate-500 mb-2 flex items-center gap-1.5">
-          <span className="w-1.5 h-1.5 rounded-full bg-slate-400" />
-          {dayjs(label).format("DD MMMM YYYY")}
-        </p>
-        <div className="space-y-2.5">
-          {payload.map((entry: any, index: number) => (
-            <div
-              key={index}
-              className="flex items-center justify-between gap-4"
-            >
-              <div className="flex items-center gap-2">
-                <div
-                  className="w-2.5 h-2.5 rounded-full shadow-sm"
-                  style={{ backgroundColor: entry.color }}
-                />
-                <span className="text-xs font-medium text-slate-600">
-                  {entry.name}
-                </span>
-              </div>
-              <span
-                className="text-sm font-bold"
-                style={{ color: entry.color }}
-              >
-                {currencyFormat(entry.value)}
-              </span>
-            </div>
-          ))}
-        </div>
-        <div className="mt-3 pt-2.5 border-t border-slate-100">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-slate-500">Total</span>
-            <span className="text-sm font-bold text-slate-800">
-              {currencyFormat(total)}
-            </span>
-          </div>
-        </div>
+const PipelineCard = ({
+  title,
+  children,
+  icon: Icon,
+  theme,
+}: {
+  title: string;
+  children?: any;
+  icon: any;
+  theme: any;
+}) => (
+  <div className="bg-white rounded-3xl p-6 shadow-xl shadow-slate-200/20 border border-slate-100 h-full">
+    <div className="flex items-center gap-3 mb-6">
+      <div
+        className="w-10 h-10 rounded-2xl flex items-center justify-center shadow-lg"
+        style={{ backgroundColor: theme.iconBg }}
+      >
+        <Icon className={`w-5 h-5 ${theme.text}`} />
       </div>
-    );
-  }
-  return null;
-};
+      <h3 className="text-lg font-bold text-slate-800">{title}</h3>
+    </div>
+    <div className="space-y-4">{children}</div>
+  </div>
+);
 
 // ─── Main Dashboard Page ─────────────────────────────────────────────────────
 
@@ -105,16 +68,6 @@ export function Dashboard() {
 
   const data = getResult?.data?.data as DashboardData;
   const isLoading = getResult?.isLoading;
-
-  const seriesData = useMemo(() => {
-    if (!data?.sales_graph?.labels || !data?.sales_graph?.data) return [];
-    return data.sales_graph.labels.map((label: string, index: number) => ({
-      date: label,
-      "Omset Penjualan": Number(data.sales_graph?.data[index]) || 0,
-    }));
-  }, [data]);
-
-  const seriesConfig = [{ name: "Omset Penjualan" }];
 
   if (isLoading) {
     return (
@@ -138,11 +91,16 @@ export function Dashboard() {
         title="Dashboard"
         subtitle="Selamat datang kembali di panel franchisee Anda."
       />
-      <Page.Body className="p-4 sm:p-6 overflow-y-auto">
-        {/* Bento Grid Container */}
+      <Page.Body className="flex flex-col gap-6 pb-10">
+        {/* Sales Chart */}
+        <SalesChart
+          data={data?.sales_graph}
+          isLoading={isLoading}
+          title="Performa Penjualan Multi-Saluran"
+        />
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {/* Main Stats */}
-          <div className="col-span-1 md:col-span-2 lg:col-span-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="col-span-1 lg:col-span-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <SummaryCard
               label="Omzet Hari Ini"
               value={currencyFormat(data?.omzet_hari_ini || 0)}
@@ -195,161 +153,88 @@ export function Dashboard() {
             />
           </div>
 
-          {/* Sales Chart Area - Spans 2 rows on lg */}
-          <div className="md:col-span-2 lg:col-span-2 row-span-2 bg-white rounded-3xl border border-slate-200/60 shadow-xl shadow-slate-200/20 overflow-hidden">
-            <div className="px-6 py-5 border-b border-slate-100 bg-linear-to-r from-white to-slate-50/50">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-2xl bg-linear-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/30">
-                  <BarChart2 className="w-5 h-5 text-white" />
-                </div>
-                <h3 className="text-lg font-bold text-slate-800">
-                  Tren Penjualan
-                </h3>
-              </div>
-            </div>
-            <div className="p-6">
-              <div className="w-full" style={{ height: "300px" }}>
-                {seriesData.length > 0 ? (
-                  <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart
-                      data={seriesData}
-                      margin={{ top: 10, right: 10, left: 0, bottom: 5 }}
-                    >
-                      <CartesianGrid
-                        strokeDasharray="2 4"
-                        vertical={false}
-                        stroke="#e2e8f0"
-                        strokeOpacity={0.6}
-                      />
-                      <XAxis
-                        dataKey="date"
-                        tickFormatter={(value) => dayjs(value).format("DD/MM")}
-                      />
-                      <YAxis
-                        tickFormatter={(value) =>
-                          value >= 1000
-                            ? `${(value / 1000).toFixed(0)}Rb`
-                            : value
-                        }
-                      />
-                      <Tooltip content={<CustomTooltip />} />
-                      {seriesConfig.map((s, i) => (
-                        <Area
-                          key={i}
-                          type="monotone"
-                          dataKey={s.name}
-                          stroke={COLORS[i % COLORS.length]}
-                          fill={`url(#gradient-${i})`}
-                        />
-                      ))}
-                    </AreaChart>
-                  </ResponsiveContainer>
-                ) : (
-                  <div className="h-full flex items-center justify-center bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200">
-                    <p className="text-slate-400 font-medium">
-                      Data grafik tidak tersedia
-                    </p>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-
           {/* Remaining Detailed Cards (Bento) */}
-          <div className="md:col-span-2 lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="bg-white p-6 rounded-2xl shadow-md border border-slate-100">
-              <h3 className="text-sm font-bold text-slate-500 uppercase tracking-widest mb-4">
-                Cashier Performance
-              </h3>
-              <div className="space-y-3">
-                {data?.cashier_performance?.slice(0, 3).map((cashier, i) => (
-                  <div
-                    key={i}
-                    className="flex justify-between items-center text-xs"
-                  >
-                    <span className="font-medium text-slate-700">
+          <div className="lg:col-span-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+            <PipelineCard
+              title="Cashier Performance"
+              icon={TrendingUp}
+              theme={THEMES.blue}
+            >
+              {data?.cashier_performance?.map((cashier, i) => (
+                <div className="flex items-center justify-between" key={i}>
+                  <div className="flex items-center gap-2">
+                    <User className="w-4 h-4 text-amber-500" />
+                    <span className="text-sm font-medium text-slate-500">
                       {cashier.cashier_name}
                     </span>
-                    <span className="font-bold text-slate-900">
-                      {cashier.total_transaksi} Trans /{" "}
-                      {currencyFormat(cashier.omzet)}
-                    </span>
                   </div>
-                ))}
-              </div>
-            </div>
+                  <span className="text-sm font-bold text-slate-800">
+                    {cashier.total_transaksi} Trans /{" "}
+                    {currencyFormat(cashier.omzet)}
+                  </span>
+                </div>
+              ))}
+            </PipelineCard>
 
-            <div className="bg-white p-6 rounded-2xl shadow-md border border-slate-100">
-              <h3 className="text-sm font-bold text-slate-500 uppercase tracking-widest mb-4">
-                Payment Method Split
-              </h3>
-              <div className="space-y-3">
-                {data?.payment_method_split?.slice(0, 3).map((method, i) => (
-                  <div
-                    key={i}
-                    className="flex justify-between items-center text-xs"
-                  >
-                    <span className="font-medium text-slate-700">
+            <PipelineCard
+              title="Payment Method Split"
+              icon={Wallet}
+              theme={THEMES.cyan}
+            >
+              {data?.payment_method_split?.map((method, i) => (
+                <div className="flex items-center justify-between" key={i}>
+                  <div className="flex items-center gap-2">
+                    <User className="w-4 h-4 text-amber-500" />
+                    <span className="text-sm font-medium text-slate-500">
                       {method.name}
                     </span>
-                    <span className="font-bold text-slate-900">
-                      {currencyFormat(method.total_paid)} (
-                      {method.percentage.toFixed(1)}%)
-                    </span>
                   </div>
-                ))}
-              </div>
-            </div>
+                  <span className="text-sm font-bold text-slate-800">
+                    {currencyFormat(method.total_paid)} (
+                    {method.percentage.toFixed(1)}%)
+                  </span>
+                </div>
+              ))}
+            </PipelineCard>
 
-            <div className="md:col-span-2 bg-white p-6 rounded-2xl shadow-md border border-slate-100">
-              <h3 className="text-sm font-bold text-slate-500 uppercase tracking-widest mb-4">
-                Top Members
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2">
-                {data?.top_member_by_saldo?.slice(0, 6).map((member, i) => (
-                  <div
-                    key={i}
-                    className="flex justify-between items-center text-xs"
-                  >
-                    <span className="font-medium text-slate-700 truncate">
+            <PipelineCard title="Top Members" icon={Medal} theme={THEMES.green}>
+              {data?.top_member_by_saldo?.map((member, i) => (
+                <div className="flex items-center justify-between" key={i}>
+                  <div className="flex items-center gap-2">
+                    <User className="w-4 h-4 text-amber-500" />
+                    <span className="text-sm font-medium text-slate-500">
                       {member.member_name}
                     </span>
-                    <span className="font-bold text-slate-900">
-                      {currencyFormat(member.saldo)}
-                    </span>
                   </div>
-                ))}
-              </div>
-            </div>
+                  <span className="text-sm font-bold text-slate-800">
+                    {currencyFormat(member.saldo)}
+                  </span>
+                </div>
+              ))}
+            </PipelineCard>
 
-            {/* New: Top Menu */}
-            <div className="bg-white p-6 rounded-2xl shadow-md border border-slate-100">
-              <h3 className="text-sm font-bold text-slate-500 uppercase tracking-widest mb-4">
-                Top Menu
-              </h3>
-              <div className="space-y-3">
-                {data?.top_menu?.slice(0, 5).map((item, i) => (
-                  <div
-                    key={i}
-                    className="flex justify-between items-center text-xs"
-                  >
-                    <span className="font-medium text-slate-700">
+            <PipelineCard
+              title="Top Menu"
+              icon={ConciergeBell}
+              theme={THEMES.orange}
+            >
+              {data?.top_menu?.map((item, i) => (
+                <div className="flex items-center justify-between" key={i}>
+                  <div className="flex items-center gap-2">
+                    <ConciergeBell className="w-4 h-4 text-amber-500" />
+                    <span className="text-sm font-medium text-slate-500">
                       {item.menu_name}
                     </span>
-                    <span className="font-bold text-slate-900">
-                      {item.total_qty} x {currencyFormat(item.total_revenue)}
-                    </span>
                   </div>
-                ))}
-              </div>
-            </div>
+                  <span className="text-sm font-bold text-slate-800">
+                    {item.total_qty} x {currencyFormat(item.total_revenue)}
+                  </span>
+                </div>
+              ))}
+            </PipelineCard>
 
-            {/* New: Peak Hours */}
-            <div className="bg-white p-6 rounded-2xl shadow-md border border-slate-100">
-              <h3 className="text-sm font-bold text-slate-500 uppercase tracking-widest mb-4">
-                Peak Hours
-              </h3>
-              <div className="grid grid-cols-4 gap-2">
+            <PipelineCard title="Peak Hours" icon={Clock10} theme={THEMES.red}>
+              <div className="grid grid-cols-4 gap-4">
                 {data?.peak_hours?.map((hour, i) => (
                   <div
                     key={i}
@@ -364,7 +249,7 @@ export function Dashboard() {
                   </div>
                 ))}
               </div>
-            </div>
+            </PipelineCard>
           </div>
         </div>
       </Page.Body>

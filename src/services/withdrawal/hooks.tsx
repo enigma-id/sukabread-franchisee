@@ -1,21 +1,17 @@
 import {
   useLazyGetListQuery,
-  useLazyShowListQuery,
-  useApproveMutation,
-  useRejectMutation,
+  useCancelMutation,
+  useCreateMutation,
 } from "./api";
 import { createCrudHook } from "../hooks/createCrudHook";
 
 export const useWithdrawal = createCrudHook({
   entityName: "withdrawal",
   useLazyGetQuery: useLazyGetListQuery,
-  useLazyShowQuery: useLazyShowListQuery,
+  useCreateMutation: useCreateMutation,
   customOperations: {
-    approve: {
-      hook: useApproveMutation,
-    },
-    reject: {
-      hook: useRejectMutation,
+    cancel: {
+      hook: useCancelMutation,
     },
   },
 });
