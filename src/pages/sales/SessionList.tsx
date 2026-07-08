@@ -9,8 +9,8 @@ import { useDocumentMeta } from "@/hooks/useDocumentMeta";
 
 export function SessionList() {
   useDocumentMeta(
-    "SessionList | Sukabread Franchisee",
-    "Manage your SessionList efficiently within the Sukabread Franchisee portal.",
+    "Sesi Penjualan | Sukabread Franchisee",
+    "Daftar sesi penjualan outlet.",
   );
   const navigate = useNavigate();
 

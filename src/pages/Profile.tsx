@@ -10,7 +10,7 @@ import { useDocumentMeta } from "@/hooks/useDocumentMeta";
 export function Profile() {
   useDocumentMeta(
     "Profile | Sukabread Franchisee",
-    "Manage your Profile efficiently within the Sukabread Franchisee portal.",
+    "Update profil akun Anda.",
   );
   const user = useAppSelector((s) => s.auth.session?.user);
   const FormState = useAppSelector((s) => s.form);

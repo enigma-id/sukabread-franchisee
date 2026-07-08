@@ -9,8 +9,8 @@ import { useDocumentMeta } from "@/hooks/useDocumentMeta";
 
 export function UserCreate() {
   useDocumentMeta(
-    "UserCreate | Sukabread Franchisee",
-    "Manage your UserCreate efficiently within the Sukabread Franchisee portal.",
+    "Tambah User | Sukabread Franchisee",
+    "Buat pengguna baru.",
   );
   const navigate = useNavigate();
   const FormState = useAppSelector((s) => s.form);

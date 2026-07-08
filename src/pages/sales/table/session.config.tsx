@@ -40,11 +40,7 @@ const createTableConfig = ({
       class: "font-medium uppercase",
       component: (row: SalesSession) => <div>{row.cashier?.name ?? "-"}</div>,
     },
-    id: {
-      title: "No. Session",
-      class: "text-base-content/60",
-    },
-    started_at: {
+started_at: {
       title: "Awal Session",
       component: (row: SalesSession) => formatTime(row.started_at),
     },
@@ -59,10 +55,16 @@ const createTableConfig = ({
           formatTime(row.finished_at)
         ),
     },
-    total_charges: {
+    cash_started: {
+      title: "Modal Awal",
+      class: "text-right font-mono",
+      headerClass: "text-right",
+      component: (row: SalesSession) => currencyFormat(row.cash_started),
+    },
+    grand_total: {
       title: "Total Transaksi",
-      align: "right",
       class: "text-right font-mono font-medium",
+      headerClass: "text-right",
       component: (row: SalesSession) =>
         currencyFormat(row.summary?.sales?.grand_total ?? 0),
     },

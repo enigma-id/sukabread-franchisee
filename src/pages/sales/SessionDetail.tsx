@@ -18,8 +18,8 @@ import { useDocumentMeta } from "@/hooks/useDocumentMeta";
 
 export function SessionDetail() {
   useDocumentMeta(
-    "SessionDetail | Sukabread Franchisee",
-    "Manage your SessionDetail efficiently within the Sukabread Franchisee portal.",
+    "Detail Sesi | Sukabread Franchisee",
+    "Detail sesi penjualan outlet.",
   );
   const { id } = useParams<{ id: string }>();
   const { show, showResult } = useSession();
@@ -47,7 +47,7 @@ export function SessionDetail() {
   const totalDiscount = session.summary?.sales?.total_discount ?? 0;
   const totalSales = session.summary?.sales?.total_sales ?? 0;
   const afterDiscount =
-    (session.summary?.sales?.total_after_discount ?? 0) - totalService;
+    session.summary?.sales?.total_after_discount ?? 0;
   const outstandingBill = session.summary?.sales?.outstanding_bill ?? 0;
   const expectedCash = session.summary?.cash?.expected_cash ?? 0;
   const topupCash = session.summary?.cash?.topup_cash ?? 0;
@@ -199,11 +199,11 @@ export function SessionDetail() {
               <p className="text-sm text-base-content/50">Tidak ada data</p>
             ) : (
               <dl className="space-y-1">
-                {paymentMethods.map((cp: { payment_name: string; subtotal: number }, i: number) => (
+                {paymentMethods.map((cp: { name: string; total_paid: number }, i: number) => (
                   <div key={i} className="info-row">
-                    <dt className="info-label">{cp.payment_name ?? "Cash"}</dt>
+                    <dt className="info-label">{cp.name ?? "Cash"}</dt>
                     <dd className="info-value mono">
-                      {currencyFormat(cp.subtotal)}
+                      {currencyFormat(cp.total_paid)}
                     </dd>
                   </div>
                 ))}
@@ -223,11 +223,11 @@ export function SessionDetail() {
               <p className="text-sm text-base-content/50">Tidak ada data</p>
             ) : (
               <dl className="space-y-1">
-                {categorySolds.map((cat: { name: string; quantity: number; total_charges: number }, i: number) => (
+                {categorySolds.map((cat: { category_name: string; total_qty: number; total_charges: number }, i: number) => (
                   <div key={i} className="info-row">
-                    <dt className="info-label">{cat.name}</dt>
+                    <dt className="info-label">{cat.category_name}</dt>
                     <div className="flex items-center gap-2">
-                      <span className="category-tag">{cat.quantity}</span>
+                      <span className="category-tag">{cat.total_qty}</span>
                       <span className="info-value mono text-xs">
                         {currencyFormat(cat.total_charges)}
                       </span>

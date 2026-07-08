@@ -51,3 +51,22 @@ export interface CatalogUpdatePayload {
   min_stock: number;
   max_stock: number;
 }
+
+// Contract-aligned types
+export interface CatalogOutletDetail {
+  id: string;
+  catalog_id: string;
+  catalog_name: string;
+  description: string;
+  category_name: string;
+  min_stock: number;
+  max_stock: number;
+  base_price: number;
+  is_active: boolean;
+  stock: number;
+  fractions: Array<{
+    id: string;
+    name: string;
+    value: number;
+  }>;
+}

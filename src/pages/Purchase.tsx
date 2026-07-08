@@ -8,7 +8,7 @@ import styles from "./Purchase.module.css";
 export function Purchase() {
   useDocumentMeta(
     "Purchase | Sukabread Franchisee",
-    "Manage your Purchase efficiently within the Sukabread Franchisee portal.",
+    "Kelola pembelian inventaris outlet.",
   );
   const user = useAppSelector((s) => s.auth.session?.user);
 

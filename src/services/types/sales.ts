@@ -25,13 +25,13 @@ export interface Cashier {
 }
 
 export interface PaymentMethod {
-  payment_name: string;
-  subtotal: number;
+  name: string;
+  total_paid: number;
 }
 
 export interface CategorySold {
-  name: string;
-  quantity: number;
+  category_name: string;
+  total_qty: number;
   total_charges: number;
 }
 

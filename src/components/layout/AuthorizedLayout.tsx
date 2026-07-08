@@ -18,6 +18,8 @@ import {
   Receipt,
   Banknote,
   History,
+  ArrowUpDown,
+  CreditCard,
 } from "lucide-react";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -85,6 +87,11 @@ const menuSections: MenuSection[] = [
         path: "/withdrawal",
         icon: <Wallet size={18} />,
       },
+      {
+        label: "Topup Saldo",
+        path: "/outlet-topup",
+        icon: <ArrowUpDown size={18} />,
+      },
     ],
   },
   {
@@ -149,6 +156,11 @@ const menuSections: MenuSection[] = [
         label: "Update Profile",
         path: "/auth/me",
         icon: <User size={18} />,
+      },
+      {
+        label: "Metode Pembayaran",
+        path: "/payment-method",
+        icon: <CreditCard size={18} />,
       },
     ],
   },

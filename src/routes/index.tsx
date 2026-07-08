@@ -25,6 +25,9 @@ import { UserUpdate } from "@/pages/settings/UserUpdate";
 import { OutletCatalog } from "@/pages/settings/OutletCatalog";
 import { OutletSettings } from "@/pages/settings/OutletSettings";
 import { OutletBalanceLog } from "@/pages/settings/OutletBalanceLog";
+import { TopupList } from "@/pages/outlet-topup/TopupList";
+import TopupCreate from "@/pages/outlet-topup/TopupCreate";
+import { PaymentMethodList } from "@/pages/payment-method/PaymentMethodList";
 import { Profile } from "@/pages/Profile";
 import WithdrawalCreate from "@/pages/withdrawal/WithdrawalCreate";
 
@@ -63,6 +66,9 @@ export function AppRoutes() {
         <Route path="/report/cash-control" element={<CashControl />} />
         <Route path="/withdrawal" element={<WithdrawalList />} />
         <Route path="/withdrawal/create" element={<WithdrawalCreate />} />
+        <Route path="/outlet-topup" element={<TopupList />} />
+        <Route path="/outlet-topup/create" element={<TopupCreate />} />
+        <Route path="/payment-method" element={<PaymentMethodList />} />
         <Route path="/setting/user" element={<UserList />} />
         <Route path="/setting/user/create" element={<UserCreate />} />
         <Route path="/setting/user/:id/update" element={<UserUpdate />} />

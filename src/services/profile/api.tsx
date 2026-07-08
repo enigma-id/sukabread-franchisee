@@ -1,6 +1,6 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { baseQuery } from "../baseQuery";
-import type { UserProfile, ProfileUpdatePayload } from "../types";
+import type { UserProfile, ContractProfileUpdatePayload } from "../types";
 
 export const profileApi = createApi({
   reducerPath: "profileApi",
@@ -24,7 +24,7 @@ export const profileApi = createApi({
      * PUT /profile/me
      * Update login user profile
      */
-    updateProfile: builder.mutation<UserProfile, ProfileUpdatePayload>({
+    updateProfile: builder.mutation<UserProfile, ContractProfileUpdatePayload>({
       query: (payload) => ({
         url: "/profile/me",
         method: "PUT",

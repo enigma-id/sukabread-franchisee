@@ -41,6 +41,17 @@ export interface OutstandingBillTracker {
   total_outstanding: number;
 }
 
+// Contract-aligned types
+export interface ContractDashboard {
+  total_sales_today: number;
+  total_orders_today: number;
+  outlet_balance: number;
+  total_members: number;
+  low_stock_items: number;
+  pending_withdrawal: number;
+  pending_topup: number;
+}
+
 export interface DashboardData {
   omzet_hari_ini?: number;
   omzet?: number;

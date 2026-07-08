@@ -1,9 +1,16 @@
 import config from "@/services/table/const";
-import { Edit, MoreVertical } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import type { WithdrawalRequest } from "@/services/types/withdrawal";
 import { currencyFormat } from "@/utils";
-import { Dropdown } from "@/components";
+import { XCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
+
+const getStatusVariant = (status: string) => {
+  if (status === "approved" || status === "completed") return "success";
+  if (status === "rejected") return "error";
+  if (status === "pending") return "warning";
+  return "default";
+};
 
 const createTableConfig = ({
   onCancel,
@@ -13,6 +20,10 @@ const createTableConfig = ({
   ...config,
   url: "/withdrawal-request",
   columns: {
+    code: {
+      title: "Kode",
+      class: "font-medium font-mono text-xs",
+    },
     outlet: {
       title: "Outlet",
       class: "font-medium",
@@ -28,17 +39,36 @@ const createTableConfig = ({
         <span className="font-semibold">{currencyFormat(row.amount)}</span>
       ),
     },
-    status: {
+    bank_name: {
+      title: "Bank",
+      component: (row: WithdrawalRequest) => (
+        <div className="flex flex-col">
+          <span className="text-sm font-medium">{row.bank_name}</span>
+          <span className="text-xs text-slate-500">
+            {row.bank_account_name} - {row.bank_account_number}
+          </span>
+        </div>
+      ),
+    },
+    document_status: {
       title: "Status",
       class: "text-center",
       headerClass: "text-center",
-      component: (row: WithdrawalRequest) => {
-        let variant: "default" | "success" | "error" | "warning" = "default";
-        if (row.status === "approved") variant = "success";
-        if (row.status === "rejected") variant = "error";
-        if (row.status === "pending") variant = "warning";
-        return <Badge variant={variant}>{row.status}</Badge>;
-      },
+      component: (row: WithdrawalRequest) => (
+        <Badge
+          variant={getStatusVariant(row.document_status)}
+          appearance="soft"
+        >
+          {row.document_status}
+        </Badge>
+      ),
+    },
+    created_by: {
+      title: "Dibuat Oleh",
+      class: "text-sm",
+      component: (row: WithdrawalRequest) => (
+        <span>{row.created_by || "-"}</span>
+      ),
     },
     created_at: {
       title: "Tanggal",
@@ -50,35 +80,19 @@ const createTableConfig = ({
     action: {
       title: "",
       class: "text-right",
-      align: "right",
-      component: (row: WithdrawalRequest) => (
-        <Dropdown
-          trigger={
-            <button className="p-2 rounded-lg hover:bg-slate-100 transition-colors">
-              <MoreVertical className="w-5 h-5 text-slate-600" />
-            </button>
-          }
-          position="end"
-          contentClassName="dropdown-content z-[100] menu p-2 shadow-2xl bg-white rounded-2xl !w-56 border border-slate-100 mt-2"
-        >
-          <Dropdown.Item
-            onSelect={() => onCancel?.(row)}
-            className="hover:bg-indigo-50 hover:text-indigo-600"
-          >
-            <button className="flex items-center py-1 gap-3 rounded-xl text-slate-700">
-              <div className="w-8 h-8 rounded-lg bg-indigo-50 flex items-center justify-center text-indigo-600">
-                <Edit className="w-4 h-4" />
-              </div>
-              <div className="flex flex-col items-start leading-tight">
-                <span className="font-bold text-[13px]">Cancel</span>
-                <span className="text-[11px] text-slate-400">
-                  Cancel withdrawal request
-                </span>
-              </div>
-            </button>
-          </Dropdown.Item>
-        </Dropdown>
-      ),
+      component: (row: WithdrawalRequest) =>
+        row.document_status === "pending" ? (
+          <div className="flex justify-end">
+            <Button
+              size="sm"
+              variant="error"
+              styleType="soft"
+              onClick={() => onCancel?.(row)}
+            >
+              <XCircle size={14} />
+            </Button>
+          </div>
+        ) : null,
     },
   },
 });

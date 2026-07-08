@@ -1,13 +1,19 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createSlice } from "@reduxjs/toolkit";
 import type { User } from "../types";
+
+interface SessionOutlet {
+  id: string;
+  name: string;
+  outlet_type_id: string;
+  brand_id: string;
+}
 
 interface authState {
   authenticated: boolean;
   session: {
     access_token: string;
     user: User;
-    outlet: any;
+    outlet: SessionOutlet | null;
   } | null;
 }
 

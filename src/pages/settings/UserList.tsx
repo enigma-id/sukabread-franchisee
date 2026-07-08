@@ -14,8 +14,8 @@ import { Modal, useEnigmaUI } from "@/components";
 
 export function UserList() {
   useDocumentMeta(
-    "User List | Sukabread Franchisee",
-    "Manage your UserList efficiently within the Sukabread Franchisee portal.",
+    "Manajemen User | Sukabread Franchisee",
+    "Kelola pengguna dan hak akses.",
   );
   const { openModal, closeModal, showToast } = useEnigmaUI();
   const navigate = useNavigate();

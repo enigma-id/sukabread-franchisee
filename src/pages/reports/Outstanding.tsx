@@ -43,7 +43,7 @@ const OverviewCards = ({ data }: { data: any | null }) => {
 export function Outstanding() {
   useDocumentMeta(
     "Outstanding | Sukabread Franchisee",
-    "Manage your Outstanding efficiently within the Sukabread Franchisee portal.",
+    "Laporan outstanding pelanggan.",
   );
   const tableConfig = useMemo(() => {
     return createTableConfig({});

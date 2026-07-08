@@ -10,3 +10,5 @@ export * from "./stock";
 export * from "./profile";
 export * from "./outlet";
 export * from "./dashboard";
+export * from "./payment-method";
+export * from "./outlet-topup";

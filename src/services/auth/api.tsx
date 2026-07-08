@@ -1,6 +1,5 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { baseQuery } from "../baseQuery";
-import type { LoginRequest } from "../types";
 
 /**
  * TMS Onward - Authentication API
@@ -11,10 +10,10 @@ export const authApi = createApi({
   endpoints: (builder) => ({
     /**
      * POST /auth/login
-     * User login with identifier and password
+     * User login with phone and password
      */
     login: builder.mutation({
-      query: (credentials: LoginRequest) => ({
+      query: (credentials: { phone: string; password: string }) => ({
         url: "/auth/login",
         method: "POST",
         body: credentials,

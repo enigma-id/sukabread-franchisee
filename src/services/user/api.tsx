@@ -1,5 +1,9 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { baseQuery } from "../baseQuery";
+import type {
+  ContractCreateUserRequest,
+  ContractUpdateUserRequest,
+} from "../types";
 
 export const userApi = createApi({
   reducerPath: "userApi",
@@ -33,7 +37,7 @@ export const userApi = createApi({
      * POST /user
      * Create new user
      */
-    createUser: builder.mutation({
+    createUser: builder.mutation<void, ContractCreateUserRequest>({
       query: (payload) => ({
         url: "/user",
         method: "POST",
@@ -45,7 +49,7 @@ export const userApi = createApi({
      * PUT /user/:id
      * Update user
      */
-    updateUser: builder.mutation({
+    updateUser: builder.mutation<void, ContractUpdateUserRequest>({
       query: ({ id, ...payload }) => ({
         url: `/user/${id}`,
         method: "PUT",

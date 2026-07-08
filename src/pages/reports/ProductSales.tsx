@@ -48,7 +48,7 @@ const OverviewCards = ({ data }: { data: any | null }) => {
 export function ProductSales() {
   useDocumentMeta(
     "Product Sales | Sukabread Franchisee",
-    "Manage your Product Sales efficiently within the Sukabread Franchisee portal.",
+    "Laporan penjualan produk.",
   );
   const tableConfig = useMemo(() => {
     return createTableConfig({});

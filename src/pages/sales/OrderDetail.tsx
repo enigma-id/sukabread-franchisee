@@ -20,8 +20,8 @@ import { useDocumentMeta } from "@/hooks/useDocumentMeta";
 
 export function OrderDetail() {
   useDocumentMeta(
-    "Order Detail | Sukabread Franchisee",
-    "Manage your OrderDetail efficiently within the Sukabread Franchisee portal.",
+    "Detail Pesanan | Sukabread Franchisee",
+    "Detail pesanan pelanggan.",
   );
   const { orderId } = useParams<{ orderId: string }>();
   const navigate = useNavigate();

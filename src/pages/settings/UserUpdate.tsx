@@ -11,8 +11,8 @@ import { User, Lock } from "lucide-react";
 
 export function UserUpdate() {
   useDocumentMeta(
-    "User Update | Sukabread Franchisee",
-    "Manage your User Update efficiently within the Sukabread Franchisee portal.",
+    "Update User | Sukabread Franchisee",
+    "Edit data pengguna.",
   );
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();

@@ -62,14 +62,11 @@ export function WithdrawalList() {
         >
           <Modal.Header>
             <div className="font-bold text-lg text-slate-900 leading-7">
-              Hapus User
+              Batalkan Penarikan
             </div>
           </Modal.Header>
           <Modal.Body className="text-sm font-normal text-slate-600 leading-5">
-            <p>
-              Apakah Anda yakin ingin menghapus user{" "}
-              <strong>{row?.name}</strong>?
-            </p>
+            <p>Apakah Anda yakin ingin membatalkan penarikan ini?</p>
           </Modal.Body>
           <Modal.Footer className="flex gap-2">
             <Button
@@ -78,7 +75,7 @@ export function WithdrawalList() {
               onClick={() => hancleCancel(row)}
               isLoading={isCanceling}
             >
-              Hapus
+              Batalkan
             </Button>
             <Button
               className="flex-1 rounded-xl"

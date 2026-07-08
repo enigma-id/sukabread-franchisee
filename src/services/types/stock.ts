@@ -24,3 +24,27 @@ export interface StockLog {
   created_at: string;
   ingredient: Ingredient;
 }
+
+// Contract-aligned types
+export interface ContractStockItem {
+  id: string;
+  catalog_id: string;
+  catalog_name: string;
+  stock: number;
+  min_stock: number;
+  max_stock: number;
+  fraction: { id: string; name: string };
+}
+
+export interface ContractStockLog {
+  id: string;
+  catalog_id: string;
+  catalog_name: string;
+  type: "in" | "out" | "adjustment";
+  quantity: number;
+  stock_before: number;
+  stock_after: number;
+  reference: string;
+  note: string;
+  created_at: string;
+}

@@ -55,8 +55,8 @@ const OverviewCards = ({ data }: { data: CashOverview | null }) => {
 
 export function CashControl() {
   useDocumentMeta(
-    "CashControl | Sukabread Franchisee",
-    "Manage your CashControl efficiently within the Sukabread Franchisee portal.",
+    "Cash Control | Sukabread Franchisee",
+    "Laporan cash control outlet.",
   );
   const tableConfig = useMemo(() => {
     return createTableConfig({});

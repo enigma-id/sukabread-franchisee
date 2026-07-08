@@ -44,6 +44,8 @@ const persistConfig = {
     "membershipApi",
     "stockApi",
     "withdrawalApi",
+    "paymentMethodApi",
+    "outletTopupApi",
   ],
 };
 

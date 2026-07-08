@@ -1,5 +1,6 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { baseQuery } from "../baseQuery";
+import type { ContractOutletUpdatePayload } from "../types";
 
 export const outletApi = createApi({
   reducerPath: "outletApi",
@@ -8,17 +9,14 @@ export const outletApi = createApi({
   endpoints: (builder) => ({
     /**
      * PUT /outlet
-     * Update outlet service charges config
+     * Update outlet config (service_charge, name, address)
      */
-    updateOutlet: builder.mutation({
-      query: ({ ...payload }) => (
-        console.log("updateOutlet", payload),
-        {
-          url: "/outlet",
-          method: "PUT",
-          body: payload,
-        }
-      ),
+    updateOutlet: builder.mutation<void, ContractOutletUpdatePayload>({
+      query: (payload) => ({
+        url: "/outlet",
+        method: "PUT",
+        body: payload,
+      }),
     }),
 
     getLog: builder.query({

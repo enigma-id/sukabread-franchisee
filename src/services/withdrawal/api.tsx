@@ -1,5 +1,6 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { baseQuery } from "../baseQuery";
+import type { ContractCreateWithdrawalRequest } from "../types";
 
 export const withdrawalApi = createApi({
   reducerPath: "withdrawalApi",
@@ -13,7 +14,14 @@ export const withdrawalApi = createApi({
         params,
       }),
     }),
-    create: builder.mutation({
+    show: builder.query({
+      query: ({ id, ...params }) => ({
+        url: `/withdrawal-request/${id}`,
+        method: "GET",
+        params,
+      }),
+    }),
+    create: builder.mutation<void, ContractCreateWithdrawalRequest>({
       query: (payload) => ({
         url: "/withdrawal-request",
         method: "POST",
@@ -30,5 +38,10 @@ export const withdrawalApi = createApi({
   }),
 });
 
-export const { useLazyGetListQuery, useCreateMutation, useCancelMutation } =
-  withdrawalApi;
+export const {
+  useLazyGetListQuery,
+  useLazyShowQuery,
+  useShowQuery,
+  useCreateMutation,
+  useCancelMutation,
+} = withdrawalApi;

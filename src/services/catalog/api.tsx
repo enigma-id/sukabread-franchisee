@@ -33,6 +33,19 @@ export const catalogApi = createApi({
     }),
 
     /**
+     * GET /catalog-outlet/:id
+     * Catalog outlet detail with fractions
+     */
+    showCatalog: builder.query({
+      query: ({ id, ...params }) => ({
+        url: `/catalog-outlet/${id}`,
+        method: "GET",
+        params,
+      }),
+      providesTags: ["Catalog"],
+    }),
+
+    /**
      * PUT /catalog-outlet/:id/activate
      */
     activateCatalog: builder.mutation({
@@ -60,6 +73,8 @@ export const catalogApi = createApi({
 
 export const {
   useLazyGetCatalogQuery,
+  useShowCatalogQuery,
+  useLazyShowCatalogQuery,
   useUpdateCatalogMutation,
   useActivateCatalogMutation,
   useDeactivateCatalogMutation,

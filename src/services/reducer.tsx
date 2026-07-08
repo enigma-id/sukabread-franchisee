@@ -13,6 +13,8 @@ import { outletApi } from "./outlet/api";
 import { membershipApi } from "./membership/api";
 import { withdrawalApi } from "./withdrawal/api";
 import { stockApi } from "./stock/api";
+import { paymentMethodApi } from "./payment-method/api";
+import { outletTopupApi } from "./outlet-topup/api";
 import { authReducer, signout } from "./auth/slice";
 import { formReducer } from "./form/slice";
 import { tableReducer } from "./table/slice";
@@ -34,6 +36,8 @@ const appReducer = combineReducers({
   [membershipApi.reducerPath]: membershipApi.reducer,
   [stockApi.reducerPath]: stockApi.reducer,
   [withdrawalApi.reducerPath]: withdrawalApi.reducer,
+  [paymentMethodApi.reducerPath]: paymentMethodApi.reducer,
+  [outletTopupApi.reducerPath]: outletTopupApi.reducer,
 });
 
 type AppState = ReturnType<typeof appReducer>;
@@ -51,6 +55,8 @@ export const apiMiddlewares = [
   membershipApi.middleware,
   stockApi.middleware,
   withdrawalApi.middleware,
+  paymentMethodApi.middleware,
+  outletTopupApi.middleware,
 ];
 
 export const rootReducer: Reducer<AppState, UnknownAction> = (

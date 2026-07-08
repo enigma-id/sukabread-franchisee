@@ -21,3 +21,17 @@ export interface UpdateUserRequest {
   password?: string
   confirm_password?: string
 }
+
+// Contract-aligned types
+export interface ContractCreateUserRequest {
+  display_name: string;
+  phone: string;
+  password: string;
+}
+
+export interface ContractUpdateUserRequest {
+  display_name?: string;
+  phone?: string;
+  password?: string;
+  is_active?: boolean;
+}

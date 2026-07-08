@@ -14,7 +14,7 @@ import { useDocumentMeta } from "@/hooks/useDocumentMeta";
 export function Settlement() {
   useDocumentMeta(
     "Settlement | Sukabread Franchisee",
-    "Manage your Settlement efficiently within the Sukabread Franchisee portal.",
+    "Laporan settlement transaksi.",
   );
   const [params] = useSearchParams();
   const month = params.get("month");

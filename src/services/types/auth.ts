@@ -27,3 +27,25 @@ export interface ProfileUpdateRequest {
   password?: string;
   confirm_password?: string;
 }
+
+// Contract-aligned types
+export interface ContractLoginRequest {
+  phone: string;
+  password: string;
+}
+
+export interface LoginResponseData {
+  token: string;
+  user: {
+    id: string;
+    display_name: string;
+    phone: string;
+    role: string; // "outlet_owner" | "cashier"
+  };
+  outlet: {
+    id: string;
+    name: string;
+    outlet_type_id: string;
+    brand_id: string;
+  };
+}
