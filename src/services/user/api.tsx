@@ -49,7 +49,10 @@ export const userApi = createApi({
      * PUT /user/:id
      * Update user
      */
-    updateUser: builder.mutation<void, ContractUpdateUserRequest>({
+    updateUser: builder.mutation<
+      void,
+      { id: string } & ContractUpdateUserRequest
+    >({
       query: ({ id, ...payload }) => ({
         url: `/user/${id}`,
         method: "PUT",

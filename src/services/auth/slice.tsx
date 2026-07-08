@@ -6,6 +6,12 @@ interface SessionOutlet {
   name: string;
   outlet_type_id: string;
   brand_id: string;
+  service_charges: number;
+  phone: string;
+  address: string;
+  recipient_name: string;
+  region_id: string;
+  is_active: boolean;
 }
 
 interface authState {
