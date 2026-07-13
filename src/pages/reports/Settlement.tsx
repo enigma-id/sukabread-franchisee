@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useMemo } from "react";
-import { useSearchParams } from "react-router-dom";
 import { useEffect } from "react";
 import { Page } from "@/components/app/layout";
 import useTable from "@/services/table/hooks";
@@ -16,14 +15,10 @@ export function Settlement() {
     "Settlement | Sukabread Franchisee",
     "Laporan settlement transaksi.",
   );
-  const [params] = useSearchParams();
-  const month = params.get("month");
 
   const tableConfig = useMemo(() => {
-    return createTableConfig({
-      filter: { periode: month ?? "" },
-    });
-  }, [month]);
+    return createTableConfig({});
+  }, []);
 
   const Table = useTable(
     "report_settlement",

@@ -15,7 +15,7 @@ const getStatusVariant = (status: string) => {
 const createTableConfig = ({
   onRemove,
 }: {
-  onRemove?: (row: any) => void;
+  onRemove?: (row: ContractOutletTopup) => void;
 }) => ({
   ...config,
   url: "/outlet-topup-request",

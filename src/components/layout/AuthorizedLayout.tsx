@@ -4,22 +4,26 @@ import { useAppDispatch, useAppSelector } from "@/hooks";
 import { signout } from "@/services/auth/slice";
 import {
   LayoutDashboard,
-  Package,
-  FileBarChart,
-  Wallet,
   ShoppingCart,
+  Users,
+  Package,
+  History,
+  PackageOpen,
+  Wallet,
+  ArrowUpDown,
+  WalletCards,
+  FileBarChart,
+  Banknote,
+  Receipt,
+  Landmark,
   Settings,
+  CreditCard,
+  User,
+  UsersRound,
   LogOut,
   Menu,
   X,
   ChevronDown,
-  User,
-  Users,
-  Receipt,
-  Banknote,
-  History,
-  ArrowUpDown,
-  CreditCard,
 } from "lucide-react";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -45,7 +49,7 @@ interface MenuSection {
 // ─── Menu Config ──────────────────────────────────────────────────────────────
 const menuSections: MenuSection[] = [
   {
-    label: "Main",
+    label: "Beranda",
     items: [
       {
         label: "Dashboard",
@@ -55,13 +59,23 @@ const menuSections: MenuSection[] = [
     ],
   },
   {
-    label: "Inventory",
+    label: "Transaksi",
     items: [
       {
-        label: "Purchase",
-        path: "/purchase",
+        label: "Penjualan",
+        path: "/sales/session",
         icon: <ShoppingCart size={18} />,
       },
+      {
+        label: "Pembelian",
+        path: "/purchase",
+        icon: <PackageOpen size={18} />,
+      },
+    ],
+  },
+  {
+    label: "Inventory",
+    items: [
       {
         label: "Daftar Stok",
         path: "/stock",
@@ -75,13 +89,8 @@ const menuSections: MenuSection[] = [
     ],
   },
   {
-    label: "Finance",
+    label: "Keuangan",
     items: [
-      {
-        label: "Penjualan",
-        path: "/sales/session",
-        icon: <ShoppingCart size={18} />,
-      },
       {
         label: "Penarikan",
         path: "/withdrawal",
@@ -92,10 +101,15 @@ const menuSections: MenuSection[] = [
         path: "/outlet-topup",
         icon: <ArrowUpDown size={18} />,
       },
+      {
+        label: "Log Saldo",
+        path: "/setting/outlet/balance-log",
+        icon: <WalletCards size={18} />,
+      },
     ],
   },
   {
-    label: "Customers",
+    label: "Pelanggan",
     items: [
       {
         label: "Membership",
@@ -120,27 +134,22 @@ const menuSections: MenuSection[] = [
       {
         label: "Settlement",
         path: "/report/settlement",
-        icon: <FileBarChart size={16} />,
+        icon: <Landmark size={16} />,
       },
       {
         label: "Cash Control",
         path: "/report/cash-control",
-        icon: <Wallet size={16} />,
+        icon: <FileBarChart size={16} />,
       },
     ],
   },
   {
-    label: "Sistem",
+    label: "Pengaturan",
     items: [
       {
-        label: "Pengaturan Outlet",
+        label: "Outlet",
         path: "/setting/outlet",
         icon: <Settings size={18} />,
-      },
-      {
-        label: "Log Saldo",
-        path: "/setting/outlet/balance-log",
-        icon: <History size={18} />,
       },
       {
         label: "Katalog Outlet",
@@ -148,19 +157,19 @@ const menuSections: MenuSection[] = [
         icon: <Package size={18} />,
       },
       {
-        label: "Manajemen User",
-        path: "/setting/user",
-        icon: <User size={18} />,
-      },
-      {
-        label: "Update Profile",
-        path: "/auth/me",
-        icon: <User size={18} />,
-      },
-      {
         label: "Metode Pembayaran",
         path: "/payment-method",
         icon: <CreditCard size={18} />,
+      },
+      {
+        label: "Manajemen User",
+        path: "/setting/user",
+        icon: <UsersRound size={18} />,
+      },
+      {
+        label: "Profile",
+        path: "/auth/me",
+        icon: <User size={18} />,
       },
     ],
   },

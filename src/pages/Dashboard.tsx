@@ -1,22 +1,28 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import {
   TrendingUp,
+  TrendingDown,
   ShoppingCart,
   Users,
   AlertTriangle,
   Wallet,
   BarChart2,
-  User,
   Medal,
   ConciergeBell,
   Clock10,
+  Flame,
+  Minus,
+  Receipt,
+  Landmark,
+  UserCheck,
+  ArrowUpFromLine,
 } from "lucide-react";
 import { Page } from "@/components/app/layout";
 import { SummaryCard } from "@/components/app";
 import { useDashboard } from "@/services/dashboard/hooks";
-import { currencyFormat } from "@/utils";
+import { currencyFormat, dateFormat } from "@/utils";
 import { useDocumentMeta } from "@/hooks/useDocumentMeta";
 import type { DashboardData } from "@/services/types";
 import SalesChart from "@/components/app/SalesChart";
@@ -54,6 +60,77 @@ const PipelineCard = ({
     <div className="space-y-4">{children}</div>
   </div>
 );
+
+// ─── Peak Hours Card with Fire Animation ─────────────────────────────────────
+const PeakHoursCard = ({
+  data,
+}: {
+  data?: { hour: number; total_transaksi: number }[];
+}) => {
+  const sorted = useMemo(() => {
+    if (!data) return [];
+    return [...data].sort((a, b) => b.total_transaksi - a.total_transaksi);
+  }, [data]);
+  const maxTx = sorted[0]?.total_transaksi ?? 0;
+
+  return (
+    <PipelineCard title="Peak Hours" icon={Clock10} theme={THEMES.red}>
+      <div className="grid grid-cols-4 gap-4">
+        {data?.map((hour, i) => {
+          const rank = sorted.findIndex((s) => s.hour === hour.hour);
+          const isPeak = rank === 0 && maxTx > 0;
+          const isSecond = rank === 1;
+          const isThird = rank === 2;
+          return (
+            <div
+              key={i}
+              className={`flex flex-col items-center p-2 rounded-lg relative overflow-hidden transition-all duration-300 ${
+                isPeak
+                  ? "bg-gradient-to-b from-orange-100 to-red-50 shadow-lg shadow-red-200 scale-105"
+                  : isSecond
+                    ? "bg-gradient-to-b from-amber-50 to-yellow-50 shadow-md shadow-amber-100"
+                    : isThird
+                      ? "bg-gradient-to-b from-stone-50 to-slate-50 shadow-sm"
+                      : "bg-slate-50"
+              }`}
+            >
+              <span
+                className={`text-[10px] font-medium ${isPeak ? "text-orange-700" : isSecond ? "text-amber-700" : isThird ? "text-stone-600" : "text-slate-500"}`}
+              >
+                {hour.hour}:00
+              </span>
+              <span
+                className={`text-sm font-bold ${isPeak ? "text-orange-600 text-base" : isSecond ? "text-amber-600" : isThird ? "text-stone-700" : "text-slate-900"}`}
+              >
+                {hour.total_transaksi}
+              </span>
+              {isPeak && (
+                <div className="absolute -bottom-1 -right-1 animate-bounce">
+                  <Flame className="w-7 h-7 text-orange-500 drop-shadow-[0_0_6px_rgba(251,146,60,0.8)]" />
+                </div>
+              )}
+              {isPeak && (
+                <span className="text-[7px] uppercase font-black text-orange-500 tracking-widest">
+                  Puncak!
+                </span>
+              )}
+              {isSecond && (
+                <span className="text-[7px] uppercase font-black text-amber-500 tracking-widest">
+                  Runner Up
+                </span>
+              )}
+              {isThird && (
+                <span className="text-[7px] uppercase font-black text-stone-400 tracking-widest">
+                  Ketiga
+                </span>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </PipelineCard>
+  );
+};
 
 // ─── Main Dashboard Page ─────────────────────────────────────────────────────
 
@@ -98,9 +175,9 @@ export function Dashboard() {
           isLoading={isLoading}
           title="Performa Penjualan Multi-Saluran"
         />
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="flex flex-col gap-4">
           {/* Main Stats */}
-          <div className="col-span-1 lg:col-span-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="col-span-1 lg:col-span-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <SummaryCard
               label="Omzet Hari Ini"
               value={currencyFormat(data?.omzet_hari_ini || 0)}
@@ -148,22 +225,62 @@ export function Dashboard() {
               value={currencyFormat(
                 data?.outstanding_bill_tracker?.total_outstanding || 0,
               )}
-              icon={Wallet}
+              icon={Receipt}
               theme={THEMES.orange}
             />
+            {data?.weekly_comparison && (
+              <>
+                <SummaryCard
+                  label="Growth Weekly Omzet"
+                  value={`${data.weekly_comparison.omzet_growth > 0 ? "+" : ""}${data.weekly_comparison.omzet_growth.toFixed(2)}%`}
+                  icon={
+                    data.weekly_comparison.trend === "up"
+                      ? TrendingUp
+                      : data.weekly_comparison.trend === "down"
+                        ? TrendingDown
+                        : Minus
+                  }
+                  theme={
+                    data.weekly_comparison.trend === "up"
+                      ? THEMES.green
+                      : data.weekly_comparison.trend === "down"
+                        ? THEMES.red
+                        : THEMES.blue
+                  }
+                />
+                <SummaryCard
+                  label="Growth Weekly Transaksi"
+                  value={`${data.weekly_comparison.transaksi_growth > 0 ? "+" : ""}${data.weekly_comparison.transaksi_growth.toFixed(2)}%`}
+                  icon={
+                    data.weekly_comparison.trend === "up"
+                      ? TrendingUp
+                      : data.weekly_comparison.trend === "down"
+                        ? TrendingDown
+                        : Minus
+                  }
+                  theme={
+                    data.weekly_comparison.trend === "up"
+                      ? THEMES.green
+                      : data.weekly_comparison.trend === "down"
+                        ? THEMES.red
+                        : THEMES.blue
+                  }
+                />
+              </>
+            )}
           </div>
 
           {/* Remaining Detailed Cards (Bento) */}
           <div className="lg:col-span-4 grid grid-cols-1 md:grid-cols-2 gap-4">
             <PipelineCard
               title="Cashier Performance"
-              icon={TrendingUp}
+              icon={UserCheck}
               theme={THEMES.blue}
             >
               {data?.cashier_performance?.map((cashier, i) => (
                 <div className="flex items-center justify-between" key={i}>
                   <div className="flex items-center gap-2">
-                    <User className="w-4 h-4 text-amber-500" />
+                    <UserCheck className="w-4 h-4 text-amber-500" />
                     <span className="text-sm font-medium text-slate-500">
                       {cashier.cashier_name}
                     </span>
@@ -178,13 +295,13 @@ export function Dashboard() {
 
             <PipelineCard
               title="Payment Method Split"
-              icon={Wallet}
+              icon={Landmark}
               theme={THEMES.cyan}
             >
               {data?.payment_method_split?.map((method, i) => (
                 <div className="flex items-center justify-between" key={i}>
                   <div className="flex items-center gap-2">
-                    <User className="w-4 h-4 text-amber-500" />
+                    <Landmark className="w-4 h-4 text-amber-500" />
                     <span className="text-sm font-medium text-slate-500">
                       {method.name}
                     </span>
@@ -201,7 +318,7 @@ export function Dashboard() {
               {data?.top_member_by_saldo?.map((member, i) => (
                 <div className="flex items-center justify-between" key={i}>
                   <div className="flex items-center gap-2">
-                    <User className="w-4 h-4 text-amber-500" />
+                    <Medal className="w-4 h-4 text-amber-500" />
                     <span className="text-sm font-medium text-slate-500">
                       {member.member_name}
                     </span>
@@ -233,22 +350,50 @@ export function Dashboard() {
               ))}
             </PipelineCard>
 
-            <PipelineCard title="Peak Hours" icon={Clock10} theme={THEMES.red}>
-              <div className="grid grid-cols-4 gap-4">
-                {data?.peak_hours?.map((hour, i) => (
-                  <div
-                    key={i}
-                    className="flex flex-col items-center p-2 bg-slate-50 rounded-lg"
-                  >
-                    <span className="text-[10px] text-slate-500 font-medium">
-                      {hour.hour}:00
-                    </span>
-                    <span className="text-sm font-bold text-slate-900">
-                      {hour.total_transaksi}
-                    </span>
+            <PeakHoursCard data={data?.peak_hours} />
+
+            {/* Withdrawal Terbaru */}
+            <PipelineCard
+              title="Penarikan Terbaru"
+              icon={ArrowUpFromLine}
+              theme={THEMES.orange}
+            >
+              {data?.withdrawal_terbaru?.length ? (
+                data.withdrawal_terbaru.map((w, i) => (
+                  <div className="flex items-center justify-between" key={i}>
+                    <div className="flex flex-col">
+                      <span className="text-sm font-mono text-slate-800">
+                        {w.code}
+                      </span>
+                      <span className="text-[10px] text-slate-400">
+                        {dateFormat(w.created_at)}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-bold text-slate-800">
+                        {currencyFormat(w.amount)}
+                      </span>
+                      <span
+                        className={`text-[10px] uppercase font-semibold px-1.5 py-0.5 rounded ${
+                          w.status === "pending"
+                            ? "bg-yellow-100 text-yellow-700"
+                            : w.status === "approved"
+                              ? "bg-blue-100 text-blue-700"
+                              : w.status === "completed"
+                                ? "bg-green-100 text-green-700"
+                                : "bg-red-100 text-red-700"
+                        }`}
+                      >
+                        {w.status}
+                      </span>
+                    </div>
                   </div>
-                ))}
-              </div>
+                ))
+              ) : (
+                <span className="text-sm text-slate-400">
+                  Tidak ada penarikan
+                </span>
+              )}
             </PipelineCard>
           </div>
         </div>

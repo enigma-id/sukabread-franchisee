@@ -31,7 +31,7 @@ const createTableConfig = () => ({
         return (
           <div className="flex justify-center">
             <Badge variant={variant} className="font-mono">
-              {stock.toLocaleString("id-ID")}
+              {stock}
             </Badge>
           </div>
         );

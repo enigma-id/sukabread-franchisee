@@ -4,6 +4,7 @@ import { Page } from "@/components/app/layout";
 import useTable from "@/services/table/hooks";
 import type { TableConfig } from "@/services/table/const";
 import createTableConfig from "./table/product-sales.config";
+import TableFilter from "./table/product-sales.filter";
 import { useDocumentMeta } from "@/hooks/useDocumentMeta";
 import { useReport } from "@/services/report/hooks";
 import { SummaryCard } from "@/components/app";
@@ -83,7 +84,9 @@ export function ProductSales() {
       <Page.Body className="flex-1 flex flex-col min-h-0 ">
         <OverviewCards data={summary} />
 
-        <Table.Tools downloadable />
+        <Table.Tools downloadable>
+          <TableFilter table={Table} />
+        </Table.Tools>
 
         <Table.Render
           emptyTitle="No Product Sales Data"

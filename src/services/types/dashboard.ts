@@ -41,6 +41,13 @@ export interface OutstandingBillTracker {
   total_outstanding: number;
 }
 
+export interface WithdrawalTerbaru {
+  code: string;
+  amount: number;
+  status: string;
+  created_at: string;
+}
+
 // Contract-aligned types
 export interface ContractDashboard {
   total_sales_today: number;
@@ -70,4 +77,5 @@ export interface DashboardData {
   payment_method_split?: PaymentMethodSplit[];
   peak_hours?: PeakHour[];
   top_member_by_saldo?: TopMemberBySaldo[];
+  withdrawal_terbaru?: WithdrawalTerbaru[];
 }

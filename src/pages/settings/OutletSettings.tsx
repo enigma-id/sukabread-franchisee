@@ -46,7 +46,7 @@ export function OutletSettings() {
               name="service_charges"
               type="number"
               label="Biaya Layanan (%)"
-              value={form.service_charges}
+              value={form}
               onChange={(e) => setForm(e.target.value)}
               error={
                 typeof FormState?.errors?.service_charges === "string"

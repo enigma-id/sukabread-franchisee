@@ -7,7 +7,7 @@ import { useDocumentMeta } from "@/hooks/useDocumentMeta";
 import createTableConfig from "./table/topup.config";
 import { useNavigate } from "react-router-dom";
 import { Button, Modal, useEnigmaUI } from "@/components";
-import { Plus, Trash2 } from "lucide-react";
+import { Plus } from "lucide-react";
 import { useOutletTopup } from "@/services/outlet-topup/hooks";
 
 export function TopupList() {

@@ -12,9 +12,6 @@ const createTableConfig = ({
 }) => ({
   ...config,
   url: "/report/settlement",
-  lockedFilter: {
-    params_type: "yearly",
-  },
   filter,
   onRowClick,
   dynamicColumns: (rows: any[]) => {

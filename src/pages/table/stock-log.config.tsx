@@ -1,6 +1,7 @@
 import config from "@/services/table/const";
 import { Badge } from "@/components/ui/badge";
 import type { StockLog } from "@/services/types/stock";
+import { dateFormat } from "@/utils";
 
 const createTableConfig = () => ({
   ...config,
@@ -10,23 +11,10 @@ const createTableConfig = () => ({
       title: "Waktu",
       class: "font-medium text-sm",
       component: (row: StockLog) => {
-        const date = new Date(row.created_at);
         return (
-          <div className="flex flex-col">
-            <span className="font-medium text-base-content">
-              {date?.toLocaleDateString("id-ID", {
-                day: "2-digit",
-                month: "short",
-                year: "numeric",
-              })}
-            </span>
-            <span className="text-xs text-base-content/50">
-              {date?.toLocaleTimeString("id-ID", {
-                hour: "2-digit",
-                minute: "2-digit",
-              })}
-            </span>
-          </div>
+          <span className="font-medium text-base-content">
+            {dateFormat(row.created_at)}
+          </span>
         );
       },
     },

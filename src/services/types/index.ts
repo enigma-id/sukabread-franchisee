@@ -12,3 +12,5 @@ export * from "./outlet";
 export * from "./dashboard";
 export * from "./payment-method";
 export * from "./outlet-topup";
+export * from "./table";
+export * from "./withdrawal";

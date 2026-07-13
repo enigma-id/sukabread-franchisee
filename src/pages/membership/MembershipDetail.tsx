@@ -86,7 +86,7 @@ export function MembershipDetail() {
             <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 h-full">
               <h2 className="font-bold text-lg mb-4 flex items-center gap-2">
                 <Receipt className="text-primary" size={20} />
-                Riwayat Poin
+                Saldo Log
               </h2>
               {log?.length === 0 ? (
                 <div className="text-center py-8 text-base-content/50">
