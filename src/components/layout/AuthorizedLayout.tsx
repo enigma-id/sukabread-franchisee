@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/hooks";
 import { signout } from "@/services/auth/slice";
 import {
+  ExternalLink,
   LayoutDashboard,
   ShoppingCart,
   Users,
@@ -39,6 +40,7 @@ interface MenuItem {
   icon: React.ReactNode;
   badge?: string;
   children?: MenuChild[];
+  external?: boolean;
 }
 
 interface MenuSection {
@@ -70,6 +72,7 @@ const menuSections: MenuSection[] = [
         label: "Pembelian",
         path: "/purchase",
         icon: <PackageOpen size={18} />,
+        external: true,
       },
     ],
   },
@@ -214,6 +217,35 @@ function NavItem({
 }) {
   const location = useLocation();
   const isActive = location.pathname.split("/").pop() === item.path?.split("/").pop();
+  const user = useAppSelector((s) => s.auth.session?.user);
+
+  if (item.external) {
+    const baseUrl = import.meta.env.DEV
+      ? "http://localhost:5174"
+      : "https://sukabread-franchisorder-git-v2-enigma-id.vercel.app";
+    const externalUrl = user?.username
+      ? `${baseUrl}?username=${user.username}`
+      : "";
+
+    return (
+      <button
+        onClick={() => {
+          if (externalUrl) window.open(externalUrl, "_blank");
+          onNavigate();
+        }}
+        className={`flex items-center gap-4 px-4 py-3 rounded-xl text-[14px] mx-3 mb-1 transition-all duration-150 cursor-pointer group relative overflow-hidden w-[calc(100%-24px)] text-left ${isActive ? "bg-primary text-primary-content font-bold shadow-sm" : "text-base-content hover:text-primary hover:bg-base-200/60 font-medium"}`}
+      >
+        <span
+          className={`flex-shrink-0 transition-colors ${isActive ? "text-primary-content" : "text-base-content/60 group-hover:text-primary"}`}
+        >
+          {item.icon}
+        </span>
+        <span className="flex-1 truncate tracking-wide">{item.label}</span>
+        <ExternalLink size={14} className="shrink-0 text-base-content/40" />
+        <ActivePill active={isActive} />
+      </button>
+    );
+  }
 
   return (
     <NavLink
