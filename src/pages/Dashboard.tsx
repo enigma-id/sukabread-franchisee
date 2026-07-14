@@ -178,6 +178,15 @@ export function Dashboard() {
         <div className="flex flex-col gap-4">
           {/* Main Stats */}
           <div className="col-span-1 lg:col-span-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="sm:col-span-2 lg:col-span-2">
+              <SummaryCard
+                label="Saldo Outlet"
+                value={currencyFormat(data?.saldo_outlet || 0)}
+                icon={Wallet}
+                theme={THEMES.blue}
+                variant="primary"
+              />
+            </div>
             <SummaryCard
               label="Omzet Hari Ini"
               value={currencyFormat(data?.omzet_hari_ini || 0)}
@@ -207,12 +216,6 @@ export function Dashboard() {
               value={data?.sesi_kasir_aktif || 0}
               icon={Users}
               theme={THEMES.purple}
-            />
-            <SummaryCard
-              label="Saldo Outlet"
-              value={currencyFormat(data?.saldo_outlet || 0)}
-              icon={Wallet}
-              theme={THEMES.blue}
             />
             <SummaryCard
               label="Stok Kritis"
