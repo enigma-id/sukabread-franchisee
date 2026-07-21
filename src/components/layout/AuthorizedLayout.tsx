@@ -159,12 +159,7 @@ const menuSections: MenuSection[] = [
         path: "/setting/catalog",
         icon: <Package size={18} />,
       },
-      {
-        label: "Metode Pembayaran",
-        path: "/payment-method",
-        icon: <CreditCard size={18} />,
-      },
-      {
+{
         label: "Manajemen User",
         path: "/setting/user",
         icon: <UsersRound size={18} />,

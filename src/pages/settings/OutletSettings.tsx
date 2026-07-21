@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { Page } from "@/components/app/layout";
 import { Input, Button } from "@/components/ui";
+import { useEnigmaUI } from "@/components/enigma";
 import { useOutlet } from "@/services/outlet/hooks";
 import { useAppSelector } from "@/hooks";
 import { useDocumentMeta } from "@/hooks/useDocumentMeta";
@@ -12,7 +13,8 @@ export function OutletSettings() {
     "Kelola pengaturan operasional outlet Anda.",
   );
 
-  const { update, setUpdate } = useOutlet();
+  const { update, updateResult } = useOutlet();
+  const { showToast } = useEnigmaUI();
   const outlet = useAppSelector((s) => s.auth.session?.outlet); // Assuming outlet info is here
   const FormState = useAppSelector((s) => s.form);
 
@@ -23,6 +25,18 @@ export function OutletSettings() {
       setForm(outlet.service_charges.toString());
     }
   }, [outlet]);
+
+  useEffect(() => {
+    if (updateResult?.isSuccess) {
+      showToast({
+        message: "Service charge berhasil di update",
+        type: "success",
+        position: "bottom-center",
+        duration: 4000,
+      });
+      updateResult?.reset?.();
+    }
+  }, [updateResult?.isSuccess]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -58,7 +72,7 @@ export function OutletSettings() {
             <Button
               type="submit"
               variant="primary"
-              isLoading={setUpdate?.isLoading}
+              isLoading={updateResult?.isLoading}
               className="w-full"
             >
               Simpan Perubahan

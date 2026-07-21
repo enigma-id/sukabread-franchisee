@@ -49,7 +49,7 @@ export function StockRangeModal({
 
   return (
     <Modal.Wrapper open onClose={onClose}>
-      <Modal.Header>{`Update Stok: ${item.name}`}</Modal.Header>
+      <Modal.Header>{`Update Stok: ${item.catalog?.name ?? item.name ?? ""}`}</Modal.Header>
       <form onSubmit={handleSubmit}>
         <Modal.Body className="space-y-4">
           <Input

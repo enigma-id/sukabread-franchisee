@@ -37,20 +37,6 @@ const createTableConfig = ({
         </div>
       ),
     },
-    base_price: {
-      title: "Harga Dasar",
-      class: "font-mono text-right",
-      headerClass: "text-right",
-      component: (row: CatalogOutlet) => (
-        <span className="font-semibold text-primary">
-          {row.catalog.base_price.toLocaleString("id-ID", {
-            style: "currency",
-            currency: "IDR",
-            minimumFractionDigits: 0,
-          })}
-        </span>
-      ),
-    },
     min_stock: {
       title: "Min Stok",
       class: "text-center font-mono",
