@@ -216,7 +216,7 @@ function NavItem({
   if (item.external) {
     const baseUrl = import.meta.env.DEV
       ? "http://localhost:5174"
-      : "https://sukabread-franchisorder-git-v2-enigma-id.vercel.app";
+      : "https://sukabread-franchisorder.vercel.app";
     const externalUrl = user?.username
       ? `${baseUrl}?username=${user.username}`
       : "";
