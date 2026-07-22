@@ -14,15 +14,28 @@ const getStatusVariant = (status: string) => {
 
 const createTableConfig = ({
   onRemove,
+  onRowClick,
 }: {
   onRemove?: (row: ContractOutletTopup) => void;
+  onRowClick?: (row: ContractOutletTopup) => void;
 }) => ({
   ...config,
   url: "/outlet-topup-request",
   columns: {
     code: {
       title: "Kode",
-      class: "font-medium font-mono text-xs",
+      class: "font-medium font-mono text-xs cursor-pointer hover:text-primary transition-colors",
+      component: (row: ContractOutletTopup) => (
+        <span
+          role="button"
+          tabIndex={0}
+          onClick={() => onRowClick?.(row)}
+          onKeyDown={(e) => e.key === "Enter" && onRowClick?.(row)}
+          className="hover:text-primary transition-colors"
+        >
+          {row.code}
+        </span>
+      ),
     },
     outlet: {
       title: "Outlet",

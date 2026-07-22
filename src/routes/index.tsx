@@ -16,6 +16,7 @@ import { OrderDetail } from "@/pages/sales/OrderDetail";
 import {
   Outstanding,
   Settlement,
+  SettlementDaily,
   ProductSales,
   CashControl,
 } from "@/pages/reports";
@@ -63,6 +64,7 @@ export function AppRoutes() {
         <Route path="/report/product-sales" element={<ProductSales />} />
         <Route path="/report/outstanding" element={<Outstanding />} />
         <Route path="/report/settlement" element={<Settlement />} />
+        <Route path="/report/settlement/daily" element={<SettlementDaily />} />
         <Route path="/report/cash-control" element={<CashControl />} />
         <Route path="/withdrawal" element={<WithdrawalList />} />
         <Route path="/withdrawal/create" element={<WithdrawalCreate />} />
