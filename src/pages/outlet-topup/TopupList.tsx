@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useMemo, useEffect, useCallback, useState } from "react";
+import { useMemo, useEffect, useCallback } from "react";
 import { Page } from "@/components/app/layout";
 import useTable from "@/services/table/hooks";
 import type { TableConfig } from "@/services/table/const";

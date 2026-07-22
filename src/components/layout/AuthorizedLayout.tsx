@@ -18,7 +18,6 @@ import {
   Receipt,
   Landmark,
   Settings,
-  CreditCard,
   User,
   UsersRound,
   LogOut,

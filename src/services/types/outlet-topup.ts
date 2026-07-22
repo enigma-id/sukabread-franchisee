@@ -27,6 +27,11 @@ export interface ContractOutletTopup {
     name: string;
     provider: string;
   };
+  payment?: {
+    status: string;
+    va_number?: string;
+    bank_name?: string;
+  };
 }
 
 export interface ContractCreateTopupRequest {
