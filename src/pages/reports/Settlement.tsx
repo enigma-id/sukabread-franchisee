@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useMemo } from "react";
-import { useEffect } from "react";
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useMemo, useEffect } from "react";
 import { Page } from "@/components/app/layout";
 import useTable from "@/services/table/hooks";
 import type { TableConfig } from "@/services/table/const";
@@ -8,17 +8,17 @@ import createTableConfig from "./table/settlement.config";
 import TableFilter from "./table/settlement.filter";
 import { useLazyGetSettlementSummaryQuery } from "@/services/report/api";
 import { SettlementSummaryCards } from "@/components/app";
-import { useDocumentMeta } from "@/hooks/useDocumentMeta";
+import { useNavigate } from "react-router-dom";
 
 export function Settlement() {
-  useDocumentMeta(
-    "Settlement | Sukabread Franchisee",
-    "Laporan settlement transaksi.",
-  );
+  const navigate = useNavigate();
 
   const tableConfig = useMemo(() => {
-    return createTableConfig({});
-  }, []);
+    return createTableConfig({
+      onRowClick: (row: any) =>
+        navigate(`/report/settlement/daily?date=${row.date}`),
+    });
+  }, [navigate]);
 
   const Table = useTable(
     "report_settlement",
@@ -79,7 +79,11 @@ export function Settlement() {
 
   return (
     <Page className="h-full flex flex-col min-h-0 bg-slate-50">
-      <Page.Header category="Report" title={`Settlement`} subtitle="" />
+      <Page.Header
+          category="Report"
+          title="Settlement"
+          subtitle="Laporan penyelesaian pembayaran."
+        />
       <Page.Body className="flex-1 flex flex-col min-h-0 ">
         <SettlementSummaryCards summary={summary} />
 
@@ -91,6 +95,7 @@ export function Settlement() {
           emptyTitle="No Settlement Data"
           emptyDescription="Settlement data will appear here once available."
         />
+        <Table.Pagination />
       </Page.Body>
     </Page>
   );

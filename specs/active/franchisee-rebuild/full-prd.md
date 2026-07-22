@@ -21,16 +21,20 @@ The current system is built on Vue 2 (EOL), Element UI 1.x, Vuetify 1.5, and Vue
 ## 2. Problem Statement
 
 ### The Problem
+
 The existing franchisee portal is built on a technology stack that reached end-of-life. Vue 2, Element UI, Vuetify 1.x, and Node 8/10 are no longer receiving security patches or bug fixes. The codebase is unmaintainable for new developers, has no TypeScript type safety, and uses deprecated build tooling (Vue CLI 3).
 
 ### Current Situation
+
 - Franchisee staff use the portal daily to monitor sales, check cash reconciliation, and generate reports
 - The system works but cannot be updated, extended, or maintained safely
 - New features (e.g., implementing the Stock page, which is currently a stub) cannot be built on the existing foundation
 - Security vulnerabilities in outdated dependencies cannot be patched
 
 ### Desired Outcome
+
 A 1:1 functional replacement built on modern tooling that:
+
 - Preserves every existing workflow and business rule
 - Enables future feature development (stock management, enhanced reports)
 - Uses TypeScript for type safety and maintainability
@@ -41,18 +45,21 @@ A 1:1 functional replacement built on modern tooling that:
 ## 3. Target Users
 
 ### Primary User: Franchise Owner
+
 - **Who:** Bakery franchise owner operating 1-3 outlets
 - **Goals:** Monitor sales performance, verify cash reconciliation, manage staff accounts, review financial reports
 - **Behavior:** Logs in daily, checks sessions, reviews settlement reports monthly, manages staff as needed
 - **Language:** Indonesian (Bahasa Indonesia) — UI labels are mixed Indonesian/English
 
 ### Secondary User: Franchise Staff (Supervisor)
+
 - **Who:** Senior staff member with supervisory access
 - **Goals:** View sales data, check own sessions, monitor daily performance
 - **Behavior:** Checks sessions and reports, cannot manage other users or delete accounts
 - **Restriction:** Cannot toggle own active status, shown differently in user list
 
 ### Tertiary: Cashier (View-Only Access)
+
 - **Who:** POS cashier accessing the portal for limited reporting
 - **Goals:** View own session history, check order details
 - **Behavior:** Primarily uses the POS app — portal access is supplementary
@@ -66,11 +73,13 @@ A 1:1 functional replacement built on modern tooling that:
 **Description:** JWT-based login with token validation on app boot.
 
 **User Stories:**
+
 - As a franchisee user, I want to sign in with username/password so I can access my outlet's data
 - As a franchisee user, I want my session to persist across page refreshes so I don't have to re-login
 - As a franchisee user, I want to update my password from the profile page
 
 **Acceptance Criteria:**
+
 - [ ] Login via POST `/auth/signin` with `{ username, password }`
 - [ ] JWT token stored in encrypted localStorage (persisted state)
 - [ ] On app boot: validate token via GET `/auth/me`
@@ -88,11 +97,13 @@ A 1:1 functional replacement built on modern tooling that:
 **Description:** List, filter, and inspect cashier sales sessions.
 
 **User Stories:**
+
 - As a franchise owner, I want to see all cashier sessions so I can monitor daily operations
 - As a franchise owner, I want to filter sessions by date range so I can review specific periods
 - As a franchise owner, I want to see session details including cash info, sales summary, payment breakdown, and category breakdown
 
 **Acceptance Criteria:**
+
 - [ ] Session list shows: Date, Cashier Name (uppercase), Session No., Start Time, End Time, Total Transaction, Status
 - [ ] Date range filter with start/end picker (end date +1 day for inclusive range)
 - [ ] `finished_at === "0001-01-01T00:00:00Z"` displays as "(Ongoing)"
@@ -116,10 +127,12 @@ A 1:1 functional replacement built on modern tooling that:
 **Description:** View individual order details with itemized breakdown.
 
 **User Stories:**
+
 - As a franchise owner, I want to see every item in an order so I can verify transactions
 - As a franchise owner, I want to see discount, service charge, and tax breakdown
 
 **Acceptance Criteria:**
+
 - [ ] Order info: Code (uppercase), Cashier Name (uppercase), Payment Ref, Order Date, Channel (uppercase), Payment Method (uppercase, null = "CASH")
 - [ ] Order items table: Item Name, QTY, Nett Price (Rp), Subtotal (Rp)
 - [ ] Add-on items (additional_id set) prefixed with "+" in name
@@ -141,6 +154,7 @@ A 1:1 functional replacement built on modern tooling that:
 **Description:** Paginated table of daily sales totals.
 
 **Acceptance Criteria:**
+
 - [ ] Table columns: Date (DD/MM/YYYY), Total Order (right-aligned, currency format)
 - [ ] Standard table with pagination
 - [ ] API: GET `/report/sales/daily`
@@ -154,6 +168,7 @@ A 1:1 functional replacement built on modern tooling that:
 **Description:** List of unpaid/open orders with summary and download.
 
 **Acceptance Criteria:**
+
 - [ ] Header shows total_charges summary from `/report/sales/outstanding/summary`
 - [ ] Summary re-fetches when table filter changes
 - [ ] Download button exports CSV/file
@@ -170,6 +185,7 @@ A 1:1 functional replacement built on modern tooling that:
 **Description:** Payment method breakdown aggregated by month within a year.
 
 **Acceptance Criteria:**
+
 - [ ] Filter by cashier (optional) and year
 - [ ] Summary cards: each payment method shows nominal — special types (Total, Outstanding, Member) larger layout, regular types smaller
 - [ ] Table: Date column + dynamic columns per payment method + drill-down arrow
@@ -177,7 +193,7 @@ A 1:1 functional replacement built on modern tooling that:
 - [ ] Column headers from `payment_methods` array in first row
 - [ ] Download button exports file with `downloadable: true` param
 - [ ] Click row → navigate to Settlement Daily with `month` param
-- [ ] API: GET `/report/settlement` with `params_type: 'yearly'`
+- [ ] API: GET `/report/settlement` with `periode_type: 'yearly'`
 - [ ] Summary: GET `/report/settlement/summary`
 
 **Priority:** Must Have
@@ -189,11 +205,12 @@ A 1:1 functional replacement built on modern tooling that:
 **Description:** Payment method breakdown per session for a specific month.
 
 **Acceptance Criteria:**
+
 - [ ] Requires `month` route param — if missing, redirect to monthly view
 - [ ] Filter by cashier (optional)
 - [ ] Summary cards identical to monthly view
 - [ ] Table: Date, Session Time (start - end), dynamic payment method columns
-- [ ] API: GET `/report/settlement` with `params_type: 'monthly'`
+- [ ] API: GET `/report/settlement` with `periode_type: 'monthly'`
 - [ ] Download button
 
 **Priority:** Must Have
@@ -205,6 +222,7 @@ A 1:1 functional replacement built on modern tooling that:
 **Description:** Product-level sales quantity report.
 
 **Acceptance Criteria:**
+
 - [ ] Table columns: Name (uppercase), Total Sold
 - [ ] Standard paginated table
 - [ ] API: GET `/report/sales/item`
@@ -218,6 +236,7 @@ A 1:1 functional replacement built on modern tooling that:
 **Description:** Cash reconciliation view showing per-session cash tracking.
 
 **Acceptance Criteria:**
+
 - [ ] Filter by cashier (optional) and date range
 - [ ] Overview cards (4 metrics): Total Transaksi Cash, Total Topup Cash, Total Setoran Cash, Kekurangan (deficiency)
 - [ ] Session table: Session (date), Cashier (uppercase), Transaksi Cash, Topup Cash, Setoran Cash, Status badge
@@ -233,6 +252,7 @@ A 1:1 functional replacement built on modern tooling that:
 **Description:** Redirects franchisee to external ordering platform.
 
 **Acceptance Criteria:**
+
 - [ ] On page mount → `window.open('https://order.sukabread.com?source=share&username={username}', '_blank')`
 - [ ] Username taken from authenticated user session
 - [ ] No in-app UI rendered
@@ -246,11 +266,13 @@ A 1:1 functional replacement built on modern tooling that:
 **Description:** CRUD operations for franchisee outlet staff.
 
 **User Stories:**
+
 - As a franchise owner, I want to create new user accounts so my staff can access the system
 - As a franchise owner, I want to activate/deactivate user accounts
 - As a franchise owner, I want to update user details
 
 **Acceptance Criteria:**
+
 - [ ] User list table: Name, Username, Last Login (DD/MM/YYYY HH:mm or "-" for never), Status (toggle), Actions (dropdown)
 - [ ] Create user form: Name, Username, Password, Confirm Password — redirect to list on success
 - [ ] Update user form: pre-filled Name/Username, optional Password/Confirm Password — redirect to list on success
@@ -269,6 +291,7 @@ A 1:1 functional replacement built on modern tooling that:
 **Description:** Stock listing page — currently unimplemented in legacy.
 
 **Acceptance Criteria:**
+
 - [ ] Render placeholder/stub matching legacy behavior
 - [ ] Stock service exists (GET `/inventory/stock`) — can implement basic list view
 - [ ] Stock adjustment service exists (CRUD + approve) — UI TBD
@@ -280,31 +303,37 @@ A 1:1 functional replacement built on modern tooling that:
 ## 5. Non-Functional Requirements
 
 ### NFR-001: Performance
+
 - First Contentful Paint < 1.5s
 - Time to Interactive < 3s
 - Bundle size < 500KB gzipped
 
 ### NFR-002: Browser Support
+
 - Chrome 90+, Firefox 90+, Safari 15+, Edge 90+
 - Responsive: desktop-first (matching legacy), mobile-friendly left panel collapse
 
 ### NFR-003: Security
+
 - JWT stored in encrypted storage (or httpOnly cookie consideration)
 - No sensitive data in URL params
 - API errors never expose stack traces to UI
 - Password fields use `autocomplete="new-password"`
 
 ### NFR-004: Localization
+
 - UI labels predominantly Indonesian (Bahasa Indonesia)
 - Some labels English (legacy pattern — preserve as-is)
 - Currency format: `1,234.56` with 2 decimal places
 
 ### NFR-005: Accessibility
+
 - Form fields have labels
 - Interactive elements keyboard-accessible
 - Status badges have semantic meaning (not color-only)
 
 ### NFR-006: PWA
+
 - Service worker for offline shell
 - Installable as PWA (icon assets exist in legacy)
 
@@ -334,27 +363,27 @@ A 1:1 functional replacement built on modern tooling that:
 
 ## 8. Success Metrics
 
-| Metric | Target | How to Measure |
-|--------|--------|----------------|
-| Feature Parity | 100% of existing features working | Manual QA against legacy app |
-| Page Load Time | < 2s on 4G | Lighthouse audit |
-| Bundle Size | < 500KB gzipped | Build output analysis |
-| TypeScript Coverage | 100% strict mode | tsconfig + CI check |
-| Test Coverage | > 60% on business logic | Jest/Vitest coverage report |
-| Zero Regression | All 20 business rules preserved | Automated E2E tests |
+| Metric              | Target                            | How to Measure               |
+| ------------------- | --------------------------------- | ---------------------------- |
+| Feature Parity      | 100% of existing features working | Manual QA against legacy app |
+| Page Load Time      | < 2s on 4G                        | Lighthouse audit             |
+| Bundle Size         | < 500KB gzipped                   | Build output analysis        |
+| TypeScript Coverage | 100% strict mode                  | tsconfig + CI check          |
+| Test Coverage       | > 60% on business logic           | Jest/Vitest coverage report  |
+| Zero Regression     | All 20 business rules preserved   | Automated E2E tests          |
 
 ---
 
 ## 9. Timeline Estimate
 
-| Phase | Duration | Scope |
-|-------|----------|-------|
-| Phase 1: Foundation | 3 days | Project setup, auth, layout, routing |
-| Phase 2: Sales Module | 3 days | Sessions, orders, detail views |
-| Phase 3: Reports | 3 days | All 5 report pages |
-| Phase 4: Settings | 2 days | User CRUD, profile, cash control |
-| Phase 5: Polish | 2 days | PWA, testing, QA, deployment |
-| **Total** | **~13 days** | |
+| Phase                 | Duration     | Scope                                |
+| --------------------- | ------------ | ------------------------------------ |
+| Phase 1: Foundation   | 3 days       | Project setup, auth, layout, routing |
+| Phase 2: Sales Module | 3 days       | Sessions, orders, detail views       |
+| Phase 3: Reports      | 3 days       | All 5 report pages                   |
+| Phase 4: Settings     | 2 days       | User CRUD, profile, cash control     |
+| Phase 5: Polish       | 2 days       | PWA, testing, QA, deployment         |
+| **Total**             | **~13 days** |                                      |
 
 ---
 
@@ -372,27 +401,28 @@ A 1:1 functional replacement built on modern tooling that:
 
 ### A. Legacy Route Map
 
-| Legacy Route | New Route (Proposed) | Module |
-|-------------|---------------------|--------|
-| `/sales/session` | `/sales/session` | Sales |
-| `/sales/session/:id` | `/sales/session/:id` | Sales |
-| `/sales/session/:id/order/:orderID` | `/sales/session/:id/order/:orderId` | Sales |
-| `/stock` | `/stock` | Stock |
-| `/report/sales/daily` | `/report/sales/daily` | Reports |
-| `/report/sales/outstanding` | `/report/sales/outstanding` | Reports |
-| `/report/sales/payment` | `/report/sales/payment` | Reports |
-| `/report/sales/payment/daily` | `/report/sales/payment/daily` | Reports |
-| `/report/sales/item` | `/report/sales/item` | Reports |
-| `/cash/control` | `/cash/control` | Cash |
-| `/purchase` | `/purchase` | Purchase |
-| `/setting/user` | `/setting/user` | Settings |
-| `/setting/user/create` | `/setting/user/create` | Settings |
-| `/setting/user/:id/update` | `/setting/user/:id/update` | Settings |
-| `/auth/me` | `/auth/me` | Settings |
+| Legacy Route                        | New Route (Proposed)                | Module   |
+| ----------------------------------- | ----------------------------------- | -------- |
+| `/sales/session`                    | `/sales/session`                    | Sales    |
+| `/sales/session/:id`                | `/sales/session/:id`                | Sales    |
+| `/sales/session/:id/order/:orderID` | `/sales/session/:id/order/:orderId` | Sales    |
+| `/stock`                            | `/stock`                            | Stock    |
+| `/report/sales/daily`               | `/report/sales/daily`               | Reports  |
+| `/report/sales/outstanding`         | `/report/sales/outstanding`         | Reports  |
+| `/report/sales/payment`             | `/report/sales/payment`             | Reports  |
+| `/report/sales/payment/daily`       | `/report/sales/payment/daily`       | Reports  |
+| `/report/sales/item`                | `/report/sales/item`                | Reports  |
+| `/cash/control`                     | `/cash/control`                     | Cash     |
+| `/purchase`                         | `/purchase`                         | Purchase |
+| `/setting/user`                     | `/setting/user`                     | Settings |
+| `/setting/user/create`              | `/setting/user/create`              | Settings |
+| `/setting/user/:id/update`          | `/setting/user/:id/update`          | Settings |
+| `/auth/me`                          | `/auth/me`                          | Settings |
 
 ### B. Business Rule Index
+
 See `research.md` — BR-001 through BR-020
 
 ---
 
-*PRD generated with SDD 4.0 — Full rebuild preserving 100% business logic*
+_PRD generated with SDD 4.0 — Full rebuild preserving 100% business logic_
