@@ -9,13 +9,14 @@ const createTableConfig = () => ({
     catalog_name: {
       title: "Nama Item",
       class: "font-medium",
+      component: (row: any) => row?.ingredient?.name || "-",
     },
     current_stock: {
-      title: "Stok Saat Ini",
+      title: "Stock",
       class: "text-center font-mono",
       headerClass: "text-center",
       component: (row: any) => {
-        const stock = row.current_stock;
+        const stock = row.stock_available ?? row.current_stock;
         const min = row.min_stock;
         const max = row.max_stock;
 
