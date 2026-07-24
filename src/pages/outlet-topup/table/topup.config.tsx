@@ -1,16 +1,9 @@
 import config from "@/services/table/const";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { currencyFormat } from "@/utils";
+import { currencyFormat, getStatusVariant } from "@/utils";
 import { Trash2 } from "lucide-react";
 import type { ContractOutletTopup } from "@/services/types/outlet-topup";
-
-const getStatusVariant = (status: string) => {
-  if (status === "approved" || status === "completed") return "success";
-  if (status === "rejected") return "error";
-  if (status === "pending") return "warning";
-  return "default";
-};
 
 const createTableConfig = ({
   onRemove,

@@ -9,15 +9,8 @@ import { useNavigate } from "react-router-dom";
 import { Badge, Button, Modal, useEnigmaUI } from "@/components";
 import { Plus, Wallet2Icon } from "lucide-react";
 import { useOutletTopup } from "@/services/outlet-topup/hooks";
-import { currencyFormat } from "@/utils";
+import { currencyFormat, getStatusVariant } from "@/utils";
 import type { ContractOutletTopup } from "@/services/types/outlet-topup";
-
-const getStatusVariant = (status: string) => {
-  if (status === "approved" || status === "completed") return "success";
-  if (status === "rejected") return "error";
-  if (status === "pending") return "warning";
-  return "default";
-};
 
 function DetailModal({
   id,

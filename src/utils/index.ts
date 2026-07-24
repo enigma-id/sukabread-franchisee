@@ -1,7 +1,15 @@
 import { dateFormat, currencyFormat } from "./common";
 
 // Re-export everything from submodules
-export { currencyFormat, dateFormat, postedAgo, updateAt, extractIds, capitalizeFirst, findByKeyValue } from "./common";
+export {
+  currencyFormat,
+  dateFormat,
+  postedAgo,
+  updateAt,
+  extractIds,
+  capitalizeFirst,
+  findByKeyValue,
+} from "./common";
 export { withGuard } from "./guard";
 export * from "./url";
 export * from "./permission";
@@ -12,7 +20,10 @@ export * from "./cn";
 export const formatCurrency = currencyFormat;
 
 // Date helpers used by pages
-export function formatDate(v?: string | Date | null, format = "DD/MM/YYYY"): string {
+export function formatDate(
+  v?: string | Date | null,
+  format = "DD/MM/YYYY",
+): string {
   return dateFormat(v, format, "-");
 }
 
@@ -40,4 +51,69 @@ export function isOngoing(date: string | null | undefined): boolean {
 export function displayPaymentMethod(name: string | null): string {
   if (!name) return "-";
   return name;
+}
+
+// Map any system status to a premium Badge variant
+export function getStatusVariant(
+  status?: string | null,
+):
+  | "default"
+  | "primary"
+  | "secondary"
+  | "accent"
+  | "info"
+  | "success"
+  | "warning"
+  | "error" {
+  const normalized = status?.toLowerCase() || "";
+  const variantMap: Record<
+    string,
+    | "default"
+    | "primary"
+    | "secondary"
+    | "accent"
+    | "info"
+    | "success"
+    | "warning"
+    | "error"
+  > = {
+    // General / Purchase / Sales order statuses
+    approved: "success",
+    draft: "default",
+    pending: "warning",
+    submitted: "info",
+    confirmed: "primary",
+    published: "primary",
+    process: "warning",
+    processing: "secondary",
+    completed: "success",
+    shipped: "accent",
+    received: "success",
+    invoiced: "info",
+    delivered: "success",
+    void: "error",
+    cancelled: "error",
+    rejected: "error",
+    active: "primary",
+    finished: "success",
+    closed: "success",
+    awaiting_approval: "warning",
+
+    // Payment statuses
+    unpaid: "error",
+    partial: "warning",
+    paid: "success",
+    refunded: "accent",
+
+    // Delivery statuses
+    shipping: "info",
+    none: "default",
+
+    // Sales session statuses
+    ongoing: "primary",
+    open: "primary",
+    waiting: "warning",
+    failed: "error",
+  };
+  return variantMap[normalized] || "default";
 }

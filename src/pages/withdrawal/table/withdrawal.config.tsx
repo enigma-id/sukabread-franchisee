@@ -1,16 +1,9 @@
 import config from "@/services/table/const";
 import { Badge } from "@/components/ui/badge";
 import type { WithdrawalRequest } from "@/services/types/withdrawal";
-import { currencyFormat } from "@/utils";
+import { currencyFormat, getStatusVariant } from "@/utils";
 import { XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-
-const getStatusVariant = (status: string) => {
-  if (status === "approved" || status === "completed") return "success";
-  if (status === "rejected") return "error";
-  if (status === "pending") return "warning";
-  return "default";
-};
 
 const createTableConfig = ({
   onCancel,

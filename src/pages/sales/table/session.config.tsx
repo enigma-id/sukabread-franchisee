@@ -1,18 +1,8 @@
 import { Badge } from "@/components";
 import config from "@/services/table/const";
 import type { SalesSession } from "@/services/types/sales";
-import { currencyFormat, formatDate, formatTime, isOngoing } from "@/utils";
+import { currencyFormat, formatDate, formatTime, getStatusVariant, isOngoing } from "@/utils";
 import { ChevronRight } from "lucide-react";
-
-const getStatusVariant = (status: string) => {
-  if (!status) return "default";
-  const s = String(status).toUpperCase();
-  if (s === "COMPLETED" || s === "FINISHED" || s === "CLOSED") return "success";
-  if (s === "ONGOING" || s === "OPEN" || s === "ACTIVE") return "primary";
-  if (s === "PENDING" || s === "WAITING") return "warning";
-  if (s === "CANCELLED" || s === "FAILED" || s === "VOID") return "error";
-  return "default";
-};
 
 const createTableConfig = ({
   onClick,

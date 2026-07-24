@@ -75,7 +75,7 @@ const TopupCreate = () => {
           onSubmit={handleSubmit}
           className="space-y-6"
         >
-          <div className="bg-white border border-slate-200 rounded-xl p-6">
+          <div className="bg-white border border-slate-200 rounded-xl p-6 relative overflow-visible! z-10">
             <h3 className="text-sm font-bold text-slate-700 uppercase mb-4 flex items-center gap-2">
               <Wallet2Icon size={16} className="text-primary" />
               Informasi Topup
