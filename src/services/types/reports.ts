@@ -56,3 +56,41 @@ export interface ProductSalesRow {
   discount: number
   total_nett: number
 }
+
+// Product Item — sales grouped per (date, outlet, menu), no discount
+export interface ProductItemRow {
+  date: string
+  outlet: string
+  menu: string
+  quantity: number
+  unit_nett: number
+  total_nett: number
+}
+
+export interface ProductItemSummary {
+  total_qty: number
+  total_nett: number
+}
+
+// Cancelled Product Sales
+export interface CancelledProductSalesRow {
+  date: string
+  channel: string
+  payment: string
+  outlet: string
+  code: string
+  menu: string
+  quantity: number
+  unit_nett: number
+  discount: number
+  total_nett: number
+  cancelled_reason: string
+  cancelled_by: string
+  cancelled_at: string
+}
+
+export interface CancelledProductSalesSummary {
+  total_qty: number
+  total_nett: number
+  total_discount: number
+}

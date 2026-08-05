@@ -19,6 +19,8 @@ import {
   SettlementDaily,
   ProductSales,
   CashControl,
+  ProductItem,
+  CancelledProductSales,
 } from "@/pages/reports";
 import { UserList } from "@/pages/settings/UserList";
 import { UserCreate } from "@/pages/settings/UserCreate";
@@ -62,6 +64,11 @@ export function AppRoutes() {
         <Route path="/membership" element={<Membership />} />
         <Route path="/membership/:id" element={<MembershipDetail />} />
         <Route path="/report/product-sales" element={<ProductSales />} />
+        <Route path="/report/product-item" element={<ProductItem />} />
+        <Route
+          path="/report/cancelled-product-sales"
+          element={<CancelledProductSales />}
+        />
         <Route path="/report/outstanding" element={<Outstanding />} />
         <Route path="/report/settlement" element={<Settlement />} />
         <Route path="/report/settlement/daily" element={<SettlementDaily />} />

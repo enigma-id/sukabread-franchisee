@@ -74,6 +74,44 @@ export const reportApi = createApi({
     getCashControlSummary: builder.query({
       query: (params) => ({ url: "/report/cash-control/summary", params }),
     }),
+
+    /**
+     * GET /report/product-item
+     * List product item sales grouped per (date, outlet, menu)
+     */
+    getProductItem: builder.query({
+      query: (params) => ({ url: "/report/product-item", params }),
+    }),
+
+    /**
+     * GET /report/product-item/summary
+     * Get product item sales summary
+     */
+    getProductItemSummary: builder.query({
+      query: (params) => ({ url: "/report/product-item/summary", params }),
+    }),
+
+    /**
+     * GET /report/cancelled-product-sales
+     * List cancelled product sales (so.status = 'cancelled')
+     */
+    getCancelledProductSales: builder.query({
+      query: (params) => ({
+        url: "/report/cancelled-product-sales",
+        params,
+      }),
+    }),
+
+    /**
+     * GET /report/cancelled-product-sales/summary
+     * Get cancelled product sales summary
+     */
+    getCancelledProductSalesSummary: builder.query({
+      query: (params) => ({
+        url: "/report/cancelled-product-sales/summary",
+        params,
+      }),
+    }),
   }),
 });
 
@@ -86,4 +124,8 @@ export const {
   useLazyGetSettlementSummaryQuery,
   useLazyGetCashControlQuery,
   useLazyGetCashControlSummaryQuery,
+  useLazyGetProductItemQuery,
+  useLazyGetProductItemSummaryQuery,
+  useLazyGetCancelledProductSalesQuery,
+  useLazyGetCancelledProductSalesSummaryQuery,
 } = reportApi;

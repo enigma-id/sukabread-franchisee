@@ -129,6 +129,16 @@ const menuSections: MenuSection[] = [
         icon: <Receipt size={16} />,
       },
       {
+        label: "Product Item",
+        path: "/report/product-item",
+        icon: <Receipt size={16} />,
+      },
+      {
+        label: "Cancelled Product Sales",
+        path: "/report/cancelled-product-sales",
+        icon: <Receipt size={16} />,
+      },
+      {
         label: "Outstanding",
         path: "/report/outstanding",
         icon: <Banknote size={16} />,
