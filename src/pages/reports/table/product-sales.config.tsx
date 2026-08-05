@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import config from "@/services/table/const";
 import { currencyFormat, formatDate } from "@/utils";
 import type { ProductSalesRow } from "@/services/types/reports";
@@ -18,7 +17,6 @@ const createTableConfig = ({
     },
     channel: { title: "Channel" },
     payment: { title: "Payment" },
-    outlet: { title: "Outlet" },
     code: { title: "Code" },
     menu: { title: "Menu" },
     quantity: { title: "Qty", class: "text-center", headerClass: "text-center" },
