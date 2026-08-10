@@ -10,6 +10,7 @@ import {
   displayPaymentMethod,
   currencyFormat,
   getStatusVariant,
+  capitalizeFirst,
 } from "@/utils";
 import { useDocumentMeta } from "@/hooks/useDocumentMeta";
 
@@ -69,7 +70,10 @@ export function OrderDetail() {
             <h2 className='card-section-title'>Order</h2>
           </div>
           <div className='grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-4'>
-            <InfoCell label='Bill Name' value={order.bill_name || "-"} />
+            <InfoCell
+              label='Bill Name'
+              value={capitalizeFirst(order.bill_name || "-")}
+            />
             <InfoCell
               label='Tanggal Order'
               value={formatDateTime(order.created_at)}
@@ -140,7 +144,7 @@ export function OrderDetail() {
                 </div>
                 <h2 className='table-header-title'>Order Items</h2>
                 <div className='ml-auto text-xs font-bold px-3 py-1 bg-primary/10 text-primary rounded-lg uppercase tracking-wider'>
-                  {totalQty} Items
+                  {totalQty} Pcs
                 </div>
               </div>
               <div className='overflow-x-auto'>
@@ -312,7 +316,7 @@ function OrderItemRow({ item, index }: { item: any; index: number }) {
         </td>
         <td className='px-6 py-3 align-middle'>
           <span className='text-[14px] font-semibold text-base-content'>
-            {item.catalog_name || item.catalog?.name || "-"}
+            {capitalizeFirst(item.catalog_name || item.catalog?.name || "-")}
           </span>
           {item.category_name && (
             <span className='ml-2 text-[11px] font-medium uppercase tracking-wide text-base-content/40'>
