@@ -26,4 +26,5 @@ dev-dist
 *.sw?
 
 .vercel
+.env
 .env*.local
