@@ -15,7 +15,6 @@ import {
   Minus,
   Receipt,
   Landmark,
-  UserCheck,
   ArrowUpFromLine,
   BadgePercent,
   Percent,
