@@ -134,7 +134,7 @@ const menuSections: MenuSection[] = [
         icon: <Receipt size={16} />,
       },
       {
-        label: "Cancelled Product Sales",
+        label: "Penjualan Dibatalkan",
         path: "/report/cancelled-product-sales",
         icon: <Receipt size={16} />,
       },

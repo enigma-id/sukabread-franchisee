@@ -50,17 +50,17 @@ const PipelineCard = ({
   icon: any;
   theme: any;
 }) => (
-  <div className="bg-white rounded-3xl p-6 shadow-xl shadow-slate-200/20 border border-slate-100 h-full">
-    <div className="flex items-center gap-3 mb-6">
+  <div className="bg-white rounded-3xl p-4 shadow-xl shadow-slate-200/20 border border-slate-100 h-full">
+    <div className="flex items-center gap-3 mb-3">
       <div
-        className="w-10 h-10 rounded-2xl flex items-center justify-center shadow-lg"
+        className="w-9 h-9 rounded-2xl flex items-center justify-center shadow-lg"
         style={{ backgroundColor: theme.iconBg }}
       >
         <Icon className={`w-5 h-5 ${theme.text}`} />
       </div>
-      <h3 className="text-base font-bold text-slate-800">{title}</h3>
+      <h3 className="text-sm font-bold text-slate-800">{title}</h3>
     </div>
-    <div className="space-y-4">{children}</div>
+    <div className="space-y-3">{children}</div>
   </div>
 );
 
@@ -103,7 +103,7 @@ const PeakHoursCard = ({
                 {hour.hour}:00
               </span>
               <span
-                className={`text-sm font-bold ${isPeak ? "text-orange-600 text-base" : isSecond ? "text-amber-600" : isThird ? "text-stone-700" : "text-slate-900"}`}
+                className={`text-xs font-bold ${isPeak ? "text-orange-600 text-sm" : isSecond ? "text-amber-600" : isThird ? "text-stone-700" : "text-slate-900"}`}
               >
                 {hour.total_transaksi}
               </span>
@@ -313,11 +313,11 @@ export function Dashboard() {
                 <div className="flex items-center justify-between" key={i}>
                   <div className="flex items-center gap-2">
                     <Landmark className="w-4 h-4 text-amber-500" />
-                    <span className="text-sm font-medium text-slate-500">
+                    <span className="text-xs font-medium text-slate-500">
                       {method.name}
                     </span>
                   </div>
-                  <span className="text-sm font-bold text-slate-800">
+                  <span className="text-xs font-bold text-slate-800">
                     {currencyFormat(method.total_paid)}
                   </span>
                 </div>
@@ -329,11 +329,11 @@ export function Dashboard() {
                 <div className="flex items-center justify-between" key={i}>
                   <div className="flex items-center gap-2">
                     <Medal className="w-4 h-4 text-amber-500" />
-                    <span className="text-sm font-medium text-slate-500">
+                    <span className="text-xs font-medium text-slate-500">
                       {member.member_name}
                     </span>
                   </div>
-                  <span className="text-sm font-bold text-slate-800">
+                  <span className="text-xs font-bold text-slate-800">
                     {currencyFormat(member.saldo)}
                   </span>
                 </div>
@@ -349,15 +349,15 @@ export function Dashboard() {
                 <div className="flex items-center justify-between" key={i}>
                   <div className="flex items-center gap-2">
                     <ConciergeBell className="w-4 h-4 text-amber-500" />
-                    <span className="text-sm font-medium text-slate-500">
+                    <span className="text-xs font-medium text-slate-500">
                       {item.menu_name}
                     </span>
                   </div>
                   <div className="flex flex-col items-end leading-tight">
-                    <span className="text-xs text-slate-500">
+                    <span className="text-[10px] text-slate-500">
                       {item.total_qty} pcs
                     </span>
-                    <span className="text-sm font-bold text-slate-800">
+                    <span className="text-xs font-bold text-slate-800">
                       {currencyFormat(item.total_revenue)}
                     </span>
                   </div>
@@ -380,7 +380,7 @@ export function Dashboard() {
                 data.withdrawal_terbaru.map((w, i) => (
                   <div className="flex items-center justify-between" key={i}>
                     <div className="flex flex-col">
-                      <span className="text-sm font-mono text-slate-800">
+                      <span className="text-xs font-mono text-slate-800">
                         {w.code}
                       </span>
                       <span className="text-[10px] text-slate-400">
@@ -388,7 +388,7 @@ export function Dashboard() {
                       </span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="text-sm font-bold text-slate-800">
+                      <span className="text-xs font-bold text-slate-800">
                         {currencyFormat(w.amount)}
                       </span>
                       <span

@@ -17,6 +17,7 @@ const createTableConfig = ({
   columns: {
     code: {
       title: "Kode",
+      sortable: true,
       class: "font-medium font-mono text-xs cursor-pointer hover:text-primary transition-colors",
       component: (row: ContractOutletTopup) => (
         <span
@@ -32,12 +33,14 @@ const createTableConfig = ({
     },
     outlet: {
       title: "Outlet",
+      sortable: true,
       component: (row: ContractOutletTopup) => (
         <span>{row.outlet?.name ?? "-"}</span>
       ),
     },
     amount: {
       title: "Jumlah",
+      sortable: true,
       class: "font-mono text-right font-medium",
       headerClass: "text-right",
       component: (row: ContractOutletTopup) => (
@@ -46,12 +49,14 @@ const createTableConfig = ({
     },
     payment_method: {
       title: "Pembayaran",
+      sortable: true,
       component: (row: ContractOutletTopup) => (
         <span>{row.payment_method?.name ?? "-"}</span>
       ),
     },
     document_status: {
       title: "Status",
+      sortable: true,
       class: "text-center",
       headerClass: "text-center",
       component: (row: ContractOutletTopup) => (
@@ -65,6 +70,7 @@ const createTableConfig = ({
     },
     created_by: {
       title: "Dibuat Oleh",
+      sortable: true,
       class: "text-sm",
       component: (row: ContractOutletTopup) => (
         <span>{row.created_by ?? "-"}</span>
@@ -72,6 +78,7 @@ const createTableConfig = ({
     },
     created_at: {
       title: "Tanggal",
+      sortable: true,
       class: "text-sm",
       component: (row: ContractOutletTopup) => (
         <span>{new Date(row.created_at).toLocaleDateString("id-ID")}</span>

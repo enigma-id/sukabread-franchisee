@@ -10,6 +10,7 @@ import { useReport } from "@/services/report/hooks";
 import { SummaryCard } from "@/components/app";
 import { currencyFormat } from "@/utils";
 import { Banknote, ArrowUpCircle, Landmark } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const THEMES: Record<string, any> = {
   blue: { text: "text-blue-500", iconBg: "#dbeafe", wave: "#3b82f6" },
@@ -23,7 +24,7 @@ const OverviewCards = ({ data }: { data: any | null }) => {
   if (!data) return null;
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-4">
       <SummaryCard
         label="Total Qty"
         value={data.total_qty}
@@ -51,9 +52,12 @@ export function CancelledProductSales() {
     "Cancelled Product Sales | Sukabread Franchisee",
     "Laporan penjualan produk yang dibatalkan.",
   );
+  const navigate = useNavigate();
   const tableConfig = useMemo(() => {
-    return createTableConfig({});
-  }, []);
+    return createTableConfig({
+      onRowClick: (row) => navigate(`/sales/order/${row.order_id}`),
+    });
+  }, [navigate]);
 
   const Table = useTable(
     "report_cancelled_product_sales",

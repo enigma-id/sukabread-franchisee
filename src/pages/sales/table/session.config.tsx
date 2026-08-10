@@ -71,21 +71,26 @@ const createTableConfig = ({
   onRowClick: (row: SalesSession) => onClick?.(row),
   columns: {
     outlet_id: {
+      alias: "outlet:id",
       title: "Outlet",
+      sortable: true,
       component: (row: SalesSession) => <div>{row.outlet?.name ?? "-"}</div>,
     },
     transaction_date: {
       title: "Tanggal",
+      sortable: true,
       component: (row: SalesSession) => formatDate(row.transaction_date),
     },
     cashier_id: {
-      alias: "cashier.id",
+      alias: "cashier:id",
       title: "Kasir",
+      sortable: true,
       class: "font-medium uppercase",
       component: (row: SalesSession) => <div>{row.cashier?.name ?? "-"}</div>,
     },
 started_at: {
       title: "Awal Session",
+      sortable: true,
       component: (row: SalesSession) => (
         <span className="whitespace-nowrap">
           {formatDate(row.started_at)}
@@ -96,6 +101,7 @@ started_at: {
     },
     finished_at: {
       title: "Akhir Session",
+      sortable: true,
       component: (row: SalesSession) =>
         isOngoing(row.finished_at) ? (
           <Badge variant="primary" appearance="soft">
@@ -111,12 +117,15 @@ started_at: {
     },
     cash_started: {
       title: "Modal Awal",
+      sortable: true,
       class: "text-right font-mono",
       headerClass: "text-right",
       component: (row: SalesSession) => currencyFormat(row.cash_started),
     },
     grand_total: {
+      alias: "summary:sales.grand_total",
       title: "Total Transaksi",
+      sortable: true,
       class: "text-right font-mono font-medium",
       headerClass: "text-right",
       component: (row: SalesSession) => {
@@ -132,6 +141,7 @@ started_at: {
     },
     status: {
       title: "Status",
+      sortable: true,
       component: (row: SalesSession) => (
         <Badge variant={getStatusVariant(row.status)} appearance="soft">
           {row.status}

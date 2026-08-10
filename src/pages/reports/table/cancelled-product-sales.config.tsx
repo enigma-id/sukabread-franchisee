@@ -1,22 +1,26 @@
 import config from "@/services/table/const";
-import { currencyFormat, formatDate } from "@/utils";
+import { currencyFormat, formatDateTime } from "@/utils";
+import { ChevronRight } from "lucide-react";
 import type { CancelledProductSalesRow } from "@/services/types/reports";
 
 const createTableConfig = ({
   filter,
+  onRowClick,
 }: {
   filter?: Record<string, unknown>;
+  onRowClick?: (row: CancelledProductSalesRow) => void;
 }) => ({
   ...config,
   url: "/report/cancelled-product-sales",
   filter,
+  onRowClick,
   columns: {
-    date: {
-      title: "Date",
+    cancelled_at: {
+      title: "Cancelled At",
       sortable: true,
       component: (row: CancelledProductSalesRow) => (
         <span className="text-sm">
-          {row?.date ? formatDate(row.date) : "-"}
+          {row?.cancelled_at ? formatDateTime(row.cancelled_at) : "-"}
         </span>
       ),
     },
@@ -75,13 +79,11 @@ const createTableConfig = ({
         <span className="text-sm uppercase">{row?.cancelled_by ?? "-"}</span>
       ),
     },
-    cancelled_at: {
-      title: "Cancelled At",
-      sortable: true,
-      component: (row: CancelledProductSalesRow) => (
-        <span className="text-sm">
-          {row?.cancelled_at ? formatDate(row.cancelled_at) : "-"}
-        </span>
+    action: {
+      title: "",
+      width: 40,
+      component: () => (
+        <ChevronRight size={16} className="text-base-content/30" />
       ),
     },
   },

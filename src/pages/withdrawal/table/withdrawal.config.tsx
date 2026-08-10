@@ -15,10 +15,12 @@ const createTableConfig = ({
   columns: {
     code: {
       title: "Kode",
+      sortable: true,
       class: "font-medium font-mono text-xs",
     },
     outlet: {
       title: "Outlet",
+      sortable: true,
       class: "font-medium",
       component: (row: WithdrawalRequest) => (
         <span>{row.outlet?.name || "-"}</span>
@@ -26,6 +28,7 @@ const createTableConfig = ({
     },
     amount: {
       title: "Jumlah",
+      sortable: true,
       class: "font-mono text-right",
       headerClass: "text-right",
       component: (row: WithdrawalRequest) => (
@@ -34,6 +37,7 @@ const createTableConfig = ({
     },
     bank_name: {
       title: "Bank",
+      sortable: true,
       component: (row: WithdrawalRequest) => (
         <div className="flex flex-col">
           <span className="text-sm font-medium">{row.bank_name}</span>
@@ -45,6 +49,7 @@ const createTableConfig = ({
     },
     document_status: {
       title: "Status",
+      sortable: true,
       class: "text-center",
       headerClass: "text-center",
       component: (row: WithdrawalRequest) => (
@@ -58,6 +63,7 @@ const createTableConfig = ({
     },
     created_by: {
       title: "Dibuat Oleh",
+      sortable: true,
       class: "text-sm",
       component: (row: WithdrawalRequest) => (
         <span>{row.created_by || "-"}</span>
@@ -65,6 +71,7 @@ const createTableConfig = ({
     },
     created_at: {
       title: "Tanggal",
+      sortable: true,
       class: "text-sm",
       component: (row: WithdrawalRequest) => (
         <span>{new Date(row.created_at).toLocaleDateString("id-ID")}</span>

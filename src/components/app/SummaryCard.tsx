@@ -25,7 +25,7 @@ export const SummaryCard: React.FC<SummaryCardProps> = ({
   if (variant === "primary") {
     return (
       <div
-        className="bg-white rounded-2xl shadow-md overflow-hidden relative flex items-center p-4 w-full [container-type:inline-size]"
+        className="bg-white rounded-2xl shadow-md overflow-hidden relative flex items-center p-4 w-full"
         style={{ height: 84 }}
       >
         {/* Background gradient overlay */}
@@ -67,7 +67,7 @@ export const SummaryCard: React.FC<SummaryCardProps> = ({
             <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
               {label}
             </span>
-            <span className="text-xl sm:text-2xl font-extrabold text-slate-800 leading-tight mt-0.5 truncate">
+            <span className="text-lg sm:text-xl font-extrabold text-slate-800 leading-tight mt-0.5 truncate">
               {value}
             </span>
           </div>
@@ -101,7 +101,7 @@ export const SummaryCard: React.FC<SummaryCardProps> = ({
         <span className="text-[9px] font-semibold tracking-widest text-gray-500 uppercase truncate">
           {label}
         </span>
-        <span className="text-lg sm:text-xl font-bold text-gray-900 leading-tight mt-0.5 truncate">
+        <span className="text-base sm:text-lg font-bold text-gray-900 leading-tight mt-0.5 truncate">
           {value}
         </span>
       </div>

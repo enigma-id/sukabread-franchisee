@@ -19,6 +19,7 @@ export * from "./loading";
 export * from "./menu";
 export * from "./modal";
 export * from "./month-picker";
+export * from "./year-picker";
 export * from "./pagination";
 export * from "./radio";
 export * from "./radio-button";

@@ -1,5 +1,5 @@
 import config from "@/services/table/const";
-import { formatDate, formatTime } from "@/utils";
+import { formatDate, formatDateTime } from "@/utils";
 import type { CashControlRow } from "@/services/types/reports";
 
 const createTableConfig = ({
@@ -13,33 +13,44 @@ const createTableConfig = ({
   columns: {
     transaction_date: {
       title: "Tanggal",
+      sortable: true,
       component: (row: CashControlRow) => formatDate(row.transaction_date),
+    },
+    cashier: {
+      title: "Kasir",
+      sortable: true,
     },
     started_at: {
       title: "Mulai",
-      component: (row: CashControlRow) => formatTime(row.started_at),
+      sortable: true,
+      component: (row: CashControlRow) => formatDateTime(row.started_at),
     },
     finished_at: {
       title: "Selesai",
-      component: (row: CashControlRow) => formatTime(row.finished_at),
+      sortable: true,
+      component: (row: CashControlRow) => formatDateTime(row.finished_at),
     },
     transaction_cash: {
       title: "Transaksi Cash",
+      sortable: true,
       align: "right",
       format_number: true,
     },
     cash_deposit: {
       title: "Cash Deposit",
+      sortable: true,
       align: "right",
       format_number: true,
     },
     finished_cash: {
       title: "Ending Cash",
+      sortable: true,
       align: "right",
       format_number: true,
     },
     variance: {
       title: "Variance",
+      sortable: true,
       align: "right",
       format_number: true,
     },

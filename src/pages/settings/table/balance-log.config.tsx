@@ -8,6 +8,7 @@ const createTableConfig = () => ({
   columns: {
     created_at: {
       title: "Waktu",
+      sortable: true,
       class: "font-medium",
       component: (row: ContractBalanceLog) => (
         <span>{dateFormat(row.created_at)}</span>
@@ -15,10 +16,12 @@ const createTableConfig = () => ({
     },
     reference_type: {
       title: "Tipe",
+      sortable: true,
       class: "capitalize",
     },
     nominal: {
       title: "Nominal",
+      sortable: true,
       class: "font-mono text-right",
       headerClass: "text-right",
       component: (row: ContractBalanceLog) => (
@@ -27,6 +30,7 @@ const createTableConfig = () => ({
     },
     balance_before: {
       title: "Saldo Awal",
+      sortable: true,
       class: "font-mono text-right",
       headerClass: "text-right",
       component: (row: ContractBalanceLog) => (
@@ -35,6 +39,7 @@ const createTableConfig = () => ({
     },
     balance_after: {
       title: "Saldo Akhir",
+      sortable: true,
       class: "font-mono text-right",
       headerClass: "text-right",
       component: (row: ContractBalanceLog) => (

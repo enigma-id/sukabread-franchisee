@@ -35,6 +35,7 @@ export interface SettlementSummaryItem {
 // Cash Control
 export interface CashControlRow {
   transaction_date: string;
+  cashier: string;
   started_at: string;
   finished_at: string;
   transaction_cash: number;
@@ -45,6 +46,7 @@ export interface CashControlRow {
 
 // Product Sales
 export interface ProductSalesRow {
+  order_id: string
   date: string
   channel: string
   payment: string
@@ -74,6 +76,7 @@ export interface ProductItemSummary {
 
 // Cancelled Product Sales
 export interface CancelledProductSalesRow {
+  order_id: string
   date: string
   channel: string
   payment: string

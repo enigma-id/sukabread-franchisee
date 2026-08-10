@@ -1,77 +1,32 @@
-/* eslint-disable react-hooks/set-state-in-effect */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useMemo, useState } from "react";
-import { RemoteSelect } from "@/components/ui";
-import type { SelectOptionValue } from "@/services/types/table";
-import TableFilters from "@/components/ui/table/filter";
+import { YearPicker } from "@/components/ui";
 
 interface TableFilterProps {
   table: {
     filter: (params: any) => void;
-    State:
-      | {
-          loading: boolean;
-          filter: any;
-        }
-      | undefined;
+    State: {
+      loading: boolean;
+      filter: any;
+    };
   };
 }
 
 const TableFilter: React.FC<TableFilterProps> = ({ table }) => {
-  const current = useMemo(
-    () => table.State?.filter ?? {},
-    [table.State?.filter],
-  );
+  const current = table.State?.filter ?? {};
 
-  const currYear = new Date().getFullYear();
-
-  const [periode, setPeriode] = useState<SelectOptionValue | null>(() => {
-    const cur = current.periode as number | undefined;
-    return cur ? { label: String(cur), value: cur } : null;
-  });
-
-  const yearOptions = Array.from({ length: 5 }, (_, i) => currYear - i).map(
-    (y) => ({ label: String(y), value: y }),
-  );
-
-  const buildFilters = () => ({
-    periode: periode?.value ?? currYear,
-  });
-
-  const isDirty = useMemo(() => {
-    const f = buildFilters();
-    return String(f.periode || "") !== String(current.periode || "");
-  }, [periode, current]);
-
-  const anyActive = !!current.periode;
-
-  const handleClear = () => {
-    setPeriode(null);
-    table.filter({ periode: currYear });
+  const applyFilters = (updates: any) => {
+    const filters = { periode: current.periode ?? undefined, ...updates };
+    table.filter(filters);
   };
 
-  const handleFilter = () => table.filter(buildFilters());
-
   return (
-    <TableFilters
-      isActive={anyActive}
-      isDirty={isDirty}
-      handleClear={handleClear}
-      handleFilter={handleFilter}
-    >
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
-        <RemoteSelect<SelectOptionValue>
-          label="Periode"
-          placeholder="Filter Periode"
-          data={yearOptions}
-          value={periode}
-          onChange={(opt) => setPeriode(opt)}
-          onClear={() => setPeriode({ label: String(currYear), value: currYear })}
-          getLabel={(item) => item?.label ?? ""}
-          renderItem={(item) => item?.label}
-        />
-      </div>
-    </TableFilters>
+    <div className="flex flex-row items-center gap-3 w-full shrink-0">
+      <YearPicker
+        value={current.periode ?? ""}
+        onChange={(val) => applyFilters({ periode: val })}
+        inputClassName="!h-9 !min-h-0 !py-0"
+      />
+    </div>
   );
 };
 

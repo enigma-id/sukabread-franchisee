@@ -54,10 +54,7 @@ export function AppRoutes() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/sales/session" element={<SessionList />} />
         <Route path="/sales/session/:id" element={<SessionDetail />} />
-        <Route
-          path="/sales/session/:id/order/:orderId"
-          element={<OrderDetail />}
-        />
+        <Route path="/sales/order/:id" element={<OrderDetail />} />
         <Route path="/purchase" element={<Purchase />} />
         <Route path="/stock" element={<Stock />} />
         <Route path="/stock/log" element={<StockLog />} />

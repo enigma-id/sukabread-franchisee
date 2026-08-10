@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useMemo } from "react";
-import { Banknote, ArrowUpCircle, Landmark, AlertTriangle } from "lucide-react";
+import { Banknote, ArrowUpCircle, Landmark, Wallet } from "lucide-react";
 import { Page } from "@/components/app/layout";
 import useTable from "@/services/table/hooks";
 import type { TableConfig } from "@/services/table/const";
@@ -24,7 +24,7 @@ const OverviewCards = ({ data }: { data: CashOverview | null }) => {
   if (!data) return null;
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
       <SummaryCard
         label="Total Transaksi Cash"
         value={currencyFormat(data.transaction_cash)}
@@ -32,21 +32,21 @@ const OverviewCards = ({ data }: { data: CashOverview | null }) => {
         theme={THEMES.orange}
       />
       <SummaryCard
-        label="Total Variance"
-        value={currencyFormat(data.variance)}
+        label="Total Cash Deposit"
+        value={currencyFormat(data.cash_deposit)}
         icon={ArrowUpCircle}
         theme={THEMES.blue}
       />
       <SummaryCard
-        label="Total Setoran Cash"
+        label="Total Ending Cash"
         value={currencyFormat(data.finished_cash)}
         icon={Landmark}
         theme={THEMES.green}
       />
       <SummaryCard
-        label="Kekurangan"
-        value={currencyFormat(data.cash_deposit)}
-        icon={AlertTriangle}
+        label="Total Variance"
+        value={currencyFormat(data.variance)}
+        icon={Wallet}
         theme={THEMES.red}
       />
     </div>
@@ -99,6 +99,7 @@ export function CashControl() {
             emptyTitle="No Cash Control Data"
             emptyDescription="Cash control data will appear here once available."
           />
+          <Table.Pagination />
         </div>
       </Page.Body>
     </Page>

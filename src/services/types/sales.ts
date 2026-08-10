@@ -4,8 +4,9 @@ import type { Outlet } from "./outlet";
 export interface SalesOrderSummary {
   id: string;
   code: string;
-  ordered_at: string;
-  channel: { name: string } | null;
+  created_at: string;
+  paid_at?: string;
+  sales_channel?: { name?: string } | null;
   payment_method: { name: string } | null;
   total_charges: number;
 }

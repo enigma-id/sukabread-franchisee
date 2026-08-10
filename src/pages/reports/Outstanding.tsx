@@ -23,7 +23,7 @@ const OverviewCards = ({ data }: { data: any | null }) => {
   if (!data) return null;
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
       <SummaryCard
         label="Total Outstanding"
         value={data.total_outstanding}

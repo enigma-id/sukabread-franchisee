@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import config from "@/services/table/const";
-import { currencyFormat, formatTime } from "@/utils";
+import { currencyFormat, formatDateTime } from "@/utils";
 import type { TableConfig } from "@/services/table/const";
 
 const createTableConfig = ({
@@ -43,17 +43,20 @@ const createTableConfig = ({
     return {
       date: {
         title: "Date",
+        sortable: false,
         component: (row: any) => row.date,
       },
       started_at: {
         title: "Mulai",
+        sortable: false,
         component: (row: any) =>
-          row.started_at ? formatTime(row.started_at) : "-",
+          row.started_at ? formatDateTime(row.started_at) : "-",
       },
       finished_at: {
         title: "Selesai",
+        sortable: false,
         component: (row: any) =>
-          row.finished_at ? formatTime(row.finished_at) : "-",
+          row.finished_at ? formatDateTime(row.finished_at) : "-",
       },
       ...dynamic,
     };

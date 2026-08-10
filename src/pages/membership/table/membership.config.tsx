@@ -14,6 +14,7 @@ const createTableConfig = ({
   columns: {
     name: {
       title: "Nama Member",
+      sortable: true,
       class: "font-medium",
       component: (row: Membership) => (
         <div className="flex flex-col">
@@ -24,17 +25,20 @@ const createTableConfig = ({
     },
     reff_code: {
       title: "Ref Code",
+      sortable: true,
       class: "text-sm text-base-content/70",
       component: (row: Membership) => <span>{row.reff_code}</span>,
     },
     saldo: {
       title: "Saldo",
+      sortable: true,
       class: "text-right font-mono",
       headerClass: "text-right",
       format_number: true,
     },
     updated_at: {
       title: "Terakhir Diupdate",
+      sortable: true,
       class: "text-sm",
       component: (row: Membership) => {
         return (

@@ -1,11 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   CalendarDays,
-  Wallet,
   TrendingUp,
   CreditCard,
   Tag,
-  Zap,
   ListOrdered,
   ChevronRight,
 } from "lucide-react";
@@ -15,6 +13,7 @@ import { useSession } from "@/services/sales/hooks";
 import {
   formatDate,
   formatTime,
+  formatDateTime,
   isOngoing,
   currencyFormat,
   displayPaymentMethod,
@@ -59,6 +58,7 @@ export function SessionDetail() {
   const outstandingBill = session.summary?.sales?.outstanding_bill ?? 0;
   const expectedCash = session.summary?.cash?.expected_cash ?? 0;
   const topupCash = session.summary?.cash?.topup_cash ?? 0;
+  const topups = session.summary?.topups ?? [];
   const paymentMethods = session.summary?.payment_methods ?? [];
   const categorySolds = session.summary?.category_solds ?? [];
   const orders = session.orders ?? [];
@@ -88,6 +88,12 @@ export function SessionDetail() {
                 </dd>
               </div>
               <div className="info-row">
+                <dt className="info-label">Cashier</dt>
+                <dd className="info-value">
+                  {session.cashier?.name ?? "-"}
+                </dd>
+              </div>
+              <div className="info-row">
                 <dt className="info-label">Tanggal</dt>
                 <dd className="info-value">
                   {formatDate(session.transaction_date)}
@@ -95,7 +101,13 @@ export function SessionDetail() {
               </div>
               <div className="info-row">
                 <dt className="info-label">Awal Session</dt>
-                <dd className="info-value">{formatTime(session.started_at)}</dd>
+                <dd className="info-value">
+                  <span className="whitespace-nowrap">
+                    {formatDate(session.started_at)}
+                    <span className="text-slate-400"> · </span>
+                    {formatTime(session.started_at)}
+                  </span>
+                </dd>
               </div>
               <div className="info-row">
                 <dt className="info-label">Akhir Session</dt>
@@ -105,22 +117,14 @@ export function SessionDetail() {
                       (Ongoing)
                     </span>
                   ) : (
-                    formatTime(session.finished_at)
+                    <span className="whitespace-nowrap">
+                      {formatDate(session.finished_at)}
+                      <span className="text-slate-400"> · </span>
+                      {formatTime(session.finished_at)}
+                    </span>
                   )}
                 </dd>
               </div>
-            </dl>
-          </div>
-
-          {/* Cash Info */}
-          <div className="card-info card-animate p-4">
-            <div className="card-section-header">
-              <div className="card-section-icon">
-                <Wallet size={18} />
-              </div>
-              <h2 className="card-section-title">Cash Info</h2>
-            </div>
-            <dl className="space-y-1">
               <div className="info-row">
                 <dt className="info-label">Starting Cash</dt>
                 <dd className="info-value mono">
@@ -140,11 +144,9 @@ export function SessionDetail() {
                 </dd>
               </div>
               <div className="info-row">
-                <dt className="info-label">Outstanding Bill Payments</dt>
+                <dt className="info-label">Topup Cash</dt>
                 <dd className="info-value mono">
-                  {currencyFormat(
-                    session.summary?.sales?.outstanding_bill_payment ?? 0,
-                  )}
+                  {currencyFormat(topupCash)}
                 </dd>
               </div>
             </dl>
@@ -183,7 +185,7 @@ export function SessionDetail() {
                   {currencyFormat(totalService)}
                 </dd>
               </div>
-              <div className="info-row-total">
+              <div className="info-row">
                 <dt className="info-label">Grand Total</dt>
                 <dd className="info-value mono">
                   {currencyFormat(grandTotal)}
@@ -193,6 +195,14 @@ export function SessionDetail() {
                 <dt className="info-label">Outstanding Bills</dt>
                 <dd className="info-value mono">
                   {currencyFormat(outstandingBill)}
+                </dd>
+              </div>
+              <div className="info-row">
+                <dt className="info-label">Outstanding Bill Payments</dt>
+                <dd className="info-value mono">
+                  {currencyFormat(
+                    session.summary?.sales?.outstanding_bill_payment ?? 0,
+                  )}
                 </dd>
               </div>
             </dl>
@@ -206,7 +216,7 @@ export function SessionDetail() {
               </div>
               <h2 className="card-section-title">Pembayaran</h2>
             </div>
-            {paymentMethods.length === 0 ? (
+            {paymentMethods.length === 0 && topups.length === 0 ? (
               <p className="text-sm text-base-content/50">Tidak ada data</p>
             ) : (
               <dl className="space-y-1">
@@ -215,6 +225,14 @@ export function SessionDetail() {
                     <dt className="info-label">{cp.name ?? "Cash"}</dt>
                     <dd className="info-value mono">
                       {currencyFormat(cp.total_paid)}
+                    </dd>
+                  </div>
+                ))}
+                {topups.map((tp: { type: string; total_nominal: number }, i: number) => (
+                  <div key={i} className="info-row">
+                    <dt className="info-label">Topup {tp.type}</dt>
+                    <dd className="info-value mono">
+                      {currencyFormat(tp.total_nominal)}
                     </dd>
                   </div>
                 ))}
@@ -247,22 +265,6 @@ export function SessionDetail() {
                 ))}
               </dl>
             )}
-          </div>
-
-          {/* Topup */}
-          <div className="card-info card-animate p-4">
-            <div className="card-section-header">
-              <div className="card-section-icon">
-                <Zap size={18} />
-              </div>
-              <h2 className="card-section-title">Topup</h2>
-            </div>
-            <dl className="space-y-1">
-              <div className="info-row">
-                <dt className="info-label">Total Topup</dt>
-                <dd className="info-value mono">{currencyFormat(topupCash)}</dd>
-              </div>
-            </dl>
           </div>
         </div>
 
@@ -317,9 +319,7 @@ export function SessionDetail() {
                     <tr
                       key={order.id}
                       onClick={() =>
-                        navigate(
-                          `/sales/session/${session.id}/order/${order.id}`,
-                        )
+                        navigate(`/sales/order/${order.id}`)
                       }
                       className="hover:bg-gray-50/50 border-b border-gray-100 last:border-0 hover:cursor-pointer transition-colors group"
                     >
@@ -327,13 +327,15 @@ export function SessionDetail() {
                         {idx + 1}
                       </td>
                       <td className="px-4 py-3 align-middle text-[13px] font-medium text-gray-700">
-                        {formatTime(order.ordered_at)}
+                        {formatDateTime(order.paid_at || order.created_at)}
                       </td>
                       <td className="px-4 py-3 align-middle text-[13px] font-medium text-gray-700">
                         {order.code.toUpperCase()}
                       </td>
                       <td className="px-4 py-3 align-middle text-[13px] font-medium text-gray-700">
-                        {displayPaymentMethod(order.channel?.name ?? null)}
+                        {displayPaymentMethod(
+                          order?.sales_channel?.name ?? null,
+                        )}
                       </td>
                       <td className="px-4 py-3 align-middle text-[13px] font-medium text-gray-700">
                         {displayPaymentMethod(

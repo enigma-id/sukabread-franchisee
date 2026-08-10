@@ -87,7 +87,7 @@ export function Settlement() {
       <Page.Body className="flex-1 flex flex-col min-h-0 ">
         <SettlementSummaryCards summary={summary} />
 
-        <Table.Tools downloadable>
+        <Table.Tools downloadable searchable={false}>
           <TableFilter table={Table} />
         </Table.Tools>
 

@@ -9,6 +9,7 @@ const createTableConfig = () => ({
   columns: {
     created_at: {
       title: "Waktu",
+      sortable: true,
       class: "font-medium text-sm",
       component: (row: StockLog) => {
         return (
@@ -20,11 +21,13 @@ const createTableConfig = () => ({
     },
     ingredient_name: {
       title: "Item",
+      sortable: true,
       class: "font-medium",
       component: (row: StockLog) => <span>{row.ingredient.name}</span>,
     },
     reference_type: {
       title: "Tipe Referensi",
+      sortable: true,
       class: "text-center",
       headerClass: "text-center",
       component: (row: StockLog) => (
@@ -35,6 +38,7 @@ const createTableConfig = () => ({
     },
     qty_after: {
       title: "Stok Akhir",
+      sortable: true,
       class: "text-center font-mono",
       headerClass: "text-center",
       component: (row: StockLog) => {
