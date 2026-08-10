@@ -108,8 +108,8 @@
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  margin-bottom: 1.25rem;
-  padding-bottom: 0.875rem;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.625rem;
   border-bottom: 1px solid oklch(0.94 0.005 264.91);
 }
 

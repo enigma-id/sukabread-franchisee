@@ -45,7 +45,7 @@ export const Badge = ({
   return (
     <div
       className={clsx(
-        "inline-flex items-center font-bold tracking-wide border shadow-sm capitalize",
+        "inline-flex items-center font-bold tracking-wide border shadow-sm capitalize rounded-full",
         variantClass,
         sizeClass,
         appearanceClass,

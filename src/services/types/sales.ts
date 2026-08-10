@@ -77,5 +77,5 @@ export interface SalesSession {
   outlet?: Outlet;
   cashier?: Cashier;
   summary?: SessionSummary;
-  sales_orders: SalesOrderSummary[];
+  orders: SalesOrderSummary[];
 }

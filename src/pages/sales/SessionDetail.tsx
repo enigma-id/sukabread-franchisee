@@ -6,11 +6,19 @@ import {
   CreditCard,
   Tag,
   Zap,
+  ListOrdered,
+  ChevronRight,
 } from "lucide-react";
 import { Page } from "@/components/app/layout";
 import { Loading } from "@/components/ui";
 import { useSession } from "@/services/sales/hooks";
-import { formatDate, formatTime, isOngoing, currencyFormat } from "@/utils";
+import {
+  formatDate,
+  formatTime,
+  isOngoing,
+  currencyFormat,
+  displayPaymentMethod,
+} from "@/utils";
 import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import type { SalesSession } from "@/services/types";
@@ -53,18 +61,19 @@ export function SessionDetail() {
   const topupCash = session.summary?.cash?.topup_cash ?? 0;
   const paymentMethods = session.summary?.payment_methods ?? [];
   const categorySolds = session.summary?.category_solds ?? [];
+  const orders = session.orders ?? [];
 
   return (
     <Page className="h-full flex flex-col min-h-0 bg-slate-50">
       <Page.Header
         category="Sales"
-        title={`Session #${session.id}`}
+        title={`Session #${session.id.split("-").pop()}`}
         backTo={() => navigate(-1)}
       />
       <Page.Body>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {/* Session Info */}
-          <div className="card-info card-animate p-6">
+          <div className="card-info card-animate p-4">
             <div className="card-section-header">
               <div className="card-section-icon">
                 <CalendarDays size={18} />
@@ -74,7 +83,9 @@ export function SessionDetail() {
             <dl className="space-y-1">
               <div className="info-row">
                 <dt className="info-label">Session No.</dt>
-                <dd className="info-value">{session.id}</dd>
+                <dd className="info-value">
+                  {session.id.split("-").pop()}
+                </dd>
               </div>
               <div className="info-row">
                 <dt className="info-label">Tanggal</dt>
@@ -102,7 +113,7 @@ export function SessionDetail() {
           </div>
 
           {/* Cash Info */}
-          <div className="card-info card-animate p-6">
+          <div className="card-info card-animate p-4">
             <div className="card-section-header">
               <div className="card-section-icon">
                 <Wallet size={18} />
@@ -140,7 +151,7 @@ export function SessionDetail() {
           </div>
 
           {/* Sales Info */}
-          <div className="card-info card-animate p-6">
+          <div className="card-info card-animate p-4">
             <div className="card-section-header">
               <div className="card-section-icon">
                 <TrendingUp size={18} />
@@ -188,7 +199,7 @@ export function SessionDetail() {
           </div>
 
           {/* Pembayaran */}
-          <div className="card-info card-animate p-6">
+          <div className="card-info card-animate p-4">
             <div className="card-section-header">
               <div className="card-section-icon">
                 <CreditCard size={18} />
@@ -212,7 +223,7 @@ export function SessionDetail() {
           </div>
 
           {/* Kategori */}
-          <div className="card-info card-animate p-6">
+          <div className="card-info card-animate p-4">
             <div className="card-section-header">
               <div className="card-section-icon">
                 <Tag size={18} />
@@ -239,7 +250,7 @@ export function SessionDetail() {
           </div>
 
           {/* Topup */}
-          <div className="card-info card-animate p-6">
+          <div className="card-info card-animate p-4">
             <div className="card-section-header">
               <div className="card-section-icon">
                 <Zap size={18} />
@@ -256,7 +267,7 @@ export function SessionDetail() {
         </div>
 
         {/* Transaction Table */}
-        {/* <div className="card-table card-animate mt-6">
+        <div className="card-table card-animate mt-6">
           <div className="table-header !p-6">
             <div className="table-header-icon">
               <ListOrdered size={16} />
@@ -292,7 +303,7 @@ export function SessionDetail() {
                 </tr>
               </thead>
               <tbody>
-                {session.sales_orders.length === 0 ? (
+                {orders.length === 0 ? (
                   <tr>
                     <td
                       colSpan={7}
@@ -302,7 +313,7 @@ export function SessionDetail() {
                     </td>
                   </tr>
                 ) : (
-                  session.sales_orders.map((order: any, idx: number) => (
+                  orders.map((order: any, idx: number) => (
                     <tr
                       key={order.id}
                       onClick={() =>
@@ -344,7 +355,7 @@ export function SessionDetail() {
               </tbody>
             </table>
           </div>
-        </div> */}
+        </div>
       </Page.Body>
     </Page>
   );

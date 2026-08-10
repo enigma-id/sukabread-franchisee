@@ -67,9 +67,12 @@ export interface DashboardData {
   saldo_outlet?: number;
   stok_kritis?: number;
   omset_penjualan?: number;
+  total_outstanding?: number;
   saldo_outlet_detail?: number;
   sales_graph?: SalesGraph;
   aov?: number;
+  total_discount?: number;
+  total_service?: number;
   weekly_comparison?: WeeklyComparison;
   outstanding_bill_tracker?: OutstandingBillTracker;
   top_menu?: TopMenu[];

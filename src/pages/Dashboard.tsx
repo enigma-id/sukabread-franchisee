@@ -1,12 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   TrendingUp,
   TrendingDown,
   ShoppingCart,
   Users,
-  AlertTriangle,
   Wallet,
   BarChart2,
   Medal,
@@ -18,9 +17,13 @@ import {
   Landmark,
   UserCheck,
   ArrowUpFromLine,
+  BadgePercent,
+  Percent,
 } from "lucide-react";
 import { Page } from "@/components/app/layout";
 import { SummaryCard } from "@/components/app";
+import { MonthPicker } from "@/components/ui";
+import dayjs from "dayjs";
 import { useDashboard } from "@/services/dashboard/hooks";
 import { currencyFormat, dateFormat } from "@/utils";
 import { useDocumentMeta } from "@/hooks/useDocumentMeta";
@@ -55,7 +58,7 @@ const PipelineCard = ({
       >
         <Icon className={`w-5 h-5 ${theme.text}`} />
       </div>
-      <h3 className="text-lg font-bold text-slate-800">{title}</h3>
+      <h3 className="text-base font-bold text-slate-800">{title}</h3>
     </div>
     <div className="space-y-4">{children}</div>
   </div>
@@ -139,9 +142,11 @@ export function Dashboard() {
 
   const { get, getResult } = useDashboard();
 
+  const [periode, setPeriode] = useState(dayjs().format("YYYY-MM"));
+
   useEffect(() => {
-    get();
-  }, []);
+    get({ periode });
+  }, [periode]);
 
   const data = getResult?.data?.data as DashboardData;
   const isLoading = getResult?.isLoading;
@@ -153,6 +158,14 @@ export function Dashboard() {
           category="Overview"
           title="Dashboard"
           subtitle="Memuat data..."
+          action={
+            <MonthPicker
+              value={periode}
+              onChange={(v) => v && setPeriode(v)}
+              placeholder="Pilih periode"
+              inputClassName="!h-9 !min-h-0 !py-0 !shadow-sm"
+            />
+          }
         />
         <Page.Body className="p-4 sm:p-6 flex items-center justify-center">
           <span className="loading loading-spinner loading-lg text-primary"></span>
@@ -167,6 +180,14 @@ export function Dashboard() {
         category="Dashboard"
         title="Dashboard"
         subtitle="Selamat datang kembali di panel franchisee Anda."
+        action={
+          <MonthPicker
+            value={periode}
+            onChange={(v) => v && setPeriode(v)}
+            placeholder="Pilih periode"
+            inputClassName="!h-9 !min-h-0 !py-0 !shadow-sm"
+          />
+        }
       />
       <Page.Body className="flex flex-col gap-6 pb-10">
         {/* Sales Chart */}
@@ -188,13 +209,13 @@ export function Dashboard() {
               />
             </div>
             <SummaryCard
-              label="Omzet Hari Ini"
+              label="Omset Hari Ini"
               value={currencyFormat(data?.omzet_hari_ini || 0)}
               icon={TrendingUp}
               theme={THEMES.green}
             />
             <SummaryCard
-              label="Omzet Total"
+              label="Omset Total"
               value={currencyFormat(data?.omzet || 0)}
               icon={TrendingUp}
               theme={THEMES.green}
@@ -206,7 +227,7 @@ export function Dashboard() {
               theme={THEMES.blue}
             />
             <SummaryCard
-              label="AOV"
+              label="Rata-Rata Per-Transaksi"
               value={currencyFormat(data?.aov || 0)}
               icon={BarChart2}
               theme={THEMES.cyan}
@@ -218,23 +239,31 @@ export function Dashboard() {
               theme={THEMES.purple}
             />
             <SummaryCard
-              label="Stok Kritis"
-              value={data?.stok_kritis || 0}
-              icon={AlertTriangle}
-              theme={THEMES.red}
-            />
-            <SummaryCard
-              label="Total Hutang"
+              label="Total Outstanding"
               value={currencyFormat(
-                data?.outstanding_bill_tracker?.total_outstanding || 0,
+                data?.total_outstanding ??
+                  data?.outstanding_bill_tracker?.total_outstanding ??
+                  0,
               )}
               icon={Receipt}
               theme={THEMES.orange}
             />
+            <SummaryCard
+              label="Total Discount"
+              value={currencyFormat(data?.total_discount || 0)}
+              icon={BadgePercent}
+              theme={THEMES.red}
+            />
+            <SummaryCard
+              label="Total Service"
+              value={currencyFormat(data?.total_service || 0)}
+              icon={Percent}
+              theme={THEMES.purple}
+            />
             {data?.weekly_comparison && (
               <>
                 <SummaryCard
-                  label="Growth Weekly Omzet"
+                  label="Growth Weekly Omset"
                   value={`${data.weekly_comparison.omzet_growth > 0 ? "+" : ""}${data.weekly_comparison.omzet_growth.toFixed(2)}%`}
                   icon={
                     data.weekly_comparison.trend === "up"
@@ -274,30 +303,9 @@ export function Dashboard() {
           </div>
 
           {/* Remaining Detailed Cards (Bento) */}
-          <div className="lg:col-span-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <PipelineCard
-              title="Cashier Performance"
-              icon={UserCheck}
-              theme={THEMES.blue}
-            >
-              {data?.cashier_performance?.map((cashier, i) => (
-                <div className="flex items-center justify-between" key={i}>
-                  <div className="flex items-center gap-2">
-                    <UserCheck className="w-4 h-4 text-amber-500" />
-                    <span className="text-sm font-medium text-slate-500">
-                      {cashier.cashier_name}
-                    </span>
-                  </div>
-                  <span className="text-sm font-bold text-slate-800">
-                    {cashier.total_transaksi} Trans /{" "}
-                    {currencyFormat(cashier.omzet)}
-                  </span>
-                </div>
-              ))}
-            </PipelineCard>
-
-            <PipelineCard
-              title="Payment Method Split"
+              title="Payment Method"
               icon={Landmark}
               theme={THEMES.cyan}
             >
@@ -310,8 +318,7 @@ export function Dashboard() {
                     </span>
                   </div>
                   <span className="text-sm font-bold text-slate-800">
-                    {currencyFormat(method.total_paid)} (
-                    {method.percentage.toFixed(1)}%)
+                    {currencyFormat(method.total_paid)}
                   </span>
                 </div>
               ))}
@@ -346,13 +353,21 @@ export function Dashboard() {
                       {item.menu_name}
                     </span>
                   </div>
-                  <span className="text-sm font-bold text-slate-800">
-                    {item.total_qty} x {currencyFormat(item.total_revenue)}
-                  </span>
+                  <div className="flex flex-col items-end leading-tight">
+                    <span className="text-xs text-slate-500">
+                      {item.total_qty} pcs
+                    </span>
+                    <span className="text-sm font-bold text-slate-800">
+                      {currencyFormat(item.total_revenue)}
+                    </span>
+                  </div>
                 </div>
               ))}
             </PipelineCard>
+          </div>
 
+          {/* Bottom Row */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             <PeakHoursCard data={data?.peak_hours} />
 
             {/* Withdrawal Terbaru */}
