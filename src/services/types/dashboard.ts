@@ -79,6 +79,6 @@ export interface DashboardData {
   cashier_performance?: CashierPerformance[];
   payment_method_split?: PaymentMethodSplit[];
   peak_hours?: PeakHour[];
-  top_member_by_saldo?: TopMemberBySaldo[];
+  top_member_topup?: TopMemberBySaldo[];
   withdrawal_terbaru?: WithdrawalTerbaru[];
 }

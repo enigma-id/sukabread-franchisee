@@ -323,8 +323,8 @@ export function Dashboard() {
               ))}
             </PipelineCard>
 
-            <PipelineCard title="Top Members" icon={Medal} theme={THEMES.green}>
-              {data?.top_member_by_saldo?.map((member, i) => (
+            <PipelineCard title="Top Member Topup" icon={Medal} theme={THEMES.green}>
+              {data?.top_member_topup?.map((member, i) => (
                 <div className="flex items-center justify-between" key={i}>
                   <div className="flex items-center gap-2">
                     <Medal className="w-4 h-4 text-amber-500" />
@@ -354,7 +354,7 @@ export function Dashboard() {
                   </div>
                   <div className="flex flex-col items-end leading-tight">
                     <span className="text-[10px] text-slate-500">
-                      {item.total_qty} pcs
+                      {item.total_qty} PCS
                     </span>
                     <span className="text-xs font-bold text-slate-800">
                       {currencyFormat(item.total_revenue)}
