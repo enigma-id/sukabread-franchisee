@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   TrendingUp,
   TrendingDown,
@@ -43,13 +44,22 @@ const PipelineCard = ({
   children,
   icon: Icon,
   theme,
+  onClick,
 }: {
   title: string;
   children?: any;
   icon: any;
   theme: any;
+  onClick?: () => void;
 }) => (
-  <div className="bg-white rounded-3xl p-4 shadow-xl shadow-slate-200/20 border border-slate-100 h-full">
+  <div
+    onClick={onClick}
+    className={`bg-white rounded-3xl p-4 shadow-xl shadow-slate-200/20 border border-slate-100 h-full ${
+      onClick
+        ? "cursor-pointer hover:shadow-2xl hover:-translate-y-0.5 transition-all duration-150 group"
+        : ""
+    }`}
+  >
     <div className="flex items-center gap-3 mb-3">
       <div
         className="w-9 h-9 rounded-2xl flex items-center justify-center shadow-lg"
@@ -138,6 +148,8 @@ const PeakHoursCard = ({
 
 export function Dashboard() {
   useDocumentMeta("Dashboard | Sukabread Franchisee", "");
+  const navigate = useNavigate();
+  const go = (path: string) => () => navigate(path);
 
   const { get, getResult } = useDashboard();
 
@@ -212,18 +224,21 @@ export function Dashboard() {
               value={currencyFormat(data?.omzet_hari_ini || 0)}
               icon={TrendingUp}
               theme={THEMES.green}
+              onClick={go(`/report/settlement/daily?date=${dayjs().format("YYYY-MM")}`)}
             />
             <SummaryCard
               label="Omset Total"
               value={currencyFormat(data?.omzet || 0)}
               icon={TrendingUp}
               theme={THEMES.green}
+              onClick={go(`/report/settlement/daily?date=${periode}`)}
             />
             <SummaryCard
               label="Total Transaksi"
               value={data?.total_transaksi || 0}
               icon={ShoppingCart}
               theme={THEMES.blue}
+              onClick={go("/sales/session")}
             />
             <SummaryCard
               label="Rata-Rata Per-Transaksi"
@@ -236,6 +251,7 @@ export function Dashboard() {
               value={data?.sesi_kasir_aktif || 0}
               icon={Users}
               theme={THEMES.purple}
+              onClick={go("/sales/session")}
             />
             <SummaryCard
               label="Total Outstanding"
@@ -246,6 +262,7 @@ export function Dashboard() {
               )}
               icon={Receipt}
               theme={THEMES.orange}
+              onClick={go("/report/outstanding")}
             />
             <SummaryCard
               label="Total Discount"
@@ -307,6 +324,7 @@ export function Dashboard() {
               title="Payment Method"
               icon={Landmark}
               theme={THEMES.cyan}
+              onClick={go("/report/settlement/daily")}
             >
               {data?.payment_method_split?.map((method, i) => (
                 <div className="flex items-center justify-between" key={i}>
@@ -323,7 +341,12 @@ export function Dashboard() {
               ))}
             </PipelineCard>
 
-            <PipelineCard title="Top Member Topup" icon={Medal} theme={THEMES.green}>
+            <PipelineCard
+              title="Top Member Topup"
+              icon={Medal}
+              theme={THEMES.green}
+              onClick={go("/membership")}
+            >
               {data?.top_member_topup?.map((member, i) => (
                 <div className="flex items-center justify-between" key={i}>
                   <div className="flex items-center gap-2">
@@ -343,6 +366,7 @@ export function Dashboard() {
               title="Top Menu"
               icon={ConciergeBell}
               theme={THEMES.orange}
+              onClick={go("/report/product-sales")}
             >
               {data?.top_menu?.map((item, i) => (
                 <div className="flex items-center justify-between" key={i}>
@@ -374,6 +398,7 @@ export function Dashboard() {
               title="Penarikan Terbaru"
               icon={ArrowUpFromLine}
               theme={THEMES.orange}
+              onClick={go("/withdrawal")}
             >
               {data?.withdrawal_terbaru?.length ? (
                 data.withdrawal_terbaru.map((w, i) => (
