@@ -97,3 +97,15 @@ export interface CancelledProductSalesSummary {
   total_nett: number
   total_discount: number
 }
+
+// Topup Cancelled
+export interface TopupCancelledRow {
+  date: string
+  reference_code: string
+  membership: string
+  outlet: string
+  nominal: number
+  cancelled_reason: string
+  cancelled_by: string
+  cancelled_at: string
+}

@@ -139,6 +139,11 @@ const menuSections: MenuSection[] = [
         icon: <Receipt size={16} />,
       },
       {
+        label: "Topup Dibatalkan",
+        path: "/report/topup-cancelled",
+        icon: <Receipt size={16} />,
+      },
+      {
         label: "Outstanding",
         path: "/report/outstanding",
         icon: <Banknote size={16} />,

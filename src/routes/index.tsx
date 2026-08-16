@@ -21,6 +21,7 @@ import {
   CashControl,
   ProductItem,
   CancelledProductSales,
+  TopupCancelled,
 } from "@/pages/reports";
 import { UserList } from "@/pages/settings/UserList";
 import { UserCreate } from "@/pages/settings/UserCreate";
@@ -70,6 +71,7 @@ export function AppRoutes() {
         <Route path="/report/settlement" element={<Settlement />} />
         <Route path="/report/settlement/daily" element={<SettlementDaily />} />
         <Route path="/report/cash-control" element={<CashControl />} />
+        <Route path="/report/topup-cancelled" element={<TopupCancelled />} />
         <Route path="/withdrawal" element={<WithdrawalList />} />
         <Route path="/withdrawal/create" element={<WithdrawalCreate />} />
         <Route path="/outlet-topup" element={<TopupList />} />
