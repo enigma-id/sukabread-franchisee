@@ -109,3 +109,8 @@ export interface TopupCancelledRow {
   cancelled_by: string
   cancelled_at: string
 }
+
+export interface TopupCancelledSummary {
+  total_count: number
+  total_nominal: number
+}

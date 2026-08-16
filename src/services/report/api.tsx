@@ -112,6 +112,28 @@ export const reportApi = createApi({
         params,
       }),
     }),
+
+    /**
+     * GET /report/topup-cancelled
+     * List cancelled topup data with pagination
+     */
+    getTopupCancelled: builder.query({
+      query: (params) => ({
+        url: "/report/topup-cancelled",
+        params,
+      }),
+    }),
+
+    /**
+     * GET /report/topup-cancelled/summary
+     * Get cancelled topup summary
+     */
+    getTopupCancelledSummary: builder.query({
+      query: (params) => ({
+        url: "/report/topup-cancelled/summary",
+        params,
+      }),
+    }),
   }),
 });
 
@@ -128,4 +150,6 @@ export const {
   useLazyGetProductItemSummaryQuery,
   useLazyGetCancelledProductSalesQuery,
   useLazyGetCancelledProductSalesSummaryQuery,
+  useLazyGetTopupCancelledQuery,
+  useLazyGetTopupCancelledSummaryQuery,
 } = reportApi;

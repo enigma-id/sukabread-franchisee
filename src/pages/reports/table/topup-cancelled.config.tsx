@@ -60,6 +60,15 @@ const createTableConfig = ({
         <span className="text-sm uppercase">{row.cancelled_by ?? "-"}</span>
       ),
     },
+    cancelled_at: {
+      title: "Cancelled At",
+      sortable: true,
+      component: (row: TopupCancelledRow) => (
+        <span className="text-sm">
+          {row.cancelled_at ? formatDateTime(row.cancelled_at) : "-"}
+        </span>
+      ),
+    },
   },
 });
 
