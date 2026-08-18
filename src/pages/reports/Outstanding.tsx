@@ -23,15 +23,15 @@ const OverviewCards = ({ data }: { data: any | null }) => {
   if (!data) return null;
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+    <div className='grid grid-cols-1 md:grid-cols-2 gap-4 mb-4'>
       <SummaryCard
-        label="Total Outstanding"
+        label='Total Outstanding'
         value={data.total_outstanding}
         icon={Banknote}
         theme={THEMES.orange}
       />
       <SummaryCard
-        label="Total Charges"
+        label='Total Charges'
         value={currencyFormat(data.total_charges)}
         icon={ArrowUpCircle}
         theme={THEMES.blue}
@@ -73,9 +73,9 @@ export function Outstanding() {
   const summary = outstandingSummaryResult.data?.data;
 
   return (
-    <Page className="h-full flex flex-col min-h-0 bg-slate-50">
-      <Page.Header category="Report" title="Outstanding Bills" subtitle="" />
-      <Page.Body className="flex-1 flex flex-col min-h-0 ">
+    <Page className='h-full flex flex-col min-h-0 bg-slate-50'>
+      <Page.Header category='Report' title='Outstanding Billsx' subtitle='' />
+      <Page.Body className='flex-1 flex flex-col min-h-0 '>
         <OverviewCards data={summary} />
 
         <Table.Tools downloadable>
@@ -83,8 +83,8 @@ export function Outstanding() {
         </Table.Tools>
 
         <Table.Render
-          emptyTitle="No Outstanding Bills"
-          emptyDescription="Outstanding bills will appear here once available."
+          emptyTitle='No Outstanding Bills'
+          emptyDescription='Outstanding bills will appear here once available.'
         />
         <Table.Pagination />
       </Page.Body>
