@@ -74,7 +74,7 @@ export function Outstanding() {
 
   return (
     <Page className='h-full flex flex-col min-h-0 bg-slate-50'>
-      <Page.Header category='Report' title='Outstanding Billsx' subtitle='' />
+      <Page.Header category='Report' title='Outstanding Bills' subtitle='' />
       <Page.Body className='flex-1 flex flex-col min-h-0 '>
         <OverviewCards data={summary} />
 
