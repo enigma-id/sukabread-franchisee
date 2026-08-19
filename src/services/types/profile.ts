@@ -24,6 +24,7 @@ export interface ContractProfile {
     name: string;
     address: string;
     outlet_type_id: string;
+    saldo: number;
   };
 }
 

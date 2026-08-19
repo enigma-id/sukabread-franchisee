@@ -31,6 +31,7 @@ export interface ContractOutletTopup {
     status: string;
     va_number?: string;
     bank_name?: string;
+    qr_url?: string;
   };
 }
 

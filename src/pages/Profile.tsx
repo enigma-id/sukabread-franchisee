@@ -8,10 +8,7 @@ import { User, Lock } from "lucide-react";
 import { useDocumentMeta } from "@/hooks/useDocumentMeta";
 
 export function Profile() {
-  useDocumentMeta(
-    "Profile | Sukabread Franchisee",
-    "Update profil akun Anda.",
-  );
+  useDocumentMeta("Profile | Sukabread Franchisee", "Update profil akun Anda.");
   const user = useAppSelector((s) => s.auth.session?.user);
   const FormState = useAppSelector((s) => s.form);
   const { update, updateResult } = useProfile();
@@ -46,40 +43,40 @@ export function Profile() {
   };
 
   return (
-    <Page className="h-full flex flex-col min-h-0 bg-slate-50">
-      <Page.Header category="Settings" title="Update Profile" />
-      <Page.Body className="flex items-start justify-center p-6">
-        <div className="w-full max-w-md space-y-6">
+    <Page className='h-full flex flex-col min-h-0 bg-slate-50'>
+      <Page.Header category='Settings' title='Update Profile' />
+      <Page.Body className='flex items-start justify-center p-6'>
+        <div className='w-full max-w-md space-y-6'>
           {/* User Info Card */}
-          <div className="bg-white rounded-2xl border border-base-300 p-6 shadow-sm">
-            <div className="flex items-center gap-4 pb-5 border-b border-base-200">
-              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
-                <User size={28} className="text-primary" />
+          <div className='bg-white rounded-2xl border border-base-300 p-6 shadow-sm'>
+            <div className='flex items-center gap-4 pb-5 border-b border-base-200'>
+              <div className='w-14 h-14 rounded-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center'>
+                <User size={28} className='text-primary' />
               </div>
               <div>
-                <h2 className="text-lg font-semibold text-base-content">
+                <h2 className='text-lg font-semibold text-base-content'>
                   {user?.name ?? "User"}
                 </h2>
-                <p className="text-sm text-base-content/60">
+                <p className='text-sm text-base-content/60'>
                   @{user?.username}
                 </p>
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4 pt-5">
+            <div className='grid grid-cols-2 gap-4 pt-5'>
               <div>
-                <p className="text-xs text-base-content/50 font-medium uppercase tracking-wider mb-1">
+                <p className='text-xs text-base-content/50 font-medium uppercase tracking-wider mb-1'>
                   Nama Lengkap
                 </p>
-                <p className="text-sm font-medium text-base-content">
+                <p className='text-sm font-medium text-base-content'>
                   {user?.name ?? "-"}
                 </p>
               </div>
               <div>
-                <p className="text-xs text-base-content/50 font-medium uppercase tracking-wider mb-1">
+                <p className='text-xs text-base-content/50 font-medium uppercase tracking-wider mb-1'>
                   Username
                 </p>
-                <p className="text-sm font-medium text-base-content">
+                <p className='text-sm font-medium text-base-content'>
                   @{user?.username ?? "-"}
                 </p>
               </div>
@@ -87,26 +84,26 @@ export function Profile() {
           </div>
 
           {/* Password Form Card */}
-          <div className="bg-white rounded-2xl border border-base-300 p-6 shadow-sm">
-            <div className="flex items-center gap-3 mb-5">
-              <div className="w-10 h-10 rounded-xl bg-orange-100 flex items-center justify-center">
-                <Lock size={20} className="text-orange-600" />
+          <div className='bg-white rounded-2xl border border-base-300 p-6 shadow-sm'>
+            <div className='flex items-center gap-3 mb-5'>
+              <div className='w-10 h-10 rounded-xl bg-orange-100 flex items-center justify-center'>
+                <Lock size={20} className='text-orange-600' />
               </div>
               <div>
-                <h3 className="text-sm font-semibold text-base-content">
+                <h3 className='text-sm font-semibold text-base-content'>
                   Ganti Password
                 </h3>
-                <p className="text-xs text-base-content/50">
+                <p className='text-xs text-base-content/50'>
                   Opsional - kosongkan jika tidak diubah
                 </p>
               </div>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className='space-y-4'>
               <Input
-                name="password"
-                type="password"
-                label="Password Baru"
+                name='password'
+                type='password'
+                label='Password Baru'
                 value={form.password}
                 onChange={handleChange}
                 error={
@@ -114,13 +111,13 @@ export function Profile() {
                     ? FormState.errors.password
                     : undefined
                 }
-                autoComplete="new-password"
-                placeholder="Masukkan password baru"
+                autoComplete='new-password'
+                placeholder='Masukkan password baru'
               />
               <Input
-                name="confirm_password"
-                type="password"
-                label="Konfirmasi Password"
+                name='confirm_password'
+                type='password'
+                label='Konfirmasi Password'
                 value={form.confirm_password}
                 onChange={handleChange}
                 error={
@@ -128,16 +125,16 @@ export function Profile() {
                     ? FormState.errors.confirm_password
                     : undefined
                 }
-                autoComplete="new-password"
-                placeholder="Ulangi password baru"
+                autoComplete='new-password'
+                placeholder='Ulangi password baru'
               />
 
-              <div className="pt-2">
+              <div className='pt-2'>
                 <Button
-                  type="submit"
-                  variant="primary"
+                  type='submit'
+                  variant='primary'
                   isLoading={updateResult?.isLoading}
-                  className="w-full"
+                  className='w-full'
                 >
                   Simpan Perubahan
                 </Button>

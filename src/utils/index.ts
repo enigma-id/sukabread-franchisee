@@ -117,3 +117,34 @@ export function getStatusVariant(
   };
   return variantMap[normalized] || "default";
 }
+
+// Map any system type to a premium Badge variant
+export function getTypeVariant(
+  type?: string | null,
+):
+  | "default"
+  | "primary"
+  | "secondary"
+  | "accent"
+  | "info"
+  | "success"
+  | "warning"
+  | "error" {
+  const normalized = type?.toLowerCase() || "";
+  const variantMap: Record<
+    string,
+    | "default"
+    | "primary"
+    | "secondary"
+    | "accent"
+    | "info"
+    | "success"
+    | "warning"
+    | "error"
+  > = {
+    sales_order: "success",
+    withdrawal: "warning",
+    pos: "info",
+  };
+  return variantMap[normalized] || "default";
+}
