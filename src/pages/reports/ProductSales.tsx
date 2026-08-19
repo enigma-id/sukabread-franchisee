@@ -24,21 +24,21 @@ const OverviewCards = ({ data }: { data: any | null }) => {
   if (!data) return null;
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-4">
+    <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-4'>
       <SummaryCard
-        label="Total Qty"
+        label='Total Qty'
         value={data.total_qty}
         icon={Banknote}
         theme={THEMES.orange}
       />
       <SummaryCard
-        label="Total Discount"
+        label='Total Discount'
         value={currencyFormat(data.total_discount)}
         icon={ArrowUpCircle}
         theme={THEMES.blue}
       />
       <SummaryCard
-        label="Total Nett"
+        label='Total Nett'
         value={currencyFormat(data.total_nett)}
         icon={Landmark}
         theme={THEMES.red}
@@ -68,8 +68,9 @@ export function ProductSales() {
     return {
       ...(Table.State?.lockedFilter || {}),
       ...(Table.State?.filter || {}),
+      search: Table.State?.textSearch || "",
     };
-  }, [Table.State?.lockedFilter, Table.State?.filter]);
+  }, [Table.State?.lockedFilter, Table.State?.filter, Table.State?.textSearch]);
 
   const currentFilterString = JSON.stringify(currentFilter);
   const { productSalesSummary, productSalesSummaryResult } = useReport();
@@ -83,9 +84,9 @@ export function ProductSales() {
   const summary = productSalesSummaryResult.data?.data;
 
   return (
-    <Page className="h-full flex flex-col min-h-0 bg-slate-50">
-      <Page.Header category="Report" title="Penjualan Harian" subtitle="" />
-      <Page.Body className="flex-1 flex flex-col min-h-0 ">
+    <Page className='h-full flex flex-col min-h-0 bg-slate-50'>
+      <Page.Header category='Report' title='Penjualan Harian' subtitle='' />
+      <Page.Body className='flex-1 flex flex-col min-h-0 '>
         <OverviewCards data={summary} />
 
         <Table.Tools downloadable>
@@ -93,8 +94,8 @@ export function ProductSales() {
         </Table.Tools>
 
         <Table.Render
-          emptyTitle="No Product Sales Data"
-          emptyDescription="Product Sales data will appear here once available."
+          emptyTitle='No Product Sales Data'
+          emptyDescription='Product Sales data will appear here once available.'
         />
         <Table.Pagination />
       </Page.Body>

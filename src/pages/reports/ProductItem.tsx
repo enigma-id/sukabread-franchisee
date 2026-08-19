@@ -23,15 +23,15 @@ const OverviewCards = ({ data }: { data: any | null }) => {
   if (!data) return null;
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-4 mb-4">
+    <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-4 mb-4'>
       <SummaryCard
-        label="Total Qty"
+        label='Total Qty'
         value={data.total_qty}
         icon={Banknote}
         theme={THEMES.orange}
       />
       <SummaryCard
-        label="Total Nett"
+        label='Total Nett'
         value={currencyFormat(data.total_nett)}
         icon={Landmark}
         theme={THEMES.red}
@@ -58,8 +58,9 @@ export function ProductItem() {
     return {
       ...(Table.State?.lockedFilter || {}),
       ...(Table.State?.filter || {}),
+      search: Table.State?.textSearch || "",
     };
-  }, [Table.State?.lockedFilter, Table.State?.filter]);
+  }, [Table.State?.lockedFilter, Table.State?.filter, Table.State?.textSearch]);
 
   const currentFilterString = JSON.stringify(currentFilter);
   const { productItemSummary, productItemSummaryResult } = useReport();
@@ -73,13 +74,9 @@ export function ProductItem() {
   const summary = productItemSummaryResult.data?.data;
 
   return (
-    <Page className="h-full flex flex-col min-h-0 bg-slate-50">
-      <Page.Header
-        category="Report"
-        title="Penjualan Menu"
-        subtitle=""
-      />
-      <Page.Body className="flex-1 flex flex-col min-h-0 ">
+    <Page className='h-full flex flex-col min-h-0 bg-slate-50'>
+      <Page.Header category='Report' title='Penjualan Menu' subtitle='' />
+      <Page.Body className='flex-1 flex flex-col min-h-0 '>
         <OverviewCards data={summary} />
 
         <Table.Tools downloadable>
@@ -87,8 +84,8 @@ export function ProductItem() {
         </Table.Tools>
 
         <Table.Render
-          emptyTitle="No Product Item Data"
-          emptyDescription="Product item data will appear here once available."
+          emptyTitle='No Product Item Data'
+          emptyDescription='Product item data will appear here once available.'
         />
         <Table.Pagination />
       </Page.Body>

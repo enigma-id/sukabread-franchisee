@@ -58,8 +58,9 @@ export function Outstanding() {
     return {
       ...(Table.State?.lockedFilter || {}),
       ...(Table.State?.filter || {}),
+      search: Table.State?.textSearch || "",
     };
-  }, [Table.State?.lockedFilter, Table.State?.filter]);
+  }, [Table.State?.lockedFilter, Table.State?.filter, Table.State?.textSearch]);
 
   const currentFilterString = JSON.stringify(currentFilter);
   const { outstandingSummary, outstandingSummaryResult } = useReport();

@@ -24,27 +24,27 @@ const OverviewCards = ({ data }: { data: CashOverview | null }) => {
   if (!data) return null;
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+    <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4'>
       <SummaryCard
-        label="Total Transaksi Cash"
+        label='Total Transaksi Cash'
         value={currencyFormat(data.transaction_cash)}
         icon={Banknote}
         theme={THEMES.orange}
       />
       <SummaryCard
-        label="Total Cash Deposit"
+        label='Total Cash Deposit'
         value={currencyFormat(data.cash_deposit)}
         icon={ArrowUpCircle}
         theme={THEMES.blue}
       />
       <SummaryCard
-        label="Total Ending Cash"
+        label='Total Ending Cash'
         value={currencyFormat(data.finished_cash)}
         icon={Landmark}
         theme={THEMES.green}
       />
       <SummaryCard
-        label="Total Variance"
+        label='Total Variance'
         value={currencyFormat(data.variance)}
         icon={Wallet}
         theme={THEMES.red}
@@ -68,8 +68,9 @@ export function CashControl() {
     return {
       ...(Table.State?.lockedFilter || {}),
       ...(Table.State?.filter || {}),
+      search: Table.State?.textSearch || "",
     };
-  }, [Table.State?.lockedFilter, Table.State?.filter]);
+  }, [Table.State?.lockedFilter, Table.State?.filter, Table.State?.textSearch]);
 
   const currentFilterString = JSON.stringify(currentFilter);
   const { cashControlSummary, cashControlSummaryResult } = useReport();
@@ -83,21 +84,21 @@ export function CashControl() {
   const summary = cashControlSummaryResult.data?.data;
 
   return (
-    <Page className="h-full flex flex-col min-h-0 bg-slate-50">
-      <Page.Header category="Report" title="Cash Control" subtitle="" />
+    <Page className='h-full flex flex-col min-h-0 bg-slate-50'>
+      <Page.Header category='Report' title='Cash Control' subtitle='' />
       <Page.Body>
         {/* Overview Cards */}
         <OverviewCards data={summary} />
 
         {/* Table */}
-        <div className="flex-1 flex flex-col min-h-0">
+        <div className='flex-1 flex flex-col min-h-0'>
           <Table.Tools downloadable>
             <TableFilter table={Table} />
           </Table.Tools>
 
           <Table.Render
-            emptyTitle="No Cash Control Data"
-            emptyDescription="Cash control data will appear here once available."
+            emptyTitle='No Cash Control Data'
+            emptyDescription='Cash control data will appear here once available.'
           />
           <Table.Pagination />
         </div>
