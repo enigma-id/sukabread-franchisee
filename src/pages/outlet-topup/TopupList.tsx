@@ -135,9 +135,9 @@ function DetailModal({ id, onClose }: { id: string; onClose: () => void }) {
                 Informasi Pembayaran
               </h4>
               <div className='grid grid-cols-2 gap-3'>
-                {detail.payment ? (
+                {detail?.payment ? (
                   <>
-                    {detail.payment.va_number && (
+                    {detail?.payment.va_number && (
                       <div>
                         <label className='text-[10px] font-semibold text-blue-500 uppercase tracking-wider'>
                           VA Number
@@ -177,7 +177,7 @@ function DetailModal({ id, onClose }: { id: string; onClose: () => void }) {
                         Bank
                       </label>
                       <p className='text-sm font-mono font-semibold text-slate-800 mt-0.5'>
-                        {detail.payment_method.name}
+                        {detail?.payment_method?.name}
                       </p>
                     </div>
                     <div>
@@ -185,7 +185,7 @@ function DetailModal({ id, onClose }: { id: string; onClose: () => void }) {
                         Nama Penerima
                       </label>
                       <p className='text-sm font-mono font-semibold text-slate-800 mt-0.5'>
-                        {detail.payment_method.account_name}
+                        {detail?.payment_method?.account_name}
                       </p>
                     </div>
                     <div>
@@ -193,7 +193,7 @@ function DetailModal({ id, onClose }: { id: string; onClose: () => void }) {
                         No. Rekening
                       </label>
                       <p className='text-sm font-mono font-semibold text-slate-800 mt-0.5'>
-                        {detail.payment_method.account_number}
+                        {detail?.payment_method?.account_number}
                       </p>
                     </div>
                   </>

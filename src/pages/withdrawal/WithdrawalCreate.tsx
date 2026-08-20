@@ -3,7 +3,7 @@ import { Button, Input } from "@/components";
 import { Page } from "@/components/app/layout";
 import { useAppSelector } from "@/hooks";
 import { useProfile } from "@/services/profile/hooks";
-import type { ContractProfile, UserProfile } from "@/services/types";
+import type { ContractProfile } from "@/services/types";
 import { useWithdrawal } from "@/services/withdrawal/hooks";
 import { currencyFormat } from "@/utils";
 import { Plus, Wallet2Icon } from "lucide-react";
