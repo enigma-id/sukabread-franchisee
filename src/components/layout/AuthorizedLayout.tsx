@@ -230,9 +230,8 @@ function NavItem({
   const user = useAppSelector((s) => s.auth.session?.user);
 
   if (item.external) {
-    const baseUrl = import.meta.env.DEV
-      ? "http://localhost:5174"
-      : "https://sukabread-franchisorder.vercel.app";
+    const baseUrl = import.meta.env.VITE_ORDER_URL;
+
     const externalUrl = user?.username
       ? `${baseUrl}?username=${user.username}`
       : "";

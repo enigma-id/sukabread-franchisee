@@ -12,26 +12,23 @@ export function Purchase() {
   );
   const user = useAppSelector((s) => s.auth.session?.user);
 
-  const baseUrl = import.meta.env.DEV
-    ? "http://localhost:5174"
-    : "https://sukabread-franchisorder-git-v2-enigma-id.vercel.app";
-  // : "https://sukabread-franchisorder.vercel.app";
+  const baseUrl = import.meta.env.VITE_ORDER_URL;
 
   const iframeUrl = user?.username
     ? `${baseUrl}?username=${user.username}`
     : "";
 
   return (
-    <Page className="h-full flex flex-col min-h-0 bg-slate-50">
+    <Page className='h-full flex flex-col min-h-0 bg-slate-50'>
       <Page.Header
-        category="Transactions"
-        title="Pembelian"
-        subtitle="Order bahan dan barang."
+        category='Transactions'
+        title='Pembelian'
+        subtitle='Order bahan dan barang.'
         action={
           iframeUrl && (
             <Button
               onClick={() => window.open(iframeUrl, "_blank")}
-              className="flex items-center gap-2"
+              className='flex items-center gap-2'
             >
               <ExternalLink size={18} />
               Buka di Tab Baru
@@ -45,7 +42,7 @@ export function Purchase() {
             <iframe
               src={iframeUrl}
               className={styles.iframe}
-              title="Suka Bread Order"
+              title='Suka Bread Order'
               allowFullScreen
             />
           ) : (
