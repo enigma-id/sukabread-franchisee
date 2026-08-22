@@ -7,7 +7,7 @@ import { useOutletTopup } from "@/services/outlet-topup/hooks";
 import { usePaymentMethod } from "@/services/payment-method/hooks";
 import type { ContractPaymentMethod } from "@/services/types";
 import { Plus, Wallet2Icon } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 interface TopupCreateRequest {
@@ -33,6 +33,12 @@ const TopupCreate = () => {
     getMethods();
   }, []);
 
+  // Exclude saldo provider from topup payment methods
+  const paymentMethods = useMemo(() => {
+    const raw = (methodsResult?.data as any)?.data ?? [];
+    return raw.filter((item: any) => item?.provider !== "saldo");
+  }, [methodsResult?.data]);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const payload = {
@@ -50,41 +56,37 @@ const TopupCreate = () => {
   }, [createResult]);
 
   return (
-    <Page className="h-full flex flex-col min-h-0 bg-slate-50">
+    <Page className='h-full flex flex-col min-h-0 bg-slate-50'>
       <Page.Header
-        category="Finance"
-        title="Topup Saldo Outlet"
-        subtitle="Buat permintaan topup saldo outlet."
+        category='Finance'
+        title='Topup Saldo Outlet'
+        subtitle='Buat permintaan topup saldo outlet.'
         backTo={() => navigate(-1)}
         action={
           <Button
-            variant="primary"
-            shape="wide"
-            size="md"
-            type="submit"
-            form="topup-form"
+            variant='primary'
+            shape='wide'
+            size='md'
+            type='submit'
+            form='topup-form'
           >
-            <Plus className="w-4 h-4 mr-2" />
+            <Plus className='w-4 h-4 mr-2' />
             Simpan
           </Button>
         }
       />
-      <Page.Body className="flex-1 flex flex-col min-h-0 mx-auto w-3xl">
-        <form
-          id="topup-form"
-          onSubmit={handleSubmit}
-          className="space-y-6"
-        >
-          <div className="bg-white border border-slate-200 rounded-xl p-6 relative overflow-visible! z-10">
-            <h3 className="text-sm font-bold text-slate-700 uppercase mb-4 flex items-center gap-2">
-              <Wallet2Icon size={16} className="text-primary" />
+      <Page.Body className='flex-1 flex flex-col min-h-0 mx-auto w-3xl'>
+        <form id='topup-form' onSubmit={handleSubmit} className='space-y-6'>
+          <div className='bg-white border border-slate-200 rounded-xl p-6 relative overflow-visible! z-10'>
+            <h3 className='text-sm font-bold text-slate-700 uppercase mb-4 flex items-center gap-2'>
+              <Wallet2Icon size={16} className='text-primary' />
               Informasi Topup
             </h3>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
               <Input
-                type="currency"
-                label="Amount"
+                type='currency'
+                label='Amount'
                 required
                 value={formData.amount}
                 onChange={(e) =>
@@ -94,11 +96,19 @@ const TopupCreate = () => {
               />
 
               <RemoteSelect
-                label="Metode Pembayaran"
-                placeholder="Pilih metode pembayaran"
+                label='Metode Pembayaran'
+                placeholder='Pilih metode pembayaran'
                 required
                 value={selectedPaymentMethod}
-                hook={methodsResult as any}
+                hook={
+                  {
+                    ...methodsResult,
+                    data: {
+                      ...(methodsResult?.data as any),
+                      data: paymentMethods,
+                    },
+                  } as any
+                }
                 fetchData={(page, search) =>
                   getMethods({ page, search } as any)
                 }
@@ -111,10 +121,10 @@ const TopupCreate = () => {
                 error={FormState?.errors?.payment_method_id as string}
               />
 
-              <div className="col-span-2">
+              <div className='col-span-2'>
                 <Input
-                  type="textarea"
-                  label="Catatan"
+                  type='textarea'
+                  label='Catatan'
                   value={formData.note}
                   onChange={(e) =>
                     setFormData({ ...formData, note: e.target.value })
