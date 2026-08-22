@@ -6,6 +6,7 @@ import {
   useLazyGetCashControlSummaryQuery,
   useLazyGetProductItemSummaryQuery,
   useLazyGetCancelledProductSalesSummaryQuery,
+  useLazyGetTopupCancelledSummaryQuery,
 } from "./api";
 
 export const useReport = createCrudHook({
@@ -17,5 +18,6 @@ export const useReport = createCrudHook({
     cashControlSummary: useLazyGetCashControlSummaryQuery,
     productItemSummary: useLazyGetProductItemSummaryQuery,
     cancelledProductSalesSummary: useLazyGetCancelledProductSalesSummaryQuery,
+    topupCancelledSummary: useLazyGetTopupCancelledSummaryQuery,
   },
 });

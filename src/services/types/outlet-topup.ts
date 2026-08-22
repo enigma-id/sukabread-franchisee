@@ -25,12 +25,15 @@ export interface ContractOutletTopup {
   payment_method?: {
     id: string;
     name: string;
+    account_name: string;
+    account_number: string;
     provider: string;
   };
   payment?: {
     status: string;
     va_number?: string;
     bank_name?: string;
+    qr_url?: string;
   };
 }
 

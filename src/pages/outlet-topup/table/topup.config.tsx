@@ -18,14 +18,15 @@ const createTableConfig = ({
     code: {
       title: "Kode",
       sortable: true,
-      class: "font-medium font-mono text-xs cursor-pointer hover:text-primary transition-colors",
+      class:
+        "font-medium font-mono text-xs cursor-pointer hover:text-primary-100 transition-colors",
       component: (row: ContractOutletTopup) => (
         <span
-          role="button"
+          role='button'
           tabIndex={0}
           onClick={() => onRowClick?.(row)}
           onKeyDown={(e) => e.key === "Enter" && onRowClick?.(row)}
-          className="hover:text-primary transition-colors"
+          className='hover:text-primary-300 transition-colors underline'
         >
           {row.code}
         </span>
@@ -62,7 +63,7 @@ const createTableConfig = ({
       component: (row: ContractOutletTopup) => (
         <Badge
           variant={getStatusVariant(row.document_status)}
-          appearance="soft"
+          appearance='soft'
         >
           {row.document_status}
         </Badge>
@@ -89,11 +90,11 @@ const createTableConfig = ({
       width: 64,
       component: (row: ContractOutletTopup) =>
         row.document_status === "pending" ? (
-          <div className="flex justify-end">
+          <div className='flex justify-end'>
             <Button
-              size="sm"
-              variant="error"
-              styleType="soft"
+              size='sm'
+              variant='error'
+              styleType='soft'
               onClick={() => onRemove?.(row)}
             >
               <Trash2 size={14} />

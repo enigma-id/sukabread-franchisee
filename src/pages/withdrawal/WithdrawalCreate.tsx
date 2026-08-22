@@ -2,7 +2,10 @@
 import { Button, Input } from "@/components";
 import { Page } from "@/components/app/layout";
 import { useAppSelector } from "@/hooks";
+import { useProfile } from "@/services/profile/hooks";
+import type { ContractProfile } from "@/services/types";
 import { useWithdrawal } from "@/services/withdrawal/hooks";
+import { currencyFormat } from "@/utils";
 import { Plus, Wallet2Icon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -19,6 +22,7 @@ const WithdrawalCreate = () => {
   const FormState = useAppSelector((s) => s.form);
   const navigate = useNavigate();
 
+  const { get: getProfile, getResult: getProfileResult } = useProfile();
   const { create, createResult } = useWithdrawal();
 
   const [formData, setFormData] = useState<WithdrawalCreateRequest>({
@@ -45,42 +49,57 @@ const WithdrawalCreate = () => {
     }
   }, [createResult]);
 
+  useEffect(() => {
+    getProfile();
+  }, []);
+
+  const profile = getProfileResult?.data?.data as ContractProfile | undefined;
+
   return (
-    <Page className="h-full flex flex-col min-h-0 bg-slate-50">
+    <Page className='h-full flex flex-col min-h-0 bg-slate-50'>
       <Page.Header
-        category="Operations"
-        title="Permintaan Penarikan"
-        subtitle="Kelola permintaan penarikan saldo outlet."
+        category='Operations'
+        title='Permintaan Penarikan'
+        subtitle='Kelola permintaan penarikan saldo outlet.'
         backTo={() => navigate(-1)}
         action={
           <Button
-            variant="primary"
-            shape="wide"
-            size="md"
-            type="submit"
-            form="withdrawal-form"
+            variant='primary'
+            shape='wide'
+            size='md'
+            type='submit'
+            form='withdrawal-form'
           >
-            <Plus className="w-4 h-4 mr-2" />
+            <Plus className='w-4 h-4 mr-2' />
             Simpan
           </Button>
         }
       />
-      <Page.Body className="flex-1 flex flex-col min-h-0 mx-auto w-3xl">
+      <Page.Body className='flex-1 flex flex-col min-h-0 mx-auto w-3xl'>
         <form
-          id="withdrawal-form"
+          id='withdrawal-form'
           onSubmit={handleSubmit}
-          className="space-y-6 "
+          className='space-y-6 '
         >
-          <div className="bg-white border border-slate-200 rounded-xl p-6">
-            <h3 className="text-sm font-bold text-slate-700 uppercase mb-4 flex items-center gap-2">
-              <Wallet2Icon size={16} className="text-primary" />
+          <div className='bg-white border border-slate-200 rounded-xl p-6'>
+            <h3 className='text-sm font-bold text-slate-700 uppercase mb-4 flex items-center gap-2'>
+              <Wallet2Icon size={16} className='text-primary' />
               Informasi Penarikan
             </h3>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className='mb-2'>
+              <label className='text-[11px] font-semibold text-slate-500 uppercase tracking-wider'>
+                Saldo Anda
+              </label>
+              <p className='text-sm font-medium text-slate-800 mt-1'>
+                {currencyFormat(profile?.outlet?.saldo)}
+              </p>
+            </div>
+
+            <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
               <Input
-                type="currency"
-                label="Amount"
+                type='currency'
+                label='Amount'
                 required
                 value={formData.amount}
                 onChange={(e) =>
@@ -90,7 +109,7 @@ const WithdrawalCreate = () => {
               />
 
               <Input
-                label="Bank Name"
+                label='Bank Name'
                 required
                 value={formData.bank_name}
                 onChange={(e) =>
@@ -100,7 +119,7 @@ const WithdrawalCreate = () => {
               />
 
               <Input
-                label="Account Name"
+                label='Account Name'
                 required
                 value={formData.bank_account_name}
                 onChange={(e) =>
@@ -113,7 +132,7 @@ const WithdrawalCreate = () => {
               />
 
               <Input
-                label="Account Number"
+                label='Account Number'
                 required
                 value={formData.bank_account_number}
                 onChange={(e) =>
@@ -125,10 +144,10 @@ const WithdrawalCreate = () => {
                 error={FormState?.errors?.bank_account_number as string}
               />
 
-              <div className="col-span-2">
+              <div className='col-span-2'>
                 <Input
-                  type="textarea"
-                  label="Notes"
+                  type='textarea'
+                  label='Notes'
                   value={formData.notes}
                   onChange={(e) =>
                     setFormData({ ...formData, notes: e.target.value })
