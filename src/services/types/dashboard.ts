@@ -21,9 +21,9 @@ export interface PeakHour {
   total_transaksi: number;
 }
 
-export interface TopMemberBySaldo {
+export interface TopMember {
   member_name: string;
-  saldo: number;
+  nominal: number;
 }
 
 export interface SalesGraph {
@@ -79,6 +79,6 @@ export interface DashboardData {
   cashier_performance?: CashierPerformance[];
   payment_method_split?: PaymentMethodSplit[];
   peak_hours?: PeakHour[];
-  top_member_topup?: TopMemberBySaldo[];
+  top_member?: TopMember[];
   withdrawal_terbaru?: WithdrawalTerbaru[];
 }
