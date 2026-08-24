@@ -344,7 +344,7 @@ export function Dashboard() {
             </PipelineCard>
 
             <PipelineCard
-              title='Top Member Topup'
+              title='Top Member'
               icon={Medal}
               theme={THEMES.green}
               onClick={go("/membership")}
