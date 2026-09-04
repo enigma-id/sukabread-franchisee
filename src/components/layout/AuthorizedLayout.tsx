@@ -2,6 +2,7 @@ import { NavLink, Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/hooks";
 import { signout } from "@/services/auth/slice";
+import { isCompanyOutlet } from "@/utils/outletType";
 import {
   ExternalLink,
   LayoutDashboard,
@@ -17,13 +18,13 @@ import {
   Banknote,
   Receipt,
   Landmark,
-  Settings,
   User,
   UsersRound,
   LogOut,
   Menu,
   X,
   ChevronDown,
+  Store,
 } from "lucide-react";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -48,7 +49,9 @@ interface MenuSection {
 }
 
 // ─── Menu Config ──────────────────────────────────────────────────────────────
-const menuSections: MenuSection[] = [
+// Saat franchise bertipe "Outlet", menu Pembelian mengarah ke halaman Sales Request
+// internal; selain itu ("Mitra") tetap membuka app order eksternal.
+const getMenuSections = (isOutlet: boolean): MenuSection[] => [
   {
     label: "Beranda",
     items: [
@@ -71,7 +74,7 @@ const menuSections: MenuSection[] = [
         label: "Pembelian",
         path: "/purchase",
         icon: <PackageOpen size={18} />,
-        external: true,
+        ...(isOutlet ? {} : { external: true }),
       },
     ],
   },
@@ -166,7 +169,7 @@ const menuSections: MenuSection[] = [
       {
         label: "Outlet",
         path: "/setting/outlet",
-        icon: <Settings size={18} />,
+        icon: <Store size={18} />,
       },
       {
         label: "Katalog Outlet",
@@ -367,6 +370,9 @@ export function AuthorizedLayout() {
   const navigate = useNavigate();
   const user = useAppSelector((s) => s.auth.session);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const isOutlet = isCompanyOutlet(user?.franchise);
+  const menuSections = getMenuSections(isOutlet);
 
   const handleSignOut = () => {
     dispatch(signout());

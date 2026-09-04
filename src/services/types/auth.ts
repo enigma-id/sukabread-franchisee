@@ -12,6 +12,25 @@ export interface AuthUser extends User {
   token?: string;
 }
 
+/**
+ * Relation `franchise` yang dikembalikan pada response login (entity.Session).
+ * `outlet_type_name` dipakai untuk membedakan tipe outlet ("Outlet" vs "Mitra").
+ */
+export interface SessionFranchise {
+  id: string;
+  ref_id?: string;
+  brand_id: string;
+  outlet_type_id?: string;
+  outlet_type_name?: string | null;
+  name: string;
+  address?: string;
+  phone?: string;
+  email?: string;
+  is_active?: boolean;
+  created_at?: string;
+  updated_at?: string;
+}
+
 export interface LoginRequest {
   identifier: string;
   password: string;

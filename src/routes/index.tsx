@@ -5,6 +5,9 @@ import { ProtectedRoute } from "./ProtectedRoute";
 import { Login } from "@/pages/Login";
 import { Dashboard } from "@/pages/Dashboard";
 import { Purchase } from "@/pages/Purchase";
+import { SalesRequestCreate } from "@/pages/purchase/SalesRequestCreate";
+import { SalesRequestUpdate } from "@/pages/purchase/SalesRequestUpdate";
+import { SalesRequestDetail } from "@/pages/purchase/SalesRequestDetail";
 import { Stock } from "@/pages/Stock";
 import { StockLog } from "@/pages/StockLog";
 import { Membership } from "@/pages/membership/MembershipList";
@@ -27,7 +30,10 @@ import { UserList } from "@/pages/settings/UserList";
 import { UserCreate } from "@/pages/settings/UserCreate";
 import { UserUpdate } from "@/pages/settings/UserUpdate";
 import { OutletCatalog } from "@/pages/settings/OutletCatalog";
-import { OutletSettings } from "@/pages/settings/OutletSettings";
+import { OutletList } from "@/pages/outlet/OutletList";
+import { OutletDetail } from "@/pages/outlet/OutletDetail";
+import { OutletCreate } from "@/pages/outlet/OutletCreate";
+import { OutletUpdate } from "@/pages/outlet/OutletUpdate";
 import { OutletBalanceLog } from "@/pages/settings/OutletBalanceLog";
 import { TopupList } from "@/pages/outlet-topup/TopupList";
 import TopupCreate from "@/pages/outlet-topup/TopupCreate";
@@ -57,6 +63,9 @@ export function AppRoutes() {
         <Route path="/sales/session/:id" element={<SessionDetail />} />
         <Route path="/sales/order/:id" element={<OrderDetail />} />
         <Route path="/purchase" element={<Purchase />} />
+        <Route path="/purchase/create" element={<SalesRequestCreate />} />
+        <Route path="/purchase/:id/update" element={<SalesRequestUpdate />} />
+        <Route path="/purchase/:id" element={<SalesRequestDetail />} />
         <Route path="/stock" element={<Stock />} />
         <Route path="/stock/log" element={<StockLog />} />
         <Route path="/membership" element={<Membership />} />
@@ -81,7 +90,13 @@ export function AppRoutes() {
         <Route path="/setting/user/create" element={<UserCreate />} />
         <Route path="/setting/user/:id/update" element={<UserUpdate />} />
         <Route path="/setting/catalog" element={<OutletCatalog />} />
-        <Route path="/setting/outlet" element={<OutletSettings />} />
+        <Route path="/setting/outlet" element={<OutletList />} />
+        <Route path="/setting/outlet/create" element={<OutletCreate />} />
+        <Route path="/setting/outlet/:id" element={<OutletDetail />} />
+        <Route
+          path="/setting/outlet/:id/update"
+          element={<OutletUpdate />}
+        />
         <Route
           path="/setting/outlet/balance-log"
           element={<OutletBalanceLog />}
