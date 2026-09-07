@@ -5,6 +5,9 @@ import { ProtectedRoute } from "./ProtectedRoute";
 import { Login } from "@/pages/Login";
 import { Dashboard } from "@/pages/Dashboard";
 import { Purchase } from "@/pages/Purchase";
+import { SalesRequestCreate } from "@/pages/purchase/SalesRequestCreate";
+import { SalesRequestUpdate } from "@/pages/purchase/SalesRequestUpdate";
+import { SalesRequestDetail } from "@/pages/purchase/SalesRequestDetail";
 import { Stock } from "@/pages/Stock";
 import { StockLog } from "@/pages/StockLog";
 import { Membership } from "@/pages/membership/MembershipList";
@@ -57,6 +60,9 @@ export function AppRoutes() {
         <Route path="/sales/session/:id" element={<SessionDetail />} />
         <Route path="/sales/order/:id" element={<OrderDetail />} />
         <Route path="/purchase" element={<Purchase />} />
+        <Route path="/purchase/create" element={<SalesRequestCreate />} />
+        <Route path="/purchase/:id/update" element={<SalesRequestUpdate />} />
+        <Route path="/purchase/:id" element={<SalesRequestDetail />} />
         <Route path="/stock" element={<Stock />} />
         <Route path="/stock/log" element={<StockLog />} />
         <Route path="/membership" element={<Membership />} />

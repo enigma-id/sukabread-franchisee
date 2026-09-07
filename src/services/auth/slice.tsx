@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import type { User } from "../types";
+import type { SessionBrand, User } from "../types";
 
 interface SessionOutlet {
   id: string;
@@ -14,13 +14,16 @@ interface SessionOutlet {
   is_active: boolean;
 }
 
+export interface AuthSession {
+  access_token: string;
+  user: User;
+  brand?: SessionBrand | null;
+  outlet?: SessionOutlet | null;
+}
+
 interface authState {
   authenticated: boolean;
-  session: {
-    access_token: string;
-    user: User;
-    outlet: SessionOutlet | null;
-  } | null;
+  session: AuthSession | null;
 }
 
 const defineInitialState = (): authState => ({
