@@ -12,7 +12,7 @@ import { useSalesRequest } from "@/services/salesRequest/hooks";
 import type { SalesRequest } from "@/services/types/salesRequest";
 
 export function SalesRequestList() {
-  useDocumentMeta("Sales Request | Sukabread Franchisee", "Kelola permintaan pembelian barang.");
+  useDocumentMeta("Pembelian | Sukabread Franchisee", "Kelola permintaan pembelian barang.");
   const navigate = useNavigate();
   const { openModal, closeModal, showToast } = useEnigmaUI();
   const { cancel, cancelResult, publish, publishResult } = useSalesRequest();
@@ -43,7 +43,7 @@ export function SalesRequestList() {
     if (isCancelSuccess) {
       closeModal("cancel-sales-request");
       showToast({
-        message: "Sales Request berhasil dibatalkan",
+        message: "Pembelian berhasil dibatalkan",
         type: "success",
         position: "bottom-center",
         duration: 4000,
@@ -57,7 +57,7 @@ export function SalesRequestList() {
     if (isPublishSuccess) {
       closeModal("publish-sales-request");
       showToast({
-        message: "Sales Request berhasil di-publish",
+        message: "Pembelian berhasil di-publish",
         type: "success",
         position: "bottom-center",
         duration: 4000,
@@ -78,12 +78,12 @@ export function SalesRequestList() {
         >
           <Modal.Header>
             <div className='font-bold text-lg text-slate-900 leading-7'>
-              Batalkan Sales Request
+              Batalkan Pembelian
             </div>
           </Modal.Header>
           <Modal.Body className='text-sm font-normal text-slate-600 leading-5'>
             <p>
-              Apakah Anda yakin ingin membatalkan request{" "}
+              Apakah Anda yakin ingin membatalkan pembelian{" "}
               <span className='font-mono font-semibold'>{row.code}</span>?
             </p>
           </Modal.Body>
@@ -122,12 +122,12 @@ export function SalesRequestList() {
         >
           <Modal.Header>
             <div className='font-bold text-lg text-slate-900 leading-7'>
-              Publish Sales Request
+              Publish Pembelian
             </div>
           </Modal.Header>
           <Modal.Body className='text-sm font-normal text-slate-600 leading-5'>
             <p>
-              Request{" "}
+              Pembelian{" "}
               <span className='font-mono font-semibold'>{row.code}</span> akan
               dikirim ke franchisor. Lanjutkan?
             </p>
@@ -160,7 +160,7 @@ export function SalesRequestList() {
     <Page className='h-full flex flex-col min-h-0 bg-slate-50'>
       <Page.Header
         category='Transaksi'
-        title='Sales Request'
+        title='Pembelian'
         subtitle='Kelola permintaan pembelian barang dari outlet.'
         action={
           <Button
@@ -170,7 +170,7 @@ export function SalesRequestList() {
             onClick={() => navigate("/purchase/create")}
           >
             <Plus className='w-4 h-4 mr-2' />
-            Buat Request
+            Buat Pembelian
           </Button>
         }
       />
@@ -178,7 +178,7 @@ export function SalesRequestList() {
         <Table.Tools />
         <Table.Render
           emptyTitle='Data Tidak Ditemukan'
-          emptyDescription='Belum ada sales request.'
+          emptyDescription='Belum ada pembelian.'
         />
         <Table.Pagination />
       </Page.Body>

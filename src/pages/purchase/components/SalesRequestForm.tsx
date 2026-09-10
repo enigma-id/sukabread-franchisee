@@ -9,6 +9,7 @@ import { DatePicker } from "@/components/ui/date-picker";
 import { useAppSelector } from "@/hooks";
 import { useIngredient } from "@/services/ingredient/hooks";
 import type { Ingredient, SalesRequest } from "@/services/types";
+import { currencyFormat } from "@/utils";
 import { Plus, Store, Trash2, Truck } from "lucide-react";
 
 export interface SalesRequestFormValues {
@@ -75,7 +76,7 @@ export function SalesRequestForm({
             brand_id: "",
             fraction: 0,
             measurement: "",
-            unit_price: 0,
+            unit_price: it.unit_nett ?? 0,
             unit: 0,
             is_active: true,
             created_at: "",
@@ -175,12 +176,12 @@ export function SalesRequestForm({
         <div className='bg-white rounded-xl p-5 border border-base-300 shadow-sm'>
           <h3 className='text-sm font-bold text-slate-700 uppercase mb-4 flex items-center gap-2'>
             <Truck size={16} className='text-primary' />
-            Informasi Request
+            Informasi Pembelian
           </h3>
 
           <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
             <DatePicker
-              label='Tanggal Request'
+              label='Tanggal Pembelian'
               required
               value={shippingDate ?? undefined}
               onChange={(date) => setShippingDate((date as Dayjs) || null)}
@@ -226,6 +227,9 @@ export function SalesRequestForm({
                     </th>
                     <th className='text-[11px] font-bold uppercase tracking-wider text-slate-500 text-right px-2 py-2 w-32'>
                       Qty
+                    </th>
+                    <th className='text-[11px] font-bold uppercase tracking-wider text-slate-500 text-right px-2 py-2 w-32'>
+                      Harga
                     </th>
                     <th className='text-[11px] font-bold uppercase tracking-wider text-slate-500 text-right px-2 py-2 w-16'></th>
                   </tr>
@@ -288,6 +292,9 @@ export function SalesRequestForm({
                             })
                           }
                         />
+                      </td>
+                      <td className='px-2 py-2 text-right text-sm font-mono text-slate-600 whitespace-nowrap'>
+                        {currencyFormat(item.ingredient?.unit_price)}
                       </td>
                       <td className='px-2 py-2 text-right'>
                         <Button

@@ -10,7 +10,12 @@ import type {
   SalesRequest,
   SalesRequestItem,
 } from "@/services/types/salesRequest";
-import { formatDate, formatDateTime, getStatusVariant } from "@/utils";
+import {
+  currencyFormat,
+  formatDate,
+  formatDateTime,
+  getStatusVariant,
+} from "@/utils";
 import {
   Pencil,
   Send,
@@ -22,7 +27,7 @@ import {
 
 export function SalesRequestDetail() {
   useDocumentMeta(
-    "Detail Sales Request | Sukabread Franchisee",
+    "Detail Pembelian | Sukabread Franchisee",
     "Detail permintaan pembelian barang.",
   );
   const { id } = useParams<{ id: string }>();
@@ -43,7 +48,7 @@ export function SalesRequestDetail() {
     if (cancelResult.isSuccess) {
       closeModal("cancel-detail");
       showToast({
-        message: "Sales Request berhasil dibatalkan",
+        message: "Pembelian berhasil dibatalkan",
         type: "success",
         position: "bottom-center",
         duration: 4000,
@@ -56,7 +61,7 @@ export function SalesRequestDetail() {
     if (publishResult.isSuccess) {
       closeModal("publish-detail");
       showToast({
-        message: "Sales Request berhasil di-publish",
+        message: "Pembelian berhasil di-publish",
         type: "success",
         position: "bottom-center",
         duration: 4000,
@@ -70,7 +75,7 @@ export function SalesRequestDetail() {
   if (!detail)
     return (
       <div className='text-center py-12 text-base-content/50'>
-        Sales Request tidak ditemukan
+        Pembelian tidak ditemukan
       </div>
     );
 
@@ -87,12 +92,12 @@ export function SalesRequestDetail() {
         >
           <Modal.Header>
             <div className='font-bold text-lg text-slate-900 leading-7'>
-              Batalkan Sales Request
+              Batalkan Pembelian
             </div>
           </Modal.Header>
           <Modal.Body className='text-sm font-normal text-slate-600 leading-5'>
             <p>
-              Apakah Anda yakin ingin membatalkan request{" "}
+              Apakah Anda yakin ingin membatalkan pembelian{" "}
               <span className='font-mono font-semibold'>{detail.code}</span>?
             </p>
           </Modal.Body>
@@ -131,12 +136,12 @@ export function SalesRequestDetail() {
         >
           <Modal.Header>
             <div className='font-bold text-lg text-slate-900 leading-7'>
-              Publish Sales Request
+              Publish Pembelian
             </div>
           </Modal.Header>
           <Modal.Body className='text-sm font-normal text-slate-600 leading-5'>
             <p>
-              Request{" "}
+              Pembelian{" "}
               <span className='font-mono font-semibold'>{detail.code}</span>{" "}
               akan dikirim ke franchisor. Lanjutkan?
             </p>
@@ -169,7 +174,7 @@ export function SalesRequestDetail() {
     <Page className='h-full flex flex-col min-h-0 bg-slate-50'>
       <Page.Header
         category='Transaksi'
-        title='Sales Request'
+        title='Pembelian'
         subtitle='Detail permintaan pembelian barang.'
         backTo={() => navigate("/purchase")}
         action={
@@ -203,12 +208,12 @@ export function SalesRequestDetail() {
             <div className='card-section-icon'>
               <Truck size={18} />
             </div>
-            <h2 className='card-section-title'>Informasi Request</h2>
+            <h2 className='card-section-title'>Informasi Pembelian</h2>
           </div>
           <div className='grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-4'>
             <InfoCell label='Kode' value={detail.code} />
             <InfoCell
-              label='Tanggal Request'
+              label='Tanggal Pembelian'
               value={
                 detail.shipping_date ? formatDate(detail.shipping_date) : "-"
               }
@@ -232,6 +237,14 @@ export function SalesRequestDetail() {
                 </Badge>
               </dd>
             </div>
+            <InfoCell
+              label='Total'
+              value={
+                <span className='font-mono'>
+                  {currencyFormat(detail.total_charges)}
+                </span>
+              }
+            />
           </div>
         </div>
 
@@ -241,7 +254,7 @@ export function SalesRequestDetail() {
             <div className='table-header-icon'>
               <ShoppingBag size={16} />
             </div>
-            <h2 className='table-header-title'>Request Items</h2>
+            <h2 className='table-header-title'>Item Pembelian</h2>
             <div className='ml-auto text-xs font-bold px-3 py-1 bg-primary/10 text-primary rounded-lg uppercase tracking-wider'>
               {items.length} Item
             </div>
@@ -262,42 +275,64 @@ export function SalesRequestDetail() {
                   <th className='px-6 py-4 text-right text-[11px] font-bold tracking-[0.05em] text-[#8B95A5] uppercase select-none w-32'>
                     QTY
                   </th>
+                  <th className='px-6 py-4 text-right text-[11px] font-bold tracking-[0.05em] text-[#8B95A5] uppercase select-none w-40'>
+                    Harga Satuan
+                  </th>
+                  <th className='px-6 py-4 text-right text-[11px] font-bold tracking-[0.05em] text-[#8B95A5] uppercase select-none w-40'>
+                    Total
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {items.length === 0 ? (
                   <tr>
                     <td
-                      colSpan={3}
+                      colSpan={5}
                       className='px-6 py-12 text-center text-base-content/50'
                     >
                       Tidak ada item
                     </td>
                   </tr>
                 ) : (
-                  items.map((item: SalesRequestItem, idx: number) => (
-                    <tr
-                      key={item.id ?? idx}
-                      className='hover:bg-gray-50/50 border-b border-gray-100 last:border-0 transition-colors'
-                    >
-                      <td className='px-6 py-3 align-middle text-[13px] font-medium text-gray-700'>
-                        {idx + 1}
-                      </td>
-                      <td className='px-6 py-3 align-middle'>
-                        <div className='flex flex-col'>
-                          <span className='text-[14px] font-semibold text-base-content'>
-                            {item.catalog?.name}
-                          </span>
-                          <span className='text-xs text-slate-400'>
-                            {item.catalog?.code}
-                          </span>
-                        </div>
-                      </td>
-                      <td className='px-6 py-3 align-middle text-right text-[14px] font-mono font-medium text-base-content'>
-                        {item.quantity_ordered} {item.fraction?.name}
-                      </td>
-                    </tr>
-                  ))
+                  items.map((item: SalesRequestItem, idx: number) => {
+                    const unitPrice =
+                      item.unit_nett ?? item.catalog?.unit_price;
+                    const subtotal =
+                      item.total_nett ??
+                      (unitPrice != null
+                        ? unitPrice * item.quantity_ordered
+                        : undefined);
+
+                    return (
+                      <tr
+                        key={item.id ?? idx}
+                        className='hover:bg-gray-50/50 border-b border-gray-100 last:border-0 transition-colors'
+                      >
+                        <td className='px-6 py-3 align-middle text-[13px] font-medium text-gray-700'>
+                          {idx + 1}
+                        </td>
+                        <td className='px-6 py-3 align-middle'>
+                          <div className='flex flex-col'>
+                            <span className='text-[14px] font-semibold text-base-content'>
+                              {item.catalog?.name}
+                            </span>
+                            <span className='text-xs text-slate-400'>
+                              {item.catalog?.code}
+                            </span>
+                          </div>
+                        </td>
+                        <td className='px-6 py-3 align-middle text-right text-[14px] font-mono font-medium text-base-content'>
+                          {item.quantity_ordered} {item.fraction?.name}
+                        </td>
+                        <td className='px-6 py-3 align-middle text-right text-[14px] font-mono text-base-content'>
+                          {currencyFormat(unitPrice)}
+                        </td>
+                        <td className='px-6 py-3 align-middle text-right text-[14px] font-mono font-bold text-base-content'>
+                          {currencyFormat(subtotal)}
+                        </td>
+                      </tr>
+                    );
+                  })
                 )}
               </tbody>
             </table>

@@ -41,7 +41,7 @@ const createTableConfig = ({
     },
 
     shipping_date: {
-      title: "Tanggal Request",
+      title: "Tanggal Pembelian",
       sortable: true,
       class: "text-sm",
       component: (row: SalesRequest) => (
@@ -100,7 +100,7 @@ const createTableConfig = ({
                 <div className='flex flex-col items-start leading-tight'>
                   <span className='font-bold text-[13px]'>Detail</span>
                   <span className='text-[11px] text-slate-400'>
-                    Lihat detail request
+                    Lihat detail pembelian
                   </span>
                 </div>
               </button>
@@ -118,7 +118,7 @@ const createTableConfig = ({
                     <div className='flex flex-col items-start leading-tight'>
                       <span className='font-bold text-[13px]'>Edit</span>
                       <span className='text-[11px] text-slate-400'>
-                        Ubah data request
+                        Ubah data pembelian
                       </span>
                     </div>
                   </button>
@@ -134,7 +134,7 @@ const createTableConfig = ({
                     <div className='flex flex-col items-start leading-tight'>
                       <span className='font-bold text-[13px]'>Publish</span>
                       <span className='text-[11px] text-slate-400'>
-                        Kirim request ke franchisor
+                        Kirim pembelian ke franchisor
                       </span>
                     </div>
                   </button>
@@ -150,7 +150,7 @@ const createTableConfig = ({
                     <div className='flex flex-col items-start leading-tight'>
                       <span className='font-bold text-[13px]'>Batalkan</span>
                       <span className='text-[11px] text-slate-400'>
-                        Batalkan request
+                        Batalkan pembelian
                       </span>
                     </div>
                   </button>

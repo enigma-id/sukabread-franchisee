@@ -11,7 +11,7 @@ import { SalesRequestForm, type SalesRequestFormValues } from "./components/Sale
 
 export function SalesRequestCreate() {
   useDocumentMeta(
-    "Buat Sales Request | Sukabread Franchisee",
+    "Buat Pembelian | Sukabread Franchisee",
     "Buat permintaan pembelian barang.",
   );
   const navigate = useNavigate();
@@ -22,7 +22,7 @@ export function SalesRequestCreate() {
   useEffect(() => {
     if (isSuccess) {
       showToast({
-        message: "Sales Request berhasil dibuat",
+        message: "Pembelian berhasil dibuat",
         type: "success",
         position: "bottom-center",
         duration: 4000,
@@ -46,7 +46,7 @@ export function SalesRequestCreate() {
     <Page className='h-full flex flex-col min-h-0 bg-slate-50'>
       <Page.Header
         category='Transaksi'
-        title='Buat Sales Request'
+        title='Buat Pembelian'
         subtitle='Buat permintaan pembelian barang baru.'
         backTo={() => navigate("/purchase")}
         action={
@@ -57,7 +57,7 @@ export function SalesRequestCreate() {
             isLoading={isCreating}
           >
             <Save className='w-4 h-4 mr-2' />
-            Simpan Request
+            Simpan Pembelian
           </Button>
         }
       />

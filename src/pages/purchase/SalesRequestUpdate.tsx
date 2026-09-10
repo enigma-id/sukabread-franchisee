@@ -12,7 +12,7 @@ import { SalesRequestForm, type SalesRequestFormValues } from "./components/Sale
 
 export function SalesRequestUpdate() {
   useDocumentMeta(
-    "Ubah Sales Request | Sukabread Franchisee",
+    "Ubah Pembelian | Sukabread Franchisee",
     "Perbarui permintaan pembelian barang.",
   );
   const { id } = useParams<{ id: string }>();
@@ -30,7 +30,7 @@ export function SalesRequestUpdate() {
   useEffect(() => {
     if (isSuccess) {
       showToast({
-        message: "Sales Request berhasil diperbarui",
+        message: "Pembelian berhasil diperbarui",
         type: "success",
         position: "bottom-center",
         duration: 4000,
@@ -60,7 +60,7 @@ export function SalesRequestUpdate() {
   if (!detail)
     return (
       <div className='text-center py-12 text-base-content/50'>
-        Sales Request tidak ditemukan
+        Pembelian tidak ditemukan
       </div>
     );
 
@@ -68,7 +68,7 @@ export function SalesRequestUpdate() {
     <Page className='h-full flex flex-col min-h-0 bg-slate-50'>
       <Page.Header
         category='Transaksi'
-        title={`Ubah ${detail.code?.toUpperCase() ?? "Sales Request"}`}
+        title={`Ubah ${detail.code?.toUpperCase() ?? "Pembelian"}`}
         subtitle='Perbarui permintaan pembelian barang.'
         backTo={() => navigate(`/purchase/${id}`)}
         action={
