@@ -41,6 +41,10 @@ export default defineConfig({
       devOptions: {
         enabled: true,
       },
+      workbox: {
+        // Bundle utama melebihi 2 MiB default (recharts + peta).
+        maximumFileSizeToCacheInBytes: 4 * 1024 * 1024,
+      },
     }),
   ],
   resolve: {

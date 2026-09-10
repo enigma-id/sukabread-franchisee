@@ -7,6 +7,8 @@ import type { Ingredient } from "./ingredient";
 export interface SalesRequestItem {
   id?: string;
   catalog_id: string;
+  catalog_code?: string;
+  catalog_name?: string;
   item_id?: string;
   quantity_ordered: number;
   unit_nett?: number;

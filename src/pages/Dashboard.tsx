@@ -347,7 +347,6 @@ export function Dashboard() {
               title='Top Member'
               icon={Medal}
               theme={THEMES.green}
-              onClick={go("/membership")}
             >
               {data?.top_member?.map((member, i) => (
                 <div className='flex items-center justify-between' key={i}>

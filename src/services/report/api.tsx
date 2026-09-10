@@ -114,25 +114,27 @@ export const reportApi = createApi({
     }),
 
     /**
-     * GET /report/topup-cancelled
-     * List cancelled topup data with pagination
+     * GET /report/saldo-log
+     * List member saldo mutation log with pagination
      */
-    getTopupCancelled: builder.query({
-      query: (params) => ({
-        url: "/report/topup-cancelled",
-        params,
-      }),
+    getSaldoLog: builder.query({
+      query: (params) => ({ url: "/report/saldo-log", params }),
     }),
 
     /**
-     * GET /report/topup-cancelled/summary
-     * Get cancelled topup summary
+     * GET /report/saldo-log/summary
+     * Get member saldo mutation log summary
      */
-    getTopupCancelledSummary: builder.query({
-      query: (params) => ({
-        url: "/report/topup-cancelled/summary",
-        params,
-      }),
+    getSaldoLogSummary: builder.query({
+      query: (params) => ({ url: "/report/saldo-log/summary", params }),
+    }),
+
+    /**
+     * GET /report/cashier-maps
+     * List cashier GPS history per outlet (mitra)
+     */
+    getCashierMaps: builder.query({
+      query: (params) => ({ url: "/report/cashier-maps", params }),
     }),
   }),
 });
@@ -150,6 +152,7 @@ export const {
   useLazyGetProductItemSummaryQuery,
   useLazyGetCancelledProductSalesQuery,
   useLazyGetCancelledProductSalesSummaryQuery,
-  useLazyGetTopupCancelledQuery,
-  useLazyGetTopupCancelledSummaryQuery,
+  useLazyGetSaldoLogQuery,
+  useLazyGetSaldoLogSummaryQuery,
+  useLazyGetCashierMapsQuery,
 } = reportApi;

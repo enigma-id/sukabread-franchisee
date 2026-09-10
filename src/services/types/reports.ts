@@ -1,7 +1,42 @@
+// Saldo Log Report
+export interface SaldoLogReportRow {
+  date: string;
+  reference_type: string;
+  reference_code: string;
+  payment_type: string;
+  nominal: number;
+  status: string;
+  membership: string;
+  card_id: string;
+  outlet: string;
+  cancelled_reason: string;
+  cancelled_by: string;
+  cancelled_at: string;
+}
+
+export interface SaldoLogReportSummary {
+  total_nominal: number;
+  total_count: number;
+}
+
+// Cashier Maps (mitra)
+export interface CashierMapHistory {
+  latitude: number;
+  longitude: number;
+  created_at: string;
+}
+
+export interface CashierMapRow {
+  cashier_id: string;
+  cashier_name: string;
+  total_charges: number;
+  historys: CashierMapHistory[];
+}
+
 // Daily Sales
 export interface DailySalesRow {
-  date: string
-  total_charges: number
+  date: string;
+  total_charges: number;
 }
 
 // Outstanding Bills
@@ -15,21 +50,21 @@ export interface OutstandingBill {
 }
 
 export interface OutstandingSummary {
-  total_charges: number
+  total_charges: number;
 }
 
 // Settlement
 export interface SettlementRow {
-  periode: string
-  started_at?: string
-  finished_at?: string
-  payment_methods: string[]
-  nominals: number[]
+  periode: string;
+  started_at?: string;
+  finished_at?: string;
+  payment_methods: string[];
+  nominals: number[];
 }
 
 export interface SettlementSummaryItem {
-  payment_method: string
-  nominal: number
+  payment_method: string;
+  nominal: number;
 }
 
 // Cash Control
@@ -46,71 +81,54 @@ export interface CashControlRow {
 
 // Product Sales
 export interface ProductSalesRow {
-  order_id: string
-  date: string
-  channel: string
-  payment: string
-  outlet: string
-  code: string
-  menu: string
-  quantity: number
-  unit_nett: number
-  discount: number
-  total_nett: number
+  order_id: string;
+  date: string;
+  channel: string;
+  payment: string;
+  outlet: string;
+  code: string;
+  menu: string;
+  quantity: number;
+  unit_nett: number;
+  discount: number;
+  total_nett: number;
 }
 
 // Product Item — sales grouped per (date, outlet, menu), no discount
 export interface ProductItemRow {
-  date: string
-  outlet: string
-  menu: string
-  quantity: number
-  unit_nett: number
-  total_nett: number
+  date: string;
+  outlet: string;
+  menu: string;
+  quantity: number;
+  unit_nett: number;
+  total_nett: number;
 }
 
 export interface ProductItemSummary {
-  total_qty: number
-  total_nett: number
+  total_qty: number;
+  total_nett: number;
 }
 
 // Cancelled Product Sales
 export interface CancelledProductSalesRow {
-  order_id: string
-  date: string
-  channel: string
-  payment: string
-  outlet: string
-  code: string
-  menu: string
-  quantity: number
-  unit_nett: number
-  discount: number
-  total_nett: number
-  cancelled_reason: string
-  cancelled_by: string
-  cancelled_at: string
+  order_id: string;
+  date: string;
+  channel: string;
+  payment: string;
+  outlet: string;
+  code: string;
+  menu: string;
+  quantity: number;
+  unit_nett: number;
+  discount: number;
+  total_nett: number;
+  cancelled_reason: string;
+  cancelled_by: string;
+  cancelled_at: string;
 }
 
 export interface CancelledProductSalesSummary {
-  total_qty: number
-  total_nett: number
-  total_discount: number
-}
-
-// Topup Cancelled
-export interface TopupCancelledRow {
-  date: string
-  reference_code: string
-  membership: string
-  outlet: string
-  nominal: number
-  cancelled_reason: string
-  cancelled_by: string
-  cancelled_at: string
-}
-
-export interface TopupCancelledSummary {
-  total_count: number
-  total_nominal: number
+  total_qty: number;
+  total_nett: number;
+  total_discount: number;
 }

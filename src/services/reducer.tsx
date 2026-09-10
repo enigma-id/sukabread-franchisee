@@ -10,7 +10,6 @@ import { tableApi } from "./table/api";
 import { catalogApi } from "./catalog/api";
 import { profileApi } from "./profile/api";
 import { outletApi } from "./outlet/api";
-import { membershipApi } from "./membership/api";
 import { withdrawalApi } from "./withdrawal/api";
 import { stockApi } from "./stock/api";
 import { ingredientApi } from "./ingredient/api";
@@ -35,7 +34,6 @@ const appReducer = combineReducers({
   [catalogApi.reducerPath]: catalogApi.reducer,
   [profileApi.reducerPath]: profileApi.reducer,
   [outletApi.reducerPath]: outletApi.reducer,
-  [membershipApi.reducerPath]: membershipApi.reducer,
   [stockApi.reducerPath]: stockApi.reducer,
   [ingredientApi.reducerPath]: ingredientApi.reducer,
   [withdrawalApi.reducerPath]: withdrawalApi.reducer,
@@ -56,7 +54,6 @@ export const apiMiddlewares = [
   catalogApi.middleware,
   profileApi.middleware,
   outletApi.middleware,
-  membershipApi.middleware,
   stockApi.middleware,
   ingredientApi.middleware,
   withdrawalApi.middleware,
