@@ -202,160 +202,155 @@ export function SalesRequestDetail() {
       />
 
       <Page.Body>
-        <div className='grid grid-cols-1 lg:grid-cols-12 gap-6 items-start'>
+        <div className='grid grid-cols-1 lg:grid-cols-2 gap-6 items-start'>
           {/* Informasi Pembelian */}
-          <div className='lg:col-span-4 flex flex-col gap-6'>
-            <div className='card-info card-animate p-5'>
-              <div className='card-section-header'>
-                <div className='card-section-icon'>
-                  <Truck size={18} />
-                </div>
-                <h2 className='card-section-title'>Informasi Pembelian</h2>
+          <div className='card-info card-animate p-5'>
+            <div className='card-section-header'>
+              <div className='card-section-icon'>
+                <Truck size={18} />
               </div>
-              <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-4'>
-                <InfoCell label='Kode' value={detail.code} />
-                <InfoCell
-                  label='Tanggal Pembelian'
-                  value={
-                    detail.shipping_date ? formatDate(detail.shipping_date) : "-"
-                  }
-                />
-                <InfoCell
-                  label='Dibuat'
-                  value={
-                    detail.created_at ? formatDateTime(detail.created_at) : "-"
-                  }
-                />
-                <div>
-                  <dt className='text-[10px] font-bold uppercase tracking-widest text-base-content/50'>
-                    Status
-                  </dt>
-                  <dd className='mt-1'>
-                    <Badge
-                      variant={getStatusVariant(detail.document_status)}
-                      appearance='soft'
-                    >
-                      {detail.document_status || "-"}
-                    </Badge>
-                  </dd>
-                </div>
-                <InfoCell
-                  label='Total'
-                  value={
-                    <span className='font-mono'>
-                      {currencyFormat(detail.total_charges)}
-                    </span>
-                  }
-                />
+              <h2 className='card-section-title'>Informasi Pembelian</h2>
+            </div>
+            <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
+              <InfoCell label='Kode' value={detail.code} />
+              <InfoCell
+                label='Tanggal Pembelian'
+                value={
+                  detail.shipping_date ? formatDate(detail.shipping_date) : "-"
+                }
+              />
+              <InfoCell
+                label='Dibuat'
+                value={
+                  detail.created_at ? formatDateTime(detail.created_at) : "-"
+                }
+              />
+              <div>
+                <dt className='text-[10px] font-bold uppercase tracking-widest text-base-content/50'>
+                  Status
+                </dt>
+                <dd className='mt-1'>
+                  <Badge
+                    variant={getStatusVariant(detail.document_status)}
+                    appearance='soft'
+                  >
+                    {detail.document_status || "-"}
+                  </Badge>
+                </dd>
               </div>
+              <InfoCell
+                label='Total'
+                value={
+                  <span className='font-mono'>
+                    {currencyFormat(detail.total_charges)}
+                  </span>
+                }
+              />
             </div>
 
-            {/* Catatan */}
             {detail.note && (
-              <div className='card-info card-animate p-6 bg-amber-50/10 border-amber-200/50'>
-                <div className='card-section-header'>
-                  <div className='card-section-icon bg-amber-100 text-amber-600'>
-                    <StickyNote size={18} />
-                  </div>
-                  <h2 className='card-section-title text-amber-800'>Catatan</h2>
+              <div className='mt-4 pt-4 border-t border-base-300'>
+                <div className='flex items-center gap-1.5'>
+                  <StickyNote size={12} className='text-base-content/40' />
+                  <dt className='text-[10px] font-bold uppercase tracking-widest text-base-content/50'>
+                    Catatan
+                  </dt>
                 </div>
-                <p className='text-sm text-amber-700/80 leading-relaxed'>
+                <dd className='mt-1 text-sm text-base-content/80 leading-relaxed break-words'>
                   {detail.note}
-                </p>
+                </dd>
               </div>
             )}
           </div>
 
           {/* Item Pembelian */}
-          <div className='lg:col-span-8'>
-            <div className='card-table card-animate'>
-              <div className='table-header !p-6'>
-                <div className='table-header-icon'>
-                  <ShoppingBag size={16} />
-                </div>
-                <h2 className='table-header-title'>Item Pembelian</h2>
-                <div className='ml-auto text-xs font-bold px-3 py-1 bg-primary/10 text-primary rounded-lg uppercase tracking-wider'>
-                  {items.length} Item
-                </div>
+          <div className='card-table card-animate'>
+            <div className='table-header !p-6'>
+              <div className='table-header-icon'>
+                <ShoppingBag size={16} />
               </div>
-              <div className='overflow-x-auto'>
-                <table
-                  className='table-hover table-vcenter datatable table'
-                  width='100%'
-                >
-                  <thead>
+              <h2 className='table-header-title'>Item Pembelian</h2>
+              <div className='ml-auto text-xs font-bold px-3 py-1 bg-primary/10 text-primary rounded-lg uppercase tracking-wider'>
+                {items.length} Item
+              </div>
+            </div>
+            <div className='overflow-x-auto'>
+              <table
+                className='table-hover table-vcenter datatable table'
+                width='100%'
+              >
+                <thead>
+                  <tr>
+                    <th className='px-4 py-4 text-left text-[11px] font-bold tracking-[0.05em] text-[#8B95A5] uppercase select-none w-10'>
+                      #
+                    </th>
+                    <th className='px-4 py-4 text-left text-[11px] font-bold tracking-[0.05em] text-[#8B95A5] uppercase select-none'>
+                      Item
+                    </th>
+                    <th className='px-4 py-4 text-right text-[11px] font-bold tracking-[0.05em] text-[#8B95A5] uppercase select-none w-24'>
+                      QTY
+                    </th>
+                    <th className='px-4 py-4 text-right text-[11px] font-bold tracking-[0.05em] text-[#8B95A5] uppercase select-none w-32'>
+                      Harga Satuan
+                    </th>
+                    <th className='px-4 py-4 text-right text-[11px] font-bold tracking-[0.05em] text-[#8B95A5] uppercase select-none w-32'>
+                      Total
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {items.length === 0 ? (
                     <tr>
-                      <th className='px-4 py-4 text-left text-[11px] font-bold tracking-[0.05em] text-[#8B95A5] uppercase select-none w-10'>
-                        #
-                      </th>
-                      <th className='px-4 py-4 text-left text-[11px] font-bold tracking-[0.05em] text-[#8B95A5] uppercase select-none'>
-                        Item
-                      </th>
-                      <th className='px-4 py-4 text-right text-[11px] font-bold tracking-[0.05em] text-[#8B95A5] uppercase select-none w-24'>
-                        QTY
-                      </th>
-                      <th className='px-4 py-4 text-right text-[11px] font-bold tracking-[0.05em] text-[#8B95A5] uppercase select-none w-28'>
-                        Harga Satuan
-                      </th>
-                      <th className='px-4 py-4 text-right text-[11px] font-bold tracking-[0.05em] text-[#8B95A5] uppercase select-none w-28'>
-                        Total
-                      </th>
+                      <td
+                        colSpan={5}
+                        className='px-4 py-12 text-center text-base-content/50'
+                      >
+                        Tidak ada item
+                      </td>
                     </tr>
-                  </thead>
-                  <tbody>
-                    {items.length === 0 ? (
-                      <tr>
-                        <td
-                          colSpan={5}
-                          className='px-4 py-12 text-center text-base-content/50'
-                        >
-                          Tidak ada item
-                        </td>
-                      </tr>
-                    ) : (
-                      items.map((item: SalesRequestItem, idx: number) => {
-                        const unitPrice =
-                          item.unit_nett ?? item.catalog?.unit_price;
-                        const subtotal =
-                          item.total_nett ??
-                          (unitPrice != null
-                            ? unitPrice * item.quantity_ordered
-                            : undefined);
+                  ) : (
+                    items.map((item: SalesRequestItem, idx: number) => {
+                      const unitPrice =
+                        item.unit_nett ?? item.catalog?.unit_price;
+                      const subtotal =
+                        item.total_nett ??
+                        (unitPrice != null
+                          ? unitPrice * item.quantity_ordered
+                          : undefined);
 
-                        return (
-                          <tr
-                            key={item.id ?? idx}
-                            className='hover:bg-gray-50/50 border-b border-gray-100 last:border-0 transition-colors'
-                          >
-                            <td className='px-4 py-3 align-middle text-[13px] font-medium text-gray-700'>
-                              {idx + 1}
-                            </td>
-                            <td className='px-4 py-3 align-middle'>
-                              <div className='flex flex-col'>
-                                <span className='text-[14px] font-semibold text-base-content'>
-                                  {item.catalog?.name}
-                                </span>
-                                <span className='text-xs text-slate-400'>
-                                  {item.catalog?.code}
-                                </span>
-                              </div>
-                            </td>
-                            <td className='px-4 py-3 align-middle text-right text-[14px] font-mono font-medium text-base-content'>
-                              {item.quantity_ordered} {item.fraction?.name}
-                            </td>
-                            <td className='px-4 py-3 align-middle text-right text-[14px] font-mono text-base-content'>
-                              {currencyFormat(unitPrice)}
-                            </td>
-                            <td className='px-4 py-3 align-middle text-right text-[14px] font-mono font-bold text-base-content'>
-                              {currencyFormat(subtotal)}
-                            </td>
-                          </tr>
-                        );
-                      })
-                    )}
-                  </tbody>
-                </table>
-              </div>
+                      return (
+                        <tr
+                          key={item.id ?? idx}
+                          className='hover:bg-gray-50/50 border-b border-gray-100 last:border-0 transition-colors'
+                        >
+                          <td className='px-4 py-3 align-middle text-[13px] font-medium text-gray-700'>
+                            {idx + 1}
+                          </td>
+                          <td className='px-4 py-3 align-middle'>
+                            <div className='flex flex-col'>
+                              <span className='text-[14px] font-semibold text-base-content'>
+                                {item.catalog?.name}
+                              </span>
+                              <span className='text-xs text-slate-400'>
+                                {item.catalog?.code}
+                              </span>
+                            </div>
+                          </td>
+                          <td className='px-4 py-3 align-middle text-right text-[14px] font-mono font-medium text-base-content'>
+                            {item.quantity_ordered} {item.fraction?.name}
+                          </td>
+                          <td className='px-4 py-3 align-middle text-right text-[14px] font-mono text-base-content'>
+                            {currencyFormat(unitPrice)}
+                          </td>
+                          <td className='px-4 py-3 align-middle text-right text-[14px] font-mono font-bold text-base-content'>
+                            {currencyFormat(subtotal)}
+                          </td>
+                        </tr>
+                      );
+                    })
+                  )}
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
