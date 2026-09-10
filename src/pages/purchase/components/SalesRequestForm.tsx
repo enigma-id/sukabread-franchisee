@@ -165,148 +165,160 @@ export function SalesRequestForm({
   const addItem = () => setItems((prev) => [...prev, { ...emptyItem }]);
 
   return (
-    <form id={id} onSubmit={handleSubmit} className='space-y-6'>
+    <form
+      id={id}
+      onSubmit={handleSubmit}
+      className='grid grid-cols-1 lg:grid-cols-12 gap-6'
+    >
       {/* Informasi Request */}
-      <div className='bg-white border border-slate-200 rounded-xl p-6'>
-        <h3 className='text-sm font-bold text-slate-700 uppercase mb-4 flex items-center gap-2'>
-          <Truck size={16} className='text-primary' />
-          Informasi Request
-        </h3>
+      <div className='lg:col-span-6 flex flex-col gap-6'>
+        <div className='bg-white rounded-xl p-5 border border-base-300 shadow-sm'>
+          <h3 className='text-sm font-bold text-slate-700 uppercase mb-4 flex items-center gap-2'>
+            <Truck size={16} className='text-primary' />
+            Informasi Request
+          </h3>
 
-        <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
-          <DatePicker
-            label='Tanggal Request'
-            required
-            value={shippingDate ?? undefined}
-            onChange={(date) => setShippingDate((date as Dayjs) || null)}
-            placeholder='Pilih tanggal'
-            error={getError(FormState?.errors, "shipping_date")}
-          />
-
-          <div className='md:col-span-2'>
-            <Input
-              type='textarea'
-              label='Catatan'
-              value={note}
-              onChange={(e) => setNote(e.target.value)}
-              error={getError(FormState?.errors, "note")}
+          <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
+            <DatePicker
+              label='Tanggal Request'
+              required
+              value={shippingDate ?? undefined}
+              onChange={(date) => setShippingDate((date as Dayjs) || null)}
+              placeholder='Pilih tanggal'
+              error={getError(FormState?.errors, "shipping_date")}
             />
+
+            <div className='md:col-span-2'>
+              <Input
+                type='textarea'
+                label='Catatan'
+                value={note}
+                onChange={(e) => setNote(e.target.value)}
+                error={getError(FormState?.errors, "note")}
+              />
+            </div>
           </div>
         </div>
       </div>
 
       {/* Daftar Bahan Baku */}
-      <div className='bg-white border border-slate-200 rounded-xl p-6 relative z-10 overflow-visible'>
-        <h3 className='text-sm font-bold text-slate-700 uppercase mb-4 flex items-center gap-2'>
-          <Store size={16} className='text-primary' />
-          Daftar Bahan Baku
-        </h3>
+      <div className='lg:col-span-6 flex flex-col'>
+        <div className='bg-white rounded-xl border border-base-300 shadow-sm'>
+          <div className='p-5 border-b border-base-300 bg-base-100'>
+            <div className='flex items-center gap-2'>
+              <Store size={16} className='text-primary' />
+              <h3 className='font-semibold text-base text-base-content'>
+                Daftar Bahan Baku
+              </h3>
+            </div>
+          </div>
 
-        <div className='overflow-visible'>
-          <table className='table-hover table-vcenter datatable table w-full'>
-            <thead>
-              <tr>
-                <th className='text-[11px] font-bold uppercase tracking-wider text-slate-500 text-left px-2 py-2 w-8'>
-                  #
-                </th>
-                <th className='text-[11px] font-bold uppercase tracking-wider text-slate-500 text-left px-2 py-2'>
-                  Bahan Baku
-                </th>
-                <th className='text-[11px] font-bold uppercase tracking-wider text-slate-500 text-right px-2 py-2 w-32'>
-                  Qty
-                </th>
-                <th className='text-[11px] font-bold uppercase tracking-wider text-slate-500 text-right px-2 py-2 w-16'>
-                  Aksi
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {items.map((item, idx) => (
-                <tr key={idx}>
-                  <td className='px-2 py-2 text-sm text-slate-500'>
-                    {idx + 1}
-                  </td>
-                  <td className='px-2 py-2 min-w-64'>
-                    <RemoteSelect
-                      placeholder='Cari bahan baku'
-                      required
-                      value={item.ingredient}
-                      hook={ingredientsHook as any}
-                      fetchData={(page, search) =>
-                        getIngredients({
-                          page: page || 1,
-                          limit: 20,
-                          search,
-                          is_active: "true",
-                        } as any)
-                      }
-                      getLabel={(ing: Ingredient) =>
-                        ing.name || ing.code || ing.ref_id || ing.id
-                      }
-                      renderItem={(ing: Ingredient) => (
-                        <div className='flex flex-col'>
-                          <span className='text-sm font-medium'>
-                            {ing.name}
-                          </span>
-                          {ing.code && (
-                            <span className='text-xs text-slate-400'>
-                              {ing.code}
-                            </span>
+          <div className='p-4'>
+            <div className='overflow-visible'>
+              <table className='table-hover table-vcenter datatable table w-full'>
+                <thead>
+                  <tr>
+                    <th className='text-[11px] font-bold uppercase tracking-wider text-slate-500 text-left px-2 py-2 w-8'>
+                      #
+                    </th>
+                    <th className='text-[11px] font-bold uppercase tracking-wider text-slate-500 text-left px-2 py-2'>
+                      Bahan Baku
+                    </th>
+                    <th className='text-[11px] font-bold uppercase tracking-wider text-slate-500 text-right px-2 py-2 w-32'>
+                      Qty
+                    </th>
+                    <th className='text-[11px] font-bold uppercase tracking-wider text-slate-500 text-right px-2 py-2 w-16'></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {items.map((item, idx) => (
+                    <tr key={idx}>
+                      <td className='px-2 py-2 text-sm text-slate-500'>
+                        {idx + 1}
+                      </td>
+                      <td className='px-2 py-2 min-w-64'>
+                        <RemoteSelect
+                          placeholder='Cari bahan baku'
+                          required
+                          value={item.ingredient}
+                          hook={ingredientsHook as any}
+                          fetchData={(page, search) =>
+                            getIngredients({
+                              page: page || 1,
+                              limit: 20,
+                              search,
+                              is_active: "true",
+                            } as any)
+                          }
+                          getLabel={(ing: Ingredient) =>
+                            ing.name || ing.code || ing.ref_id || ing.id
+                          }
+                          renderItem={(ing: Ingredient) => (
+                            <div className='flex flex-col'>
+                              <span className='text-sm font-medium'>
+                                {ing.name}
+                              </span>
+                              {ing.code && (
+                                <span className='text-xs text-slate-400'>
+                                  {ing.code}
+                                </span>
+                              )}
+                            </div>
                           )}
-                        </div>
-                      )}
-                      getValue={(ing: Ingredient) => ing.ref_id || ing.id}
-                      onChange={(ing: Ingredient) =>
-                        updateItem(idx, { ingredient: ing })
-                      }
-                      onClear={() => updateItem(idx, { ingredient: null })}
-                      error={getError(
-                        FormState?.errors,
-                        `items.${idx}.catalog_id`,
-                      )}
-                    />
-                  </td>
-                  <td className='px-2 py-2 text-right'>
-                    <Input
-                      type='number'
-                      min={1}
-                      className='text-right'
-                      value={item.quantity_ordered}
-                      onChange={(e) =>
-                        updateItem(idx, {
-                          quantity_ordered: Number(e.target.value) || 0,
-                        })
-                      }
-                    />
-                  </td>
-                  <td className='px-2 py-2 text-right'>
-                    <Button
-                      type='button'
-                      size='sm'
-                      styleType='soft'
-                      variant='error'
-                      disabled={items.length === 1}
-                      onClick={() => removeItem(idx)}
-                    >
-                      <Trash2 size={14} />
-                    </Button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+                          getValue={(ing: Ingredient) => ing.ref_id || ing.id}
+                          onChange={(ing: Ingredient) =>
+                            updateItem(idx, { ingredient: ing })
+                          }
+                          onClear={() => updateItem(idx, { ingredient: null })}
+                          error={getError(
+                            FormState?.errors,
+                            `items.${idx}.catalog_id`,
+                          )}
+                        />
+                      </td>
+                      <td className='px-2 py-2 text-right'>
+                        <Input
+                          type='number'
+                          min={1}
+                          className='text-right'
+                          value={item.quantity_ordered}
+                          onChange={(e) =>
+                            updateItem(idx, {
+                              quantity_ordered: Number(e.target.value) || 0,
+                            })
+                          }
+                        />
+                      </td>
+                      <td className='px-2 py-2 text-right'>
+                        <Button
+                          type='button'
+                          size='sm'
+                          styleType='soft'
+                          variant='error'
+                          disabled={items.length === 1}
+                          onClick={() => removeItem(idx)}
+                        >
+                          <Trash2 size={14} />
+                        </Button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
 
-        <Button
-          type='button'
-          variant='primary'
-          styleType='outline'
-          className='mt-4 w-full border-dashed'
-          onClick={addItem}
-        >
-          <Plus size={16} className='mr-2' />
-          Tambah Item
-        </Button>
+            <Button
+              type='button'
+              variant='primary'
+              styleType='outline'
+              className='mt-4 w-full border-dashed'
+              onClick={addItem}
+            >
+              <Plus size={16} className='mr-2' />
+              Tambah Item
+            </Button>
+          </div>
+        </div>
       </div>
 
       <button type='submit' className='hidden' disabled={submitting} />
