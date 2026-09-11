@@ -1,7 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import config from "@/services/table/const";
-import { currencyFormat, formatDateTime } from "@/utils";
+import {
+  currencyFormat,
+  formatDateTime,
+  getStatusVariant,
+  getTypeVariant,
+} from "@/utils";
 import type { TableConfig } from "@/services/table/const";
+import { Badge } from "@/components";
 
 const createTableConfig = ({
   filter: incomingFilter,
@@ -23,19 +29,18 @@ const createTableConfig = ({
       title: "Tanggal",
       sortable: true,
       component: (row: any) => (
-        <span className="text-sm">
-          {row?.date ? formatDateTime(row.date) : "-"}
-        </span>
+        <>{row?.date ? formatDateTime(row.date) : "-"}</>
       ),
     },
+    cashier_name: { title: "Kasir", sortable: true },
     membership: {
       title: "Member",
       sortable: true,
       component: (row: any) => (
-        <div className="flex flex-col">
-          <span className="font-semibold text-sm">{row?.membership || "-"}</span>
+        <div className='flex flex-col'>
+          <span className='font-semibold'>{row?.membership || "-"}</span>
           {row?.card_id && (
-            <span className="text-xs text-base-content/60">{row.card_id}</span>
+            <span className='text-xs text-base-content/60'>{row.card_id}</span>
           )}
         </div>
       ),
@@ -44,22 +49,20 @@ const createTableConfig = ({
       title: "Tipe",
       sortable: true,
       component: (row: any) => (
-        <span className="text-sm capitalize">{row?.reference_type || "-"}</span>
+        <span className='capitalize'>{row?.reference_type || "-"}</span>
       ),
     },
     reference_code: {
       title: "Reference Code",
       sortable: true,
       component: (row: any) => (
-        <span className="font-medium text-sm">{row?.reference_code || "-"}</span>
+        <span className='font-medium '>{row?.reference_code || "-"}</span>
       ),
     },
     payment_type: {
       title: "Payment Type",
       sortable: false,
-      component: (row: any) => (
-        <span className="text-sm">{row?.payment_type || "-"}</span>
-      ),
+      class: "capitalize",
     },
     nominal: {
       title: "Nominal",
@@ -86,30 +89,26 @@ const createTableConfig = ({
       title: "Status",
       sortable: true,
       component: (row: any) => (
-        <span
-          className={
-            row?.status === "cancelled"
-              ? "text-red-500 text-sm font-medium capitalize"
-              : "text-green-600 text-sm font-medium capitalize"
-          }
-        >
-          {row?.status || "-"}
-        </span>
+        <Badge variant={getStatusVariant(row.status)} appearance='soft'>
+          {row.status || "-"}
+        </Badge>
       ),
     },
     cancelled_info: {
       title: "Dibatalkan",
       sortable: false,
       component: (row: any) => {
-        if (row?.status !== "cancelled") return <span className="text-sm">-</span>;
+        if (row?.status !== "cancelled") return "-";
         return (
-          <div className="flex flex-col">
-            <span className="text-sm font-medium text-red-500">
+          <div className='flex flex-col'>
+            <span className=' font-medium text-red-500'>
               {row?.cancelled_reason || "-"}
             </span>
-            <span className="text-xs text-base-content/60">
+            <span className='text-xs text-base-content/60'>
               {row?.cancelled_by || "-"}
-              {row?.cancelled_at ? ` • ${formatDateTime(row.cancelled_at)}` : ""}
+              {row?.cancelled_at
+                ? ` • ${formatDateTime(row.cancelled_at)}`
+                : ""}
             </span>
           </div>
         );

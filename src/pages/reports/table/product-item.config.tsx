@@ -15,9 +15,12 @@ const createTableConfig = ({
       title: "Tanggal",
       component: (row: ProductItemRow) => formatDate(row.date),
     },
-    outlet: { title: "Outlet" },
     menu: { title: "Menu" },
-    quantity: { title: "Qty", class: "text-center", headerClass: "text-center" },
+    quantity: {
+      title: "Qty",
+      class: "text-center",
+      headerClass: "text-center",
+    },
     unit_nett: {
       title: "Unit Nett",
       headerClass: "!text-end",

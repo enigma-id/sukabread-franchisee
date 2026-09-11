@@ -20,6 +20,7 @@ const createTableConfig = ({
       sortable: true,
       component: (row: ProductSalesRow) => formatDate(row.date),
     },
+    cashier_name: { title: "Kasir", sortable: true },
     channel: { title: "Channel", sortable: true },
     payment: { title: "Payment", sortable: true },
     code: { title: "Code", sortable: true },
@@ -54,8 +55,9 @@ const createTableConfig = ({
     action: {
       title: "",
       width: 40,
+      sortable: false,
       component: () => (
-        <ChevronRight size={16} className="text-base-content/30" />
+        <ChevronRight size={16} className='text-base-content/30' />
       ),
     },
   },

@@ -497,14 +497,11 @@ export function AuthorizedLayout() {
             <div className='flex-1 min-w-0'>
               <div className='flex items-center gap-2'>
                 <p className='text-[14px] font-bold text-base-content truncate leading-tight'>
-                  {user?.user?.name ?? "Demo"}
+                  {user?.user?.name ?? ""}
                 </p>
-                <span className='text-[8px] font-black bg-primary text-primary-content px-1.5 py-0.5 rounded uppercase tracking-wider'>
-                  Admin
-                </span>
               </div>
               <p className='text-[11px] text-base-content/70 truncate mt-1 font-semibold tracking-wide'>
-                {user?.user?.username ?? "demo@franchisee..."}
+                {user?.outlet?.name ?? ""}
               </p>
             </div>
 

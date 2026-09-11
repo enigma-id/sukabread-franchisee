@@ -217,6 +217,7 @@ export function Dashboard() {
                 icon={Wallet}
                 theme={THEMES.blue}
                 variant='primary'
+                onClick={go(`/setting/outlet/balance-log`)}
               />
             </div>
             <SummaryCard
@@ -343,11 +344,7 @@ export function Dashboard() {
               ))}
             </PipelineCard>
 
-            <PipelineCard
-              title='Top Member'
-              icon={Medal}
-              theme={THEMES.green}
-            >
+            <PipelineCard title='Top Member' icon={Medal} theme={THEMES.green}>
               {data?.top_member?.map((member, i) => (
                 <div className='flex items-center justify-between' key={i}>
                   <div className='flex items-center gap-2'>

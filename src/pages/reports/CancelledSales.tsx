@@ -3,8 +3,8 @@ import { useEffect, useMemo } from "react";
 import { Page } from "@/components/app/layout";
 import useTable from "@/services/table/hooks";
 import type { TableConfig } from "@/services/table/const";
-import createTableConfig from "./table/cancelled-product-sales.config";
-import TableFilter from "./table/cancelled-product-sales.filter";
+import createTableConfig from "./table/cancelled-sales.config";
+import TableFilter from "./table/cancelled-sales.filter";
 import { useDocumentMeta } from "@/hooks/useDocumentMeta";
 import { useReport } from "@/services/report/hooks";
 import { SummaryCard } from "@/components/app";
@@ -60,7 +60,7 @@ export function CancelledProductSales() {
   }, [navigate]);
 
   const Table = useTable(
-    "report_cancelled_product_sales",
+    "report_cancelled_sales",
     tableConfig as TableConfig<unknown>,
   );
 
@@ -73,16 +73,15 @@ export function CancelledProductSales() {
   }, [Table.State?.lockedFilter, Table.State?.filter, Table.State?.textSearch]);
 
   const currentFilterString = JSON.stringify(currentFilter);
-  const { cancelledProductSalesSummary, cancelledProductSalesSummaryResult } =
-    useReport();
+  const { cancelledSalesSummary, cancelledSalesSummaryResult } = useReport();
 
   useEffect(() => {
     if (Table.State) {
-      cancelledProductSalesSummary(JSON.parse(currentFilterString));
+      cancelledSalesSummary(JSON.parse(currentFilterString));
     }
   }, [currentFilterString, Table.State !== undefined]);
 
-  const summary = cancelledProductSalesSummaryResult.data?.data;
+  const summary = cancelledSalesSummaryResult.data?.data;
 
   return (
     <Page className='h-full flex flex-col min-h-0 bg-slate-50'>
