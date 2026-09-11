@@ -4,12 +4,18 @@ import type { ProductItemRow } from "@/services/types/reports";
 
 const createTableConfig = ({
   filter,
+  lockedFilter,
+  onRowClick,
 }: {
   filter?: Record<string, unknown>;
+  lockedFilter?: Record<string, unknown>;
+  onRowClick?: (row: ProductItemRow) => void;
 }) => ({
   ...config,
   url: "/report/product-item",
   filter,
+  lockedFilter,
+  onRowClick,
   columns: {
     date: {
       title: "Tanggal",

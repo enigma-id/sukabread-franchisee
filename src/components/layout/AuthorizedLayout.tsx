@@ -160,6 +160,11 @@ const getMenuSections = (
           path: "/report/cash-control",
           icon: <FileBarChart size={16} />,
         },
+        {
+          label: type === "mitra" ? "Laporan Mitra" : "Laporan Kasir",
+          path: "/report/cashier",
+          icon: <UsersRound size={16} />,
+        },
         ...(type !== "outlet"
           ? []
           : [

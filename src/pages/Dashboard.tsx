@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect, useMemo, useState } from "react";
+import { lazy, Suspense, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   TrendingUp,
@@ -16,19 +16,27 @@ import {
   Minus,
   Receipt,
   Landmark,
-  ArrowUpFromLine,
   BadgePercent,
   Percent,
+  MapPinned,
 } from "lucide-react";
+import clsx from "clsx";
 import { Page } from "@/components/app/layout";
 import { SummaryCard } from "@/components/app";
 import { MonthPicker } from "@/components/ui";
 import dayjs from "dayjs";
 import { useDashboard } from "@/services/dashboard/hooks";
-import { currencyFormat, dateFormat } from "@/utils";
+import { currencyFormat, deviceStatusColor } from "@/utils";
 import { useDocumentMeta } from "@/hooks/useDocumentMeta";
 import type { DashboardData } from "@/services/types";
 import SalesChart from "@/components/app/SalesChart";
+
+// Lazy — widget peta memuat mapbox-gl yang besar, jangan masuk bundle utama.
+const CashierLiveMap = lazy(() =>
+  import("@/components/app/CashierLiveMap").then((m) => ({
+    default: m.CashierLiveMap,
+  })),
+);
 
 const THEMES = {
   blue: { text: "text-blue-500", iconBg: "#dbeafe", wave: "#3b82f6" },
@@ -154,6 +162,7 @@ export function Dashboard() {
   const { get, getResult } = useDashboard();
 
   const [periode, setPeriode] = useState(dayjs().format("YYYY-MM"));
+  const [selectedCashier, setSelectedCashier] = useState<string | null>(null);
 
   useEffect(() => {
     get({ periode });
@@ -161,6 +170,15 @@ export function Dashboard() {
 
   const data = getResult?.data?.data as DashboardData;
   const isLoading = getResult?.isLoading;
+
+  const liveMap = useMemo(
+    () => data?.cashier_live_map ?? [],
+    [data?.cashier_live_map],
+  );
+  const liveSelectedId =
+    selectedCashier && liveMap.some((o) => o.cashier_id === selectedCashier)
+      ? selectedCashier
+      : (liveMap[0]?.cashier_id ?? null);
 
   if (isLoading) {
     return (
@@ -321,6 +339,102 @@ export function Dashboard() {
             )}
           </div>
 
+          {/* Section mitra — monitoring operator (kasir + manager). Backend hanya
+              mengisi field ini bila brand.type = 'mitra'. */}
+          {(!!data?.top_cashiers?.length || liveMap.length > 0) && (
+            <div className='grid grid-cols-1 lg:grid-cols-2 gap-4'>
+              <PipelineCard
+                title='Top Kasir'
+                icon={Medal}
+                theme={THEMES.green}
+                onClick={go("/report/cashier")}
+              >
+                {data?.top_cashiers?.length ? (
+                  data.top_cashiers.map((c) => (
+                    <div
+                      key={c.cashier_id}
+                      className='flex items-center justify-between cursor-pointer rounded-lg px-1 -mx-1 hover:bg-slate-50'
+                      onClick={go(`/report/cashier/${c.cashier_id}`)}
+                    >
+                      <div className='flex items-center gap-2 min-w-0'>
+                        <Medal className='w-4 h-4 text-amber-500 shrink-0' />
+                        <span className='text-xs font-medium text-slate-500 truncate'>
+                          {c.cashier_name}
+                        </span>
+                        <span className='text-[9px] uppercase font-bold text-slate-400'>
+                          {c.role}
+                        </span>
+                      </div>
+                      <div className='flex flex-col items-end leading-tight shrink-0'>
+                        <span className='text-[10px] text-slate-500'>
+                          {c.total_transactions} trx
+                        </span>
+                        <span className='text-xs font-bold text-slate-800'>
+                          {currencyFormat(c.total_revenue)}
+                        </span>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <span className='text-sm text-slate-400'>
+                    Belum ada transaksi
+                  </span>
+                )}
+              </PipelineCard>
+
+              <PipelineCard
+                title='Posisi Kasir'
+                icon={MapPinned}
+                theme={THEMES.cyan}
+              >
+                {liveMap.length > 0 ? (
+                  <>
+                    <div className='flex flex-wrap gap-1.5'>
+                      {liveMap.map((op) => (
+                        <button
+                          key={op.cashier_id}
+                          onClick={() => setSelectedCashier(op.cashier_id)}
+                          className={clsx(
+                            "flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-semibold transition-colors cursor-pointer",
+                            op.cashier_id === liveSelectedId
+                              ? "border-primary/30 bg-primary/10 text-primary"
+                              : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50",
+                          )}
+                        >
+                          <span
+                            className='h-2 w-2 rounded-full'
+                            style={{ background: deviceStatusColor(op.status) }}
+                          />
+                          {op.cashier_name}
+                        </button>
+                      ))}
+                    </div>
+
+                    <Suspense
+                      fallback={
+                        <div className='h-[280px] rounded-xl bg-slate-100' />
+                      }
+                    >
+                      <CashierLiveMap
+                        items={liveMap}
+                        selectedId={liveSelectedId}
+                        onSelect={setSelectedCashier}
+                        className='h-[280px]'
+                      />
+                    </Suspense>
+                  </>
+                ) : (
+                  <div className='flex h-[280px] flex-col items-center justify-center text-slate-400'>
+                    <MapPinned className='w-7 h-7 text-slate-300 mb-2' />
+                    <span className='text-sm font-medium'>
+                      Tidak ada operator bertugas
+                    </span>
+                  </div>
+                )}
+              </PipelineCard>
+            </div>
+          )}
+
           {/* Remaining Detailed Cards (Bento) */}
           <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
             <PipelineCard
@@ -388,54 +502,7 @@ export function Dashboard() {
           </div>
 
           {/* Bottom Row */}
-          <div className='grid grid-cols-1 lg:grid-cols-2 gap-4'>
-            <PeakHoursCard data={data?.peak_hours} />
-
-            {/* Withdrawal Terbaru */}
-            <PipelineCard
-              title='Penarikan Terbaru'
-              icon={ArrowUpFromLine}
-              theme={THEMES.orange}
-              onClick={go("/withdrawal")}
-            >
-              {data?.withdrawal_terbaru?.length ? (
-                data.withdrawal_terbaru.map((w, i) => (
-                  <div className='flex items-center justify-between' key={i}>
-                    <div className='flex flex-col'>
-                      <span className='text-xs font-mono text-slate-800'>
-                        {w.code}
-                      </span>
-                      <span className='text-[10px] text-slate-400'>
-                        {dateFormat(w.created_at)}
-                      </span>
-                    </div>
-                    <div className='flex items-center gap-2'>
-                      <span className='text-xs font-bold text-slate-800'>
-                        {currencyFormat(w.amount)}
-                      </span>
-                      <span
-                        className={`text-[10px] uppercase font-semibold px-1.5 py-0.5 rounded ${
-                          w.status === "pending"
-                            ? "bg-yellow-100 text-yellow-700"
-                            : w.status === "approved"
-                              ? "bg-blue-100 text-blue-700"
-                              : w.status === "completed"
-                                ? "bg-green-100 text-green-700"
-                                : "bg-red-100 text-red-700"
-                        }`}
-                      >
-                        {w.status}
-                      </span>
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <span className='text-sm text-slate-400'>
-                  Tidak ada penarikan
-                </span>
-              )}
-            </PipelineCard>
-          </div>
+          <PeakHoursCard data={data?.peak_hours} />
         </div>
       </Page.Body>
     </Page>

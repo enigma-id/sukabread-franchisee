@@ -8,9 +8,11 @@ const currYear = new Date().getFullYear();
 
 const createTableConfig = ({
   filter: incomingFilter,
+  lockedFilter: incomingLockedFilter,
   onRowClick,
 }: {
   filter?: Record<string, unknown>;
+  lockedFilter?: Record<string, unknown>;
   onRowClick?: (row: any) => void;
 }): TableConfig<any> => ({
   ...config,
@@ -22,6 +24,7 @@ const createTableConfig = ({
   },
   lockedFilter: {
     periode_type: "yearly",
+    ...(incomingLockedFilter || {}),
   },
   onRowClick,
   dynamicColumns: (rows: any[]) => {

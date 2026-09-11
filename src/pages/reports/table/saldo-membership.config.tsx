@@ -4,15 +4,18 @@ import {
   currencyFormat,
   formatDateTime,
   getStatusVariant,
-  getTypeVariant,
 } from "@/utils";
 import type { TableConfig } from "@/services/table/const";
 import { Badge } from "@/components";
 
 const createTableConfig = ({
   filter: incomingFilter,
+  lockedFilter: incomingLockedFilter,
+  onRowClick,
 }: {
   filter?: Record<string, unknown>;
+  lockedFilter?: Record<string, unknown>;
+  onRowClick?: (row: any) => void;
 }): TableConfig<any> => ({
   ...config,
   url: "/report/saldo-log",
@@ -21,7 +24,9 @@ const createTableConfig = ({
   },
   lockedFilter: {
     status: "completed",
+    ...(incomingLockedFilter || {}),
   },
+  onRowClick,
   columns: {
     // Urutan key = urutan kolom: Tanggal, Member, Tipe, Reference Code,
     // Payment Type, Nominal, Status, Info Pembatalan.

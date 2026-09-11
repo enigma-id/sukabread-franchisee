@@ -1,314 +1,63 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useMemo, useRef, useState } from "react";
-import mapboxgl from "mapbox-gl";
-import type {
-  Feature as GeoJSONFeatureType,
-  Point as GeoJSONPoint,
-} from "geojson";
-import "mapbox-gl/dist/mapbox-gl.css";
-import { MapPin, Loader2, MapPinned } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { Loader2, MapPin, MapPinned } from "lucide-react";
 import { Page } from "@/components/app/layout";
+import { CashierLiveMap } from "@/components/app/CashierLiveMap";
 import { useLazyGetCashierMapsQuery } from "@/services/report/api";
 import type { CashierMapRow } from "@/services/types";
-import { currencyFormat } from "@/utils";
+import { currencyFormat, deviceStatusColor, deviceStatusLabel } from "@/utils";
 import clsx from "clsx";
 
-const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN || "";
-
-// History marker color — latest point gets a distinct (red) color.
-const HISTORY_COLOR = "#10b981";
-const LATEST_COLOR = "#ef4444";
-
-const validPoints = (row: CashierMapRow | undefined) =>
-  (row?.historys ?? []).filter(
+const pointCount = (row: CashierMapRow) =>
+  (row.historys ?? []).filter(
     (p) => typeof p.latitude === "number" && typeof p.longitude === "number",
-  );
-
-// Reusable popup HTML.
-const buildPopupHtml = ({
-  cashierName,
-  idx,
-  createdAt,
-  isLast,
-  color,
-}: {
-  cashierName: string;
-  idx: number;
-  createdAt: string;
-  isLast: boolean;
-  color: string;
-}) => `
-  <div style="padding: 16px; font-family: 'Inter', sans-serif;">
-    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; gap: 8px; padding-right: 28px;">
-      <div style="font-size: 14px; font-weight: 900; color: #111827; letter-spacing: -0.02em;">${cashierName}</div>
-      ${isLast ? `<div style="font-size: 10px; font-weight: 800; color: ${color}; background: ${color}15; padding: 4px 8px; border-radius: 8px; text-transform: uppercase; border: 1px solid ${color}30; white-space: nowrap;">Posisi Terakhir</div>` : ""}
-    </div>
-    <div style="display: flex; gap: 10px; align-items: flex-start;">
-      <div style="display: flex; flex-direction: column; align-items: center; gap: 4px; padding-top: 3px;">
-        <div style="width: 9px; height: 9px; border-radius: 50%; background: ${color}; box-shadow: 0 0 0 3px ${color}22;"></div>
-      </div>
-      <div style="flex: 1;">
-        <div style="font-size: 10px; font-weight: 800; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 2px;">Titik History</div>
-        <div style="font-size: 13px; font-weight: 700; color: #1f2937; line-height: 1.4;">Titik #${idx + 1}</div>
-        <div style="font-size: 11px; font-weight: 500; color: #6b7280; margin-top: 2px;">${createdAt}</div>
-      </div>
-    </div>
-  </div>
-`;
+  ).length;
 
 export function CashierMaps() {
   const [trigger, { data: rawResponse, isLoading }] =
     useLazyGetCashierMapsQuery();
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
-  const raw = (rawResponse as any)?.data ?? rawResponse;
   const rows = useMemo<CashierMapRow[]>(() => {
+    const raw = (rawResponse as any)?.data ?? rawResponse;
     if (Array.isArray(raw)) return raw;
     if (raw && Array.isArray(raw.data)) return raw.data;
     if (raw && Array.isArray(raw.datas)) return raw.datas;
     return [];
-  }, [raw]);
+  }, [rawResponse]);
 
-  // Fetch on mount, then auto-refresh every 1 hour.
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  // Refresh tiap menit — status recency device (online ≤5 mnt) ikut berubah.
   useEffect(() => {
     trigger(undefined);
-    const timer = setInterval(() => trigger(undefined), 60 * 60 * 1000);
+    const timer = setInterval(() => trigger(undefined), 60 * 1000);
     return () => clearInterval(timer);
   }, []);
 
-  // Default to first cashier; user click overrides. Fallback if selected gone.
+  // Default ke operator pertama; klik marker/list menimpa pilihan.
   const activeId =
     selectedId && rows.some((r) => r.cashier_id === selectedId)
       ? selectedId
       : (rows[0]?.cashier_id ?? null);
 
   const selected = rows.find((r) => r.cashier_id === activeId);
-  const points = validPoints(selected);
-  const center: [number, number] =
-    points.length > 0
-      ? [points[0].longitude, points[0].latitude]
-      : [106.8166667, -6.2];
-
-  // Map lifecycle — one init per mount.
-  const mapContainer = useRef<HTMLDivElement>(null);
-  const map = useRef<mapboxgl.Map | null>(null);
-  const popup = useRef<mapboxgl.Popup | null>(null);
-  const [isLoaded, setIsLoaded] = useState(false);
-  const hasInitializedLayers = useRef(false);
-
-  useEffect(() => {
-    if (!mapContainer.current || !MAPBOX_TOKEN) return;
-
-    map.current = new mapboxgl.Map({
-      container: mapContainer.current,
-      accessToken: MAPBOX_TOKEN,
-      style: "mapbox://styles/mapbox/streets-v12",
-      center,
-      zoom: 12,
-      interactive: true,
-      attributionControl: false,
-    });
-
-    map.current.addControl(
-      new mapboxgl.NavigationControl({ showCompass: false }),
-      "top-right",
-    );
-
-    popup.current = new mapboxgl.Popup({
-      closeButton: true,
-      closeOnClick: false,
-      offset: 15,
-      maxWidth: "280px",
-      className: "cashier-mapbox-popup",
-    });
-
-    map.current.on("load", () => setIsLoaded(true));
-
-    return () => {
-      map.current?.remove();
-      map.current = null;
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  // Draw trail + markers whenever points / selected cashier change.
-  useEffect(() => {
-    if (!map.current || !isLoaded) return;
-    const mapInstance = map.current;
-
-    const markerFeatures: GeoJSONFeatureType[] = [];
-    const trailFeatures: GeoJSONFeatureType[] = [];
-
-    points.forEach((p, idx) => {
-      const isLast = idx === points.length - 1;
-      const color = isLast ? LATEST_COLOR : HISTORY_COLOR;
-      markerFeatures.push({
-        type: "Feature",
-        properties: {
-          idx,
-          isLast,
-          color,
-          cashierName: selected?.cashier_name ?? "cashier",
-          createdAt: p.created_at,
-        },
-        geometry: { type: "Point", coordinates: [p.longitude, p.latitude] },
-      });
-
-      if (idx > 0) {
-        const prev = points[idx - 1];
-        trailFeatures.push({
-          type: "Feature",
-          properties: { color: HISTORY_COLOR },
-          geometry: {
-            type: "LineString",
-            coordinates: [
-              [prev.longitude, prev.latitude],
-              [p.longitude, p.latitude],
-            ],
-          },
-        });
-      }
-    });
-
-    // Clean up previous layers/sources.
-    ["cashier-trail", "cashier-markers", "cashier-markers-labels"].forEach(
-      (layerId) => {
-        if (mapInstance.getLayer(layerId)) mapInstance.removeLayer(layerId);
-      },
-    );
-    ["cashier-trail", "cashier-markers"].forEach((sourceId) => {
-      if (mapInstance.getSource(sourceId)) mapInstance.removeSource(sourceId);
-    });
-
-    if (markerFeatures.length === 0) return;
-
-    if (trailFeatures.length > 0) {
-      mapInstance.addSource("cashier-trail", {
-        type: "geojson",
-        data: { type: "FeatureCollection", features: trailFeatures },
-      });
-      mapInstance.addLayer({
-        id: "cashier-trail",
-        type: "line",
-        source: "cashier-trail",
-        paint: {
-          "line-color": HISTORY_COLOR,
-          "line-width": 3,
-          "line-opacity": 0.8,
-          "line-dasharray": [4, 3],
-        },
-      });
-    }
-
-    mapInstance.addSource("cashier-markers", {
-      type: "geojson",
-      data: { type: "FeatureCollection", features: markerFeatures },
-    });
-
-    mapInstance.addLayer({
-      id: "cashier-markers",
-      type: "circle",
-      source: "cashier-markers",
-      paint: {
-        "circle-radius": ["case", ["get", "isLast"], 12, 8],
-        "circle-color": ["get", "color"],
-        "circle-stroke-width": 2,
-        "circle-stroke-color": "#ffffff",
-      },
-    });
-
-    mapInstance.addLayer({
-      id: "cashier-markers-labels",
-      type: "symbol",
-      source: "cashier-markers",
-      layout: {
-        "text-field": ["case", ["get", "isLast"], "●", ""],
-        "text-font": ["Open Sans Regular", "Arial Unicode MS Regular"],
-        "text-size": 9,
-        "text-anchor": "center",
-        "text-ignore-placement": true,
-      },
-      paint: { "text-color": "#ffffff" },
-    });
-
-    const onMapClick = (e: mapboxgl.MapMouseEvent) => {
-      const features = mapInstance.queryRenderedFeatures(e.point, {
-        layers: ["cashier-markers"],
-      });
-      if (!features || features.length === 0) return;
-
-      const feature = features[0];
-      const props = feature.properties as any;
-      const coordinates = (feature.geometry as GeoJSONPoint).coordinates as [
-        number,
-        number,
-      ];
-
-      const html = buildPopupHtml({
-        cashierName: props.cashierName,
-        idx: props.idx,
-        createdAt: props.createdAt,
-        isLast: props.isLast,
-        color: props.color,
-      });
-
-      if (popup.current) {
-        popup.current.setLngLat(coordinates).setHTML(html).addTo(mapInstance);
-      }
-    };
-
-    const onMapMouseMove = (e: mapboxgl.MapMouseEvent) => {
-      const features = mapInstance.queryRenderedFeatures(e.point, {
-        layers: ["cashier-markers"],
-      });
-      mapInstance.getCanvas().style.cursor =
-        features.length > 0 ? "pointer" : "";
-    };
-
-    mapInstance.on("click", onMapClick);
-    mapInstance.on("mousemove", onMapMouseMove);
-
-    // Fit bounds once per cashier selection.
-    if (!hasInitializedLayers.current && markerFeatures.length > 0) {
-      const bounds = new mapboxgl.LngLatBounds();
-      markerFeatures.forEach((f) => {
-        const coords = (f.geometry as GeoJSONPoint).coordinates as [
-          number,
-          number,
-        ];
-        bounds.extend(coords);
-      });
-      mapInstance.fitBounds(bounds, { padding: 50, maxZoom: 15 });
-      hasInitializedLayers.current = true;
-    }
-
-    return () => {
-      mapInstance.off("click", onMapClick);
-      mapInstance.off("mousemove", onMapMouseMove);
-    };
-  }, [points, selected, isLoaded]);
-
-  // Refit when switching cashier.
-  useEffect(() => {
-    hasInitializedLayers.current = false;
-  }, [activeId]);
 
   return (
     <Page className='h-full flex flex-col min-h-0 bg-slate-50'>
       <Page.Header
         category='Report'
-        title='Mitra Maps'
-        subtitle='Laporan posisi dan jejak kasir outlet berdasarkan history GPS.'
+        title='Outlet Maps'
+        subtitle='Posisi live kasir/operator yang sedang bertugas berdasarkan history GPS device.'
       />
       <Page.Body className='flex-1 flex flex-col md:flex-row gap-4 min-h-0'>
-        {/* Left — mitra list */}
+        {/* Left — daftar operator yang sedang bertugas */}
         <div className='w-full md:w-[380px] shrink-0 flex flex-col bg-white border border-slate-200/60 rounded-2xl overflow-hidden'>
           <div className='px-5 py-4 border-b border-slate-100 flex items-center gap-2.5'>
             <MapPinned className='w-4 h-4 text-emerald-600' />
-            <h3 className='text-sm font-bold text-slate-800'>Daftar Mitra</h3>
+            <h3 className='text-sm font-bold text-slate-800'>
+              Operator Bertugas
+            </h3>
             <span className='ml-auto text-[11px] font-semibold text-slate-400'>
-              {rows.length} Mitra
+              {rows.length} Operator
             </span>
           </div>
 
@@ -320,12 +69,17 @@ export function CashierMaps() {
             ) : rows.length === 0 ? (
               <div className='flex flex-col items-center justify-center py-12 text-slate-400'>
                 <MapPin className='w-8 h-8 text-slate-300 mb-2' />
-                <p className='text-sm font-medium'>Belum ada data</p>
+                <p className='text-sm font-medium'>Tidak ada operator bertugas</p>
+                <p className='mt-1 px-6 text-center text-[11px]'>
+                  Peta hanya menampilkan operator dengan sesi kasir yang masih
+                  terbuka.
+                </p>
               </div>
             ) : (
               rows.map((row) => {
-                const count = validPoints(row).length;
+                const count = pointCount(row);
                 const active = row.cashier_id === activeId;
+                const color = deviceStatusColor(row.status);
                 return (
                   <button
                     key={row.cashier_id}
@@ -345,11 +99,36 @@ export function CashierMaps() {
                         {count} titik
                       </span>
                     </div>
-                    <p className='text-xs text-slate-500 font-medium mt-0.5'>
-                      Total Omset:{" "}
+
+                    <div className='mt-1 flex items-center gap-2'>
+                      <span className='text-[10px] font-bold uppercase tracking-wide text-slate-400'>
+                        {row.role || "-"}
+                      </span>
+                      <span className='flex items-center gap-1'>
+                        <span
+                          className='h-1.5 w-1.5 rounded-full'
+                          style={{ background: color }}
+                        />
+                        <span
+                          className='text-[10px] font-bold'
+                          style={{ color }}
+                        >
+                          {deviceStatusLabel(row.status)}
+                        </span>
+                      </span>
+                    </div>
+
+                    <p className='text-xs text-slate-500 font-medium mt-1'>
+                      Omset sesi:{" "}
                       <span className='font-bold text-emerald-600'>
                         {currencyFormat(row.total_charges)}
                       </span>
+                    </p>
+                    <p className='text-[10px] text-slate-400 mt-0.5'>
+                      {row.battery_health
+                        ? `Battery ${row.battery_health}`
+                        : "Battery -"}
+                      {row.last_seen ? ` • ${row.last_seen}` : ""}
                     </p>
                   </button>
                 );
@@ -358,38 +137,25 @@ export function CashierMaps() {
           </div>
         </div>
 
-        {/* Right — map */}
+        {/* Right — peta */}
         <div className='flex-1 min-w-0 bg-white border border-slate-200/60 rounded-2xl overflow-hidden flex flex-col'>
           <div className='px-5 py-4 border-b border-slate-100 flex items-center gap-2.5'>
             <MapPin className='w-4 h-4 text-emerald-600' />
             <h3 className='text-sm font-bold text-slate-800'>
-              {selected?.cashier_name ?? "Peta Mitra"}
+              {selected?.cashier_name ?? "Peta Operator"}
             </h3>
             <span className='ml-auto text-[11px] font-semibold text-slate-400'>
-              {points.length} history
+              {selected ? pointCount(selected) : 0} history
             </span>
           </div>
 
-          <div className='flex-1 min-h-0 relative'>
-            {MAPBOX_TOKEN ? (
-              <div
-                ref={mapContainer}
-                className='absolute inset-0 w-full h-full'
-                style={{ minHeight: 400 }}
-              />
-            ) : (
-              <div className='flex-1 flex items-center justify-center bg-slate-50/50 border-2 border-dashed border-slate-200 m-4 rounded-2xl h-[400px]'>
-                <div className='text-center'>
-                  <MapPin className='w-8 h-8 text-slate-300 mx-auto mb-3' />
-                  <p className='text-slate-400 font-medium'>
-                    Mapbox token belum dikonfigurasi
-                  </p>
-                  <code className='text-xs text-slate-400 bg-slate-100 px-2 py-1 rounded'>
-                    VITE_MAPBOX_TOKEN
-                  </code>
-                </div>
-              </div>
-            )}
+          <div className='flex-1 min-h-0 p-3'>
+            <CashierLiveMap
+              items={rows}
+              selectedId={activeId}
+              onSelect={setSelectedId}
+              className='h-full min-h-[400px]'
+            />
           </div>
         </div>
       </Page.Body>

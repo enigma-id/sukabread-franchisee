@@ -1,13 +1,9 @@
+import type { CashierMapRow } from "./reports";
+
 export interface TopMenu {
   menu_name: string;
   total_qty: number;
   total_revenue: number;
-}
-
-export interface CashierPerformance {
-  cashier_name: string;
-  total_transaksi: number;
-  omzet: number;
 }
 
 export interface PaymentMethodSplit {
@@ -41,11 +37,14 @@ export interface OutstandingBillTracker {
   total_outstanding: number;
 }
 
-export interface WithdrawalTerbaru {
-  code: string;
-  amount: number;
-  status: string;
-  created_at: string;
+/** Top 5 operator (kasir/manager) — hanya diisi bila brand.type = 'mitra'. */
+export interface TopCashier {
+  cashier_id: string;
+  cashier_name: string;
+  role: string;
+  total_transactions: number;
+  total_revenue: number;
+  aov: number;
 }
 
 // Contract-aligned types
@@ -76,9 +75,11 @@ export interface DashboardData {
   weekly_comparison?: WeeklyComparison;
   outstanding_bill_tracker?: OutstandingBillTracker;
   top_menu?: TopMenu[];
-  cashier_performance?: CashierPerformance[];
   payment_method_split?: PaymentMethodSplit[];
   peak_hours?: PeakHour[];
   top_member?: TopMember[];
-  withdrawal_terbaru?: WithdrawalTerbaru[];
+  /** Section mitra: top 5 operator by metrik terpilih. */
+  top_cashiers?: TopCashier[];
+  /** Section mitra: posisi device operator yang sedang bertugas (session opened). */
+  cashier_live_map?: CashierMapRow[];
 }

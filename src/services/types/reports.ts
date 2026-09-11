@@ -19,18 +19,56 @@ export interface SaldoLogReportSummary {
   total_count: number;
 }
 
-// Cashier Maps (mitra)
+// Cashier Maps (mitra) — live map posisi device operator.
 export interface CashierMapHistory {
   latitude: number;
   longitude: number;
   created_at: string;
 }
 
+/** Recency device operator: online (<=5 menit) | stale (5-15 menit) | offline. */
+export type CashierDeviceStatus = "online" | "stale" | "offline";
+
 export interface CashierMapRow {
   cashier_id: string;
   cashier_name: string;
+  role: string;
+  session_id: string;
+  started_at: string;
+  battery_health: string;
+  last_seen: string;
+  status: CashierDeviceStatus;
   total_charges: number;
   historys: CashierMapHistory[];
+}
+
+// Laporan per-operator (cashier + manager)
+export interface CashierReportRow {
+  cashier_id: string;
+  cashier_name: string;
+  username: string;
+  role: string;
+  outlet_id: string;
+  outlet_name: string;
+  total_sales: number;
+  omzet: number;
+  total_outstanding: number;
+  outstanding_amount: number;
+  total_session: number;
+  active_session: number;
+  aov: number;
+  cancelled_count: number;
+}
+
+export interface CashierReportSummary {
+  total_cashier: number;
+  total_sales: number;
+  total_omzet: number;
+  total_outstanding: number;
+  outstanding_amount: number;
+  total_session: number;
+  active_cashier: number;
+  cancelled_count: number;
 }
 
 // Daily Sales

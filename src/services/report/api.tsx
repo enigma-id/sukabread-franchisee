@@ -136,6 +136,22 @@ export const reportApi = createApi({
     getCashierMaps: builder.query({
       query: (params) => ({ url: "/report/cashier-maps", params }),
     }),
+
+    /**
+     * GET /report/cashier
+     * List laporan per-operator (cashier + manager) dengan angka ringkasan
+     */
+    getCashierReport: builder.query({
+      query: (params) => ({ url: "/report/cashier", params }),
+    }),
+
+    /**
+     * GET /report/cashier/summary
+     * Agregat laporan per-operator (tanpa cashier_id = seluruh operator)
+     */
+    getCashierReportSummary: builder.query({
+      query: (params) => ({ url: "/report/cashier/summary", params }),
+    }),
   }),
 });
 
@@ -155,4 +171,6 @@ export const {
   useLazyGetSaldoLogQuery,
   useLazyGetSaldoLogSummaryQuery,
   useLazyGetCashierMapsQuery,
+  useLazyGetCashierReportQuery,
+  useLazyGetCashierReportSummaryQuery,
 } = reportApi;

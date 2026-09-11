@@ -26,6 +26,8 @@ import {
   ProductItem,
   CancelledProductSales,
   SaldoMembership,
+  CashierList,
+  CashierDetail,
 } from "@/pages/reports";
 // Lazy — page peta memuat mapbox-gl yang besar, jangan masuk bundle utama.
 const CashierMaps = lazy(() =>
@@ -92,6 +94,8 @@ export function AppRoutes() {
         <Route path="/report/settlement" element={<Settlement />} />
         <Route path="/report/settlement/daily" element={<SettlementDaily />} />
         <Route path="/report/cash-control" element={<CashControl />} />
+        <Route path="/report/cashier" element={<CashierList />} />
+        <Route path="/report/cashier/:id" element={<CashierDetail />} />
         <Route
           path="/report/saldo-membership"
           element={<SaldoMembership />}

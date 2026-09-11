@@ -5,14 +5,17 @@ import type { CancelledProductSalesRow } from "@/services/types/reports";
 
 const createTableConfig = ({
   filter,
+  lockedFilter,
   onRowClick,
 }: {
   filter?: Record<string, unknown>;
+  lockedFilter?: Record<string, unknown>;
   onRowClick?: (row: CancelledProductSalesRow) => void;
 }) => ({
   ...config,
   url: "/report/cancel-order",
   filter,
+  lockedFilter,
   onRowClick,
   columns: {
     cancelled_at: {
