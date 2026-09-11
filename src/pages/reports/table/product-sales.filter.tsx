@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import dayjs, { Dayjs } from "dayjs";
 
-import { DatePicker, RemoteSelect } from "@/components/ui";
+import { DatePicker, RemoteSelect, SelectCashier } from "@/components/ui";
 import { useCatalog } from "@/services/catalog/hooks";
 import { ChevronDown } from "lucide-react";
 import type { CatalogOutlet } from "@/services/types";
@@ -15,6 +15,7 @@ interface TableFilterProps {
     State: {
       loading: boolean;
       filter: any;
+      lockedFilter?: Record<string, any>;
     };
   };
 }
@@ -25,9 +26,15 @@ const TableFilter: React.FC<TableFilterProps> = ({ table }) => {
     [table.State?.filter],
   );
 
+  // Kasir dikunci di konteks drill-down (mis. tab detail kasir).
+  const lockedCashier = !!table.State?.lockedFilter?.cashier_id;
+
   const { get: getCatalog, getResult } = useCatalog();
 
   const [catalog, setCatalog] = useState<CatalogOutlet | null>(null);
+  const [cashierId, setCashierId] = useState<string | null>(
+    () => (current.cashier_id as string) || null,
+  );
 
   const [dateRange, setDateRange] = useState<
     [Dayjs | null, Dayjs | null] | undefined
@@ -42,6 +49,7 @@ const TableFilter: React.FC<TableFilterProps> = ({ table }) => {
 
   const buildFilters = () => ({
     catalog_id: catalog?.catalog_id ?? "",
+    cashier_id: cashierId ?? "",
     start_date: dateRange ? dateRange[0]?.format("YYYY-MM-DD") ?? "" : "",
     end_date: dateRange ? dateRange[1]?.format("YYYY-MM-DD") ?? "" : "",
   });
@@ -50,14 +58,16 @@ const TableFilter: React.FC<TableFilterProps> = ({ table }) => {
     const f = buildFilters();
     return (
       String(f.catalog_id || "") !== String(current.catalog_id || "") ||
+      String(f.cashier_id || "") !== String(current.cashier_id || "") ||
       String(f.start_date || "") !== String(current.start_date || "") ||
       String(f.end_date || "") !== String(current.end_date || "")
     );
-  }, [catalog, dateRange, current]);
+  }, [catalog, cashierId, dateRange, current]);
 
   const anyActive = useMemo(
     () =>
       !!current.catalog_id ||
+      !!current.cashier_id ||
       !!current.start_date ||
       !!current.end_date,
     [current],
@@ -65,8 +75,14 @@ const TableFilter: React.FC<TableFilterProps> = ({ table }) => {
 
   const handleClear = () => {
     setCatalog(null);
+    setCashierId(null);
     setDateRange(undefined);
-    table.filter({ catalog_id: "", start_date: "", end_date: "" });
+    table.filter({
+      catalog_id: "",
+      cashier_id: "",
+      start_date: "",
+      end_date: "",
+    });
   };
 
   const handleFilter = () => table.filter(buildFilters());
@@ -96,11 +112,11 @@ const TableFilter: React.FC<TableFilterProps> = ({ table }) => {
       handleClear={handleClear}
       handleFilter={handleFilter}
     >
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+      <div className='grid grid-cols-1 lg:grid-cols-2 gap-3'>
         <RemoteSelect
-          placeholder="Catalog: All"
-          inputClassName="!bg-white !border-gray-200 !h-9 !min-h-0 !py-0 !shadow-sm hover:!bg-gray-50 !text-gray-700 cursor-pointer !rounded-lg text-sm font-medium"
-          suffix={<ChevronDown className="text-gray-400 w-4 h-4" />}
+          placeholder='Catalog: All'
+          inputClassName='!bg-white !border-gray-200 !h-9 !min-h-0 !py-0 !shadow-sm hover:!bg-gray-50 !text-gray-700 cursor-pointer !rounded-lg text-sm font-medium'
+          suffix={<ChevronDown className='text-gray-400 w-4 h-4' />}
           value={catalog}
           onChange={setCatalog}
           onClear={() => setCatalog(null)}
@@ -116,8 +132,15 @@ const TableFilter: React.FC<TableFilterProps> = ({ table }) => {
           renderItem={(item: any) => item?.catalog?.name}
           getValue={(item: any) => item.catalog_id}
         />
+        {!lockedCashier && (
+          <SelectCashier
+            value={cashierId}
+            onChange={setCashierId}
+            inputClassName='!bg-white !border-gray-200 !h-9 !min-h-0 !py-0 !shadow-sm hover:!bg-gray-50 !text-gray-700 cursor-pointer !rounded-lg text-sm font-medium'
+          />
+        )}
         <DatePicker
-          mode="range"
+          mode='range'
           value={dateRange}
           onChange={(date) => {
             let newRange: [Dayjs | null, Dayjs | null] = [null, null];
@@ -126,8 +149,8 @@ const TableFilter: React.FC<TableFilterProps> = ({ table }) => {
             }
             setDateRange(newRange);
           }}
-          placeholder="Select Date Range"
-          inputClassName="!bg-white !border-gray-200 !h-9 !min-h-0 !py-0 !shadow-sm hover:!bg-gray-50 !text-gray-700 cursor-pointer !rounded-lg text-sm font-medium"
+          placeholder='Select Date Range'
+          inputClassName='!bg-white !border-gray-200 !h-9 !min-h-0 !py-0 !shadow-sm hover:!bg-gray-50 !text-gray-700 cursor-pointer !rounded-lg text-sm font-medium'
         />
       </div>
     </TableFilters>

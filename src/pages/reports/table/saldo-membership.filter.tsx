@@ -2,7 +2,7 @@
 import { useMemo, useState } from "react";
 import dayjs, { Dayjs } from "dayjs";
 
-import { DatePicker, RemoteSelect } from "@/components/ui";
+import { DatePicker, RemoteSelect, SelectCashier } from "@/components/ui";
 import TableFilters from "@/components/ui/table/filter";
 
 interface TableFilterProps {
@@ -11,6 +11,7 @@ interface TableFilterProps {
     State: {
       loading: boolean;
       filter: any;
+      lockedFilter?: Record<string, any>;
     };
   };
 }
@@ -31,6 +32,13 @@ const statusOptions: FilterOption[] = [
 
 const TableFilter: React.FC<TableFilterProps> = ({ table }) => {
   const current = useMemo(() => table.State?.filter ?? {}, [table.State?.filter]);
+
+  // Kasir dikunci di konteks drill-down (mis. tab detail kasir).
+  const lockedCashier = !!table.State?.lockedFilter?.cashier_id;
+
+  const [cashierId, setCashierId] = useState<string | null>(
+    () => (current.cashier_id as string) || null,
+  );
 
   const [referenceType, setReferenceType] = useState<FilterOption | null>(() => {
     const cur = current.reference_type as string | undefined;
@@ -58,6 +66,7 @@ const TableFilter: React.FC<TableFilterProps> = ({ table }) => {
   const buildFilters = () => ({
     reference_type: referenceType?.value ?? "",
     status: status?.value ?? "",
+    cashier_id: cashierId ?? "",
     start_date: dateRange?.[0]?.format("YYYY-MM-DD") ?? "",
     end_date: dateRange?.[1]?.format("YYYY-MM-DD") ?? "",
   });
@@ -66,16 +75,18 @@ const TableFilter: React.FC<TableFilterProps> = ({ table }) => {
     return (
       ((referenceType?.value ?? "") !== (current.reference_type || "")) ||
       ((status?.value ?? "") !== (current.status || "")) ||
+      ((cashierId ?? "") !== (current.cashier_id || "")) ||
       ((dateRange?.[0]?.format("YYYY-MM-DD") ?? "") !==
         (current.start_date || "")) ||
       ((dateRange?.[1]?.format("YYYY-MM-DD") ?? "") !==
         (current.end_date || ""))
     );
-  }, [referenceType, status, dateRange, current]);
+  }, [referenceType, status, cashierId, dateRange, current]);
 
   const anyActive = useMemo(
     () =>
       !!current.reference_type ||
+      !!current.cashier_id ||
       (current.status && current.status !== "completed") ||
       !!current.start_date ||
       !!current.end_date,
@@ -85,10 +96,12 @@ const TableFilter: React.FC<TableFilterProps> = ({ table }) => {
   const handleClear = () => {
     setReferenceType(null);
     setStatus({ label: "Completed", value: "completed" });
+    setCashierId(null);
     setDateRange(undefined);
     table.filter({
       reference_type: "",
       status: "completed",
+      cashier_id: "",
       start_date: "",
       end_date: "",
     });
@@ -103,7 +116,7 @@ const TableFilter: React.FC<TableFilterProps> = ({ table }) => {
       handleClear={handleClear}
       handleFilter={handleFilter}
     >
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 items-end">
         <RemoteSelect
           label="Tipe"
           placeholder="Filter Tipe"
@@ -124,6 +137,7 @@ const TableFilter: React.FC<TableFilterProps> = ({ table }) => {
           getLabel={(item: { label: string }) => item?.label ?? ""}
           renderItem={(item: { label: string }) => item?.label}
         />
+        <SelectCashier value={cashierId} onChange={setCashierId} hidden={lockedCashier} />
         <DatePicker
           label="Rentang Tanggal"
           mode="range"

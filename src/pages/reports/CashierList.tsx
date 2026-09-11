@@ -56,7 +56,8 @@ const OverviewCards = ({ data }: { data: any | null }) => {
 
 export function CashierList() {
   const brandType = useAppSelector((s) => s.auth.session?.brand?.type);
-  const title = brandType?.toLowerCase() === "mitra" ? "Laporan Mitra" : "Laporan Kasir";
+  const isMitra = brandType?.toLowerCase() === "mitra";
+  const title = isMitra ? "Laporan Mitra" : "Laporan Kasir";
 
   useDocumentMeta(
     `${title} | Sukabread Franchisee`,

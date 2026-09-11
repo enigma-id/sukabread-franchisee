@@ -45,7 +45,7 @@ export function CashierMaps() {
     <Page className='h-full flex flex-col min-h-0 bg-slate-50'>
       <Page.Header
         category='Report'
-        title='Outlet Maps'
+        title='Mitra Maps'
         subtitle='Posisi live kasir/operator yang sedang bertugas berdasarkan history GPS device.'
       />
       <Page.Body className='flex-1 flex flex-col md:flex-row gap-4 min-h-0'>
@@ -150,8 +150,10 @@ export function CashierMaps() {
           </div>
 
           <div className='flex-1 min-h-0 p-3'>
+            {/* Peta hanya menampilkan titik milik operator yang dipilih —
+                daftar di kiri tetap memuat semua operator bertugas. */}
             <CashierLiveMap
-              items={rows}
+              items={selected ? [selected] : []}
               selectedId={activeId}
               onSelect={setSelectedId}
               className='h-full min-h-[400px]'

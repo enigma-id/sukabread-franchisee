@@ -25,6 +25,7 @@ export * from "./radio";
 export * from "./radio-button";
 export * from "./select";
 export * from "./select-remote";
+export * from "./select-cashier";
 export * from "./steps";
 export * from "./tabs";
 export * from "./toast";

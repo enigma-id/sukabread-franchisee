@@ -81,6 +81,10 @@ const PipelineCard = ({
   </div>
 );
 
+const CardEmpty = ({ text = "Belum ada transaksi" }: { text?: string }) => (
+  <span className='text-sm text-slate-400'>{text}</span>
+);
+
 // ─── Peak Hours Card with Fire Animation ─────────────────────────────────────
 const PeakHoursCard = ({
   data,
@@ -92,6 +96,14 @@ const PeakHoursCard = ({
     return [...data].sort((a, b) => b.total_transaksi - a.total_transaksi);
   }, [data]);
   const maxTx = sorted[0]?.total_transaksi ?? 0;
+
+  if (!data?.length) {
+    return (
+      <PipelineCard title='Peak Hours' icon={Clock10} theme={THEMES.red}>
+        <CardEmpty />
+      </PipelineCard>
+    );
+  }
 
   return (
     <PipelineCard title='Peak Hours' icon={Clock10} theme={THEMES.red}>
@@ -219,6 +231,47 @@ export function Dashboard() {
         }
       />
       <Page.Body className='flex flex-col gap-6 pb-10'>
+        {/* Live Mitra (live map) — khusus brand mitra, full width paling atas. */}
+        {liveMap.length > 0 && (
+          <PipelineCard
+            title='Live Mitra'
+            icon={MapPinned}
+            theme={THEMES.cyan}
+          >
+            <div className='flex flex-wrap gap-1.5'>
+              {liveMap.map((op) => (
+                <button
+                  key={op.cashier_id}
+                  onClick={() => setSelectedCashier(op.cashier_id)}
+                  className={clsx(
+                    "flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-semibold transition-colors cursor-pointer",
+                    op.cashier_id === liveSelectedId
+                      ? "border-primary/30 bg-primary/10 text-primary"
+                      : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50",
+                  )}
+                >
+                  <span
+                    className='h-2 w-2 rounded-full'
+                    style={{ background: deviceStatusColor(op.status) }}
+                  />
+                  {op.cashier_name}
+                </button>
+              ))}
+            </div>
+
+            <Suspense
+              fallback={<div className='h-[520px] rounded-xl bg-slate-100' />}
+            >
+              <CashierLiveMap
+                items={liveMap}
+                selectedId={liveSelectedId}
+                onSelect={setSelectedCashier}
+                className='h-[520px]'
+              />
+            </Suspense>
+          </PipelineCard>
+        )}
+
         {/* Sales Chart */}
         <SalesChart
           data={data?.sales_graph}
@@ -339,139 +392,51 @@ export function Dashboard() {
             )}
           </div>
 
-          {/* Section mitra — monitoring operator (kasir + manager). Backend hanya
-              mengisi field ini bila brand.type = 'mitra'. */}
-          {(!!data?.top_cashiers?.length || liveMap.length > 0) && (
-            <div className='grid grid-cols-1 lg:grid-cols-2 gap-4'>
-              <PipelineCard
-                title='Top Kasir'
-                icon={Medal}
-                theme={THEMES.green}
-                onClick={go("/report/cashier")}
-              >
-                {data?.top_cashiers?.length ? (
-                  data.top_cashiers.map((c) => (
-                    <div
-                      key={c.cashier_id}
-                      className='flex items-center justify-between cursor-pointer rounded-lg px-1 -mx-1 hover:bg-slate-50'
-                      onClick={go(`/report/cashier/${c.cashier_id}`)}
-                    >
-                      <div className='flex items-center gap-2 min-w-0'>
-                        <Medal className='w-4 h-4 text-amber-500 shrink-0' />
-                        <span className='text-xs font-medium text-slate-500 truncate'>
-                          {c.cashier_name}
-                        </span>
-                        <span className='text-[9px] uppercase font-bold text-slate-400'>
-                          {c.role}
-                        </span>
-                      </div>
-                      <div className='flex flex-col items-end leading-tight shrink-0'>
-                        <span className='text-[10px] text-slate-500'>
-                          {c.total_transactions} trx
-                        </span>
-                        <span className='text-xs font-bold text-slate-800'>
-                          {currencyFormat(c.total_revenue)}
-                        </span>
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <span className='text-sm text-slate-400'>
-                    Belum ada transaksi
-                  </span>
-                )}
-              </PipelineCard>
-
-              <PipelineCard
-                title='Posisi Kasir'
-                icon={MapPinned}
-                theme={THEMES.cyan}
-              >
-                {liveMap.length > 0 ? (
-                  <>
-                    <div className='flex flex-wrap gap-1.5'>
-                      {liveMap.map((op) => (
-                        <button
-                          key={op.cashier_id}
-                          onClick={() => setSelectedCashier(op.cashier_id)}
-                          className={clsx(
-                            "flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-semibold transition-colors cursor-pointer",
-                            op.cashier_id === liveSelectedId
-                              ? "border-primary/30 bg-primary/10 text-primary"
-                              : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50",
-                          )}
-                        >
-                          <span
-                            className='h-2 w-2 rounded-full'
-                            style={{ background: deviceStatusColor(op.status) }}
-                          />
-                          {op.cashier_name}
-                        </button>
-                      ))}
-                    </div>
-
-                    <Suspense
-                      fallback={
-                        <div className='h-[280px] rounded-xl bg-slate-100' />
-                      }
-                    >
-                      <CashierLiveMap
-                        items={liveMap}
-                        selectedId={liveSelectedId}
-                        onSelect={setSelectedCashier}
-                        className='h-[280px]'
-                      />
-                    </Suspense>
-                  </>
-                ) : (
-                  <div className='flex h-[280px] flex-col items-center justify-center text-slate-400'>
-                    <MapPinned className='w-7 h-7 text-slate-300 mb-2' />
-                    <span className='text-sm font-medium'>
-                      Tidak ada operator bertugas
-                    </span>
-                  </div>
-                )}
-              </PipelineCard>
-            </div>
-          )}
-
           {/* Remaining Detailed Cards (Bento) */}
-          <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
+          <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4'>
             <PipelineCard
               title='Payment Method'
               icon={Landmark}
               theme={THEMES.cyan}
               onClick={go("/report/settlement/daily")}
             >
-              {data?.payment_method_split?.map((method, i) => (
-                <div className='flex items-center justify-between' key={i}>
-                  <div className='flex items-center gap-2'>
-                    <Landmark className='w-4 h-4 text-amber-500' />
-                    <span className='text-xs font-medium text-slate-500'>
-                      {method.name}
+              {data?.payment_method_split?.length ? (
+                data.payment_method_split.map((method, i) => (
+                  <div className='flex items-center justify-between' key={i}>
+                    <div className='flex items-center gap-2'>
+                      <Landmark className='w-4 h-4 text-amber-500' />
+                      <span className='text-xs font-medium text-slate-500'>
+                        {method.name}
+                      </span>
+                    </div>
+                    <span className='text-xs font-bold text-slate-800'>
+                      {currencyFormat(method.total_paid)}
                     </span>
                   </div>
-                  <span className='text-xs font-bold text-slate-800'>
-                    {currencyFormat(method.total_paid)}
-                  </span>
-                </div>
-              ))}
+                ))
+              ) : (
+                <CardEmpty />
+              )}
             </PipelineCard>
 
             <PipelineCard title='Top Member' icon={Medal} theme={THEMES.green}>
-              {data?.top_member?.map((member, i) => (
-                <div className='flex items-center justify-between' key={i}>
-                  <div className='flex items-center gap-2'>
-                    <Medal className='w-4 h-4 text-amber-500' />
-                    <span className='text-xs font-medium text-slate-500'>
-                      {member.member_name}
+              {data?.top_member?.length ? (
+                data.top_member.map((member, i) => (
+                  <div className='flex items-center justify-between' key={i}>
+                    <div className='flex items-center gap-2'>
+                      <Medal className='w-4 h-4 text-amber-500' />
+                      <span className='text-xs font-medium text-slate-500'>
+                        {member.member_name}
+                      </span>
+                    </div>
+                    <span className='text-xs font-bold text-slate-800'>
+                      {currencyFormat(member.nominal)}
                     </span>
                   </div>
-                  <span className='text-xs font-bold text-slate-800'>
-                    {currencyFormat(member.nominal)}
-                  </span>
-                </div>
-              ))}
+                ))
+              ) : (
+                <CardEmpty />
+              )}
             </PipelineCard>
 
             <PipelineCard
@@ -480,24 +445,66 @@ export function Dashboard() {
               theme={THEMES.orange}
               onClick={go("/report/product-sales")}
             >
-              {data?.top_menu?.map((item, i) => (
-                <div className='flex items-center justify-between' key={i}>
-                  <div className='flex items-center gap-2'>
-                    <ConciergeBell className='w-4 h-4 text-amber-500' />
-                    <span className='text-xs font-medium text-slate-500'>
-                      {item.menu_name}
-                    </span>
+              {data?.top_menu?.length ? (
+                data.top_menu.map((item, i) => (
+                  <div className='flex items-center justify-between' key={i}>
+                    <div className='flex items-center gap-2'>
+                      <ConciergeBell className='w-4 h-4 text-amber-500' />
+                      <span className='text-xs font-medium text-slate-500'>
+                        {item.menu_name}
+                      </span>
+                    </div>
+                    <div className='flex flex-col items-end leading-tight'>
+                      <span className='text-[10px] text-slate-500'>
+                        {item.total_qty} PCS
+                      </span>
+                      <span className='text-xs font-bold text-slate-800'>
+                        {currencyFormat(item.total_revenue)}
+                      </span>
+                    </div>
                   </div>
-                  <div className='flex flex-col items-end leading-tight'>
-                    <span className='text-[10px] text-slate-500'>
-                      {item.total_qty} PCS
-                    </span>
-                    <span className='text-xs font-bold text-slate-800'>
-                      {currencyFormat(item.total_revenue)}
-                    </span>
+                ))
+              ) : (
+                <CardEmpty />
+              )}
+            </PipelineCard>
+
+            {/* Top Kasir — diisi backend untuk semua tipe brand. */}
+            <PipelineCard
+              title='Top Kasir'
+              icon={Medal}
+              theme={THEMES.green}
+              onClick={go("/report/cashier")}
+            >
+              {data?.top_cashiers?.length ? (
+                data.top_cashiers.map((c) => (
+                  <div
+                    key={c.cashier_id}
+                    className='flex items-center justify-between cursor-pointer rounded-lg px-1 -mx-1 hover:bg-slate-50'
+                    onClick={go(`/report/cashier/${c.cashier_id}`)}
+                  >
+                    <div className='flex items-center gap-2 min-w-0'>
+                      <Medal className='w-4 h-4 text-amber-500 shrink-0' />
+                      <span className='text-xs font-medium text-slate-500 truncate'>
+                        {c.cashier_name}
+                      </span>
+                      <span className='text-[9px] uppercase font-bold text-slate-400'>
+                        {c.role}
+                      </span>
+                    </div>
+                    <div className='flex flex-col items-end leading-tight shrink-0'>
+                      <span className='text-[10px] text-slate-500'>
+                        {c.total_transactions} trx
+                      </span>
+                      <span className='text-xs font-bold text-slate-800'>
+                        {currencyFormat(c.total_revenue)}
+                      </span>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))
+              ) : (
+                <CardEmpty />
+              )}
             </PipelineCard>
           </div>
 

@@ -19,16 +19,17 @@ import {
 
 const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN || "";
 
+/** Warna titik history lama & garis jejak — sengaja biru agar tidak ketuker
+ *  dengan marker "offline" (abu-abu). */
+const HISTORY_COLOR = "#3b82f6";
+
+/** Radius marker (px). Semua titik sama besar. */
+const MARKER_RADIUS = 12;
+
 const validHistory = (row?: CashierMapRow): CashierMapHistory[] =>
   (row?.historys ?? []).filter(
     (p) => typeof p.latitude === "number" && typeof p.longitude === "number",
   );
-
-/** Titik history terakhir yang valid — posisi device terkini operator. */
-const lastPoint = (row: CashierMapRow): CashierMapHistory | null => {
-  const points = validHistory(row);
-  return points.length > 0 ? points[points.length - 1] : null;
-};
 
 const escapeHtml = (value: unknown) =>
   String(value ?? "-").replace(/[&<>"']/g, (c) => {
@@ -46,23 +47,29 @@ const escapeHtml = (value: unknown) =>
     }
   });
 
-interface CashierMarker {
+/** Satu titik GPS milik seorang operator. */
+interface CashierPoint {
   row: CashierMapRow;
   point: CashierMapHistory;
+  /** Urutan titik pada history operator (0-based). */
+  index: number;
+  /** Titik terakhir = posisi terkini operator. */
+  isLatest: boolean;
+  /** Kunci unik fitur di map (operator + urutan titik). */
+  key: string;
 }
 
-const buildPopupHtml = ({ row, point }: CashierMarker) => {
+const buildPopupHtml = ({ row, point, index, isLatest }: CashierPoint) => {
   const color = deviceStatusColor(row.status);
+  const pointCharges = point.total_charges ?? 0;
+  const pointTrx = point.total_transactions ?? 0;
 
   return `
-  <div style="padding: 14px 16px; font-family: 'Inter', sans-serif; min-width: 200px;">
+  <div style="padding: 14px 16px; font-family: 'Inter', sans-serif; min-width: 220px;">
     <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; padding-right: 24px;">
       <div style="font-size: 14px; font-weight: 800; color: #111827; white-space: nowrap;">${escapeHtml(
         row.cashier_name,
       )}</div>
-      <div style="font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: ${color}; background: ${color}18; padding: 2px 6px; border-radius: 6px; white-space: nowrap;">
-        ${escapeHtml(row.role || "-")}
-      </div>
     </div>
     <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 10px;">
       <span style="width: 7px; height: 7px; border-radius: 50%; background: ${color}; box-shadow: 0 0 0 3px ${color}22;"></span>
@@ -75,15 +82,37 @@ const buildPopupHtml = ({ row, point }: CashierMarker) => {
           : ""
       }
     </div>
+
     <div style="display: flex; flex-direction: column; gap: 4px; font-size: 11px; color: #4b5563;">
+      <div style="display: flex; justify-content: space-between; gap: 12px;">
+        <span style="color: #9ca3af;">Titik</span>
+        <span style="font-weight: 700; color: #1f2937;">
+          #${index + 1}${isLatest ? " (terkini)" : ""}
+        </span>
+      </div>
+      ${
+        point.created_at
+          ? `<div style="display: flex; justify-content: space-between; gap: 12px;">
+              <span style="color: #9ca3af;">Waktu</span>
+              <span style="font-weight: 600; color: #6b7280;">${escapeHtml(point.created_at)}</span>
+            </div>`
+          : ""
+      }
       <div style="display: flex; justify-content: space-between; gap: 12px;">
         <span style="color: #9ca3af;">Battery</span>
         <span style="font-weight: 700; color: #1f2937;">${escapeHtml(row.battery_health || "-")}</span>
       </div>
+    </div>
+
+    <div style="margin-top: 10px; padding-top: 8px; border-top: 1px solid #f1f5f9; display: flex; flex-direction: column; gap: 4px; font-size: 11px;">
       <div style="display: flex; justify-content: space-between; gap: 12px;">
-        <span style="color: #9ca3af;">Omset sesi</span>
-        <span style="font-weight: 700; color: #1f2937;">${escapeHtml(
-          currencyFormat(row.total_charges ?? 0),
+        <span style="color: #6b7280; font-weight: 600;">Transaksi di titik ini</span>
+        <span style="font-weight: 700; color: #1f2937;">${pointTrx}</span>
+      </div>
+      <div style="display: flex; justify-content: space-between; gap: 12px;">
+        <span style="color: #6b7280; font-weight: 600;">Omset di titik ini</span>
+        <span style="font-weight: 800; color: #047857;">${escapeHtml(
+          currencyFormat(pointCharges),
         )}</span>
       </div>
       <div style="display: flex; justify-content: space-between; gap: 12px;">
@@ -107,8 +136,10 @@ interface CashierLiveMapProps {
 }
 
 /**
- * Peta live posisi device operator — satu marker per operator (warna mengikuti
- * recency device) plus opsional jejak history milik operator terpilih.
+ * Peta live posisi device operator. Setiap titik history digambar sebagai
+ * marker: titik terkini berukuran besar dan berwarna sesuai recency device
+ * (online/stale/offline), titik sebelumnya kecil dan lebih transparan.
+ * Jejak (garis) operator terpilih digambar di atasnya.
  *
  * Komponen ini memuat `mapbox-gl`, jadi konsumennya WAJIB lazy-load.
  */
@@ -118,11 +149,18 @@ export function CashierLiveMap({
   onSelect,
   className,
 }: CashierLiveMapProps) {
-  const markers = useMemo<CashierMarker[]>(
+  const points = useMemo<CashierPoint[]>(
     () =>
-      items
-        .map((row) => ({ row, point: lastPoint(row) }))
-        .filter((m): m is CashierMarker => m.point !== null),
+      items.flatMap((row) => {
+        const history = validHistory(row);
+        return history.map((point, index) => ({
+          row,
+          point,
+          index,
+          isLatest: index === history.length - 1,
+          key: `${row.cashier_id}-${index}`,
+        }));
+      }),
     [items],
   );
 
@@ -131,24 +169,24 @@ export function CashierLiveMap({
     [items, selectedId],
   );
 
-  const center: [number, number] =
-    markers.length > 0
-      ? [markers[0].point.longitude, markers[0].point.latitude]
-      : [106.8166667, -6.2];
+  const firstPoint = points[0];
+  const center: [number, number] = firstPoint
+    ? [firstPoint.point.longitude, firstPoint.point.latitude]
+    : [106.8166667, -6.2];
 
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const popup = useRef<mapboxgl.Popup | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
 
-  // Signature titik marker — dipakai untuk refit bounds saat posisi berubah.
+  // Signature titik — dipakai untuk refit bounds saat sebaran posisi berubah.
   const boundsSignature = useMemo(
     () =>
-      markers
-        .map((m) => `${m.point.longitude},${m.point.latitude}`)
+      points
+        .map((p) => `${p.point.longitude},${p.point.latitude}`)
         .sort()
         .join("|"),
-    [markers],
+    [points],
   );
   const lastBoundsSignature = useRef<string>("");
 
@@ -193,14 +231,24 @@ export function CashierLiveMap({
     if (!map.current || !isLoaded) return;
     const mapInstance = map.current;
 
-    const markerFeatures: GeoJSONFeatureType[] = markers.map(
-      ({ row, point }) => ({
+    const markerFeatures: GeoJSONFeatureType[] = points.map(
+      ({ row, point, key, isLatest }) => ({
         type: "Feature",
         properties: {
+          key,
           cashierId: row.cashier_id,
-          color: deviceStatusColor(row.status),
+          // Posisi terkini pakai warna status device; titik lama pakai warna
+          // history (biru) supaya operator kelihatan sudah berpindah.
+          color: isLatest ? deviceStatusColor(row.status) : HISTORY_COLOR,
+          radius: MARKER_RADIUS,
+          opacity: isLatest ? 1 : 0.85,
+          // Label nama hanya di titik terkini → satu label per operator.
+          label: isLatest ? row.cashier_name : "",
         },
-        geometry: { type: "Point", coordinates: [point.longitude, point.latitude] },
+        geometry: {
+          type: "Point",
+          coordinates: [point.longitude, point.latitude],
+        },
       }),
     );
 
@@ -221,9 +269,11 @@ export function CashierLiveMap({
       });
     });
 
-    ["cashier-trail", "cashier-markers"].forEach((layerId) => {
-      if (mapInstance.getLayer(layerId)) mapInstance.removeLayer(layerId);
-    });
+    ["cashier-trail", "cashier-markers", "cashier-markers-labels"].forEach(
+      (layerId) => {
+        if (mapInstance.getLayer(layerId)) mapInstance.removeLayer(layerId);
+      },
+    );
     ["cashier-trail", "cashier-markers"].forEach((sourceId) => {
       if (mapInstance.getSource(sourceId)) mapInstance.removeSource(sourceId);
     });
@@ -240,7 +290,7 @@ export function CashierLiveMap({
         type: "line",
         source: "cashier-trail",
         paint: {
-          "line-color": "#3b82f6",
+          "line-color": HISTORY_COLOR,
           "line-width": 3,
           "line-opacity": 0.75,
           "line-dasharray": [4, 3],
@@ -258,21 +308,46 @@ export function CashierLiveMap({
       type: "circle",
       source: "cashier-markers",
       paint: {
-        "circle-radius": 9,
+        "circle-radius": ["get", "radius"],
         "circle-color": ["get", "color"],
+        "circle-opacity": ["get", "opacity"],
         "circle-stroke-width": 2,
         "circle-stroke-color": "#ffffff",
+        "circle-stroke-opacity": ["get", "opacity"],
+      },
+    });
+
+    // Nama kasir di titik terkini — supaya jelas pin ini milik operator siapa.
+    // Label titik sebelumnya kosong, jadi tidak ada teks yang menumpuk.
+    mapInstance.addLayer({
+      id: "cashier-markers-labels",
+      type: "symbol",
+      source: "cashier-markers",
+      layout: {
+        "text-field": ["get", "label"],
+        "text-font": ["Open Sans Regular", "Arial Unicode MS Regular"],
+        "text-size": 12,
+        "text-anchor": "top",
+        "text-offset": [0, 1.3],
+        "text-allow-overlap": false,
+        "text-padding": 4,
+      },
+      paint: {
+        "text-color": "#0f172a",
+        "text-halo-color": "#ffffff",
+        "text-halo-width": 2,
+        "text-halo-blur": 0.5,
       },
     });
 
     const onMapClick = (e: mapboxgl.MapMouseEvent) => {
       const features = mapInstance.queryRenderedFeatures(e.point, {
-        layers: ["cashier-markers"],
+        layers: ["cashier-markers", "cashier-markers-labels"],
       });
       if (!features || features.length === 0) return;
 
       const props = features[0].properties as any;
-      const found = markers.find((m) => m.row.cashier_id === props.cashierId);
+      const found = points.find((p) => p.key === props.key);
       if (!found) return;
 
       const coordinates = (features[0].geometry as GeoJSONPoint)
@@ -290,7 +365,7 @@ export function CashierLiveMap({
 
     const onMapMouseMove = (e: mapboxgl.MapMouseEvent) => {
       const features = mapInstance.queryRenderedFeatures(e.point, {
-        layers: ["cashier-markers"],
+        layers: ["cashier-markers", "cashier-markers-labels"],
       });
       mapInstance.getCanvas().style.cursor =
         features.length > 0 ? "pointer" : "";
@@ -303,20 +378,24 @@ export function CashierLiveMap({
       mapInstance.off("click", onMapClick);
       mapInstance.off("mousemove", onMapMouseMove);
     };
-  }, [markers, trail, isLoaded, onSelect]);
+  }, [points, trail, isLoaded, onSelect]);
 
   // Refit bounds hanya ketika sebaran titik berubah (bukan tiap re-render).
   useEffect(() => {
-    if (!map.current || !isLoaded || markers.length === 0) return;
+    if (!map.current || !isLoaded || points.length === 0) return;
     if (lastBoundsSignature.current === boundsSignature) return;
 
     const bounds = new mapboxgl.LngLatBounds();
-    markers.forEach(({ point }) =>
+    points.forEach(({ point }) =>
       bounds.extend([point.longitude, point.latitude]),
     );
-    map.current.fitBounds(bounds, { padding: 50, maxZoom: 15 });
+    // Padding bawah lebih besar: label nama digambar di bawah marker.
+    map.current.fitBounds(bounds, {
+      padding: { top: 60, bottom: 90, left: 60, right: 60 },
+      maxZoom: 15,
+    });
     lastBoundsSignature.current = boundsSignature;
-  }, [boundsSignature, markers, isLoaded]);
+  }, [boundsSignature, points, isLoaded]);
 
   return (
     <div
@@ -343,7 +422,7 @@ export function CashierLiveMap({
         </div>
       )}
 
-      {MAPBOX_TOKEN && markers.length === 0 && (
+      {MAPBOX_TOKEN && points.length === 0 && (
         <div className='absolute inset-0 flex flex-col items-center justify-center bg-slate-50/85'>
           <MapPin className='mb-2 h-7 w-7 text-slate-300' />
           <p className='text-xs font-medium text-slate-400'>
@@ -356,7 +435,7 @@ export function CashierLiveMap({
         {(["online", "stale", "offline"] as const).map((status) => (
           <div key={status} className='flex items-center gap-1.5'>
             <span
-              className='h-2 w-2 rounded-full'
+              className='h-3 w-3 rounded-full border-2 border-white shadow-sm'
               style={{ background: DEVICE_STATUS_COLOR[status] }}
             />
             <span className='text-[10px] font-semibold text-slate-600'>
@@ -364,6 +443,15 @@ export function CashierLiveMap({
             </span>
           </div>
         ))}
+        <div className='flex items-center gap-1.5 border-t border-slate-200 pt-1'>
+          <span
+            className='h-3 w-3 rounded-full border-2 border-white shadow-sm'
+            style={{ background: HISTORY_COLOR }}
+          />
+          <span className='text-[10px] font-semibold text-slate-600'>
+            Titik sebelumnya
+          </span>
+        </div>
       </div>
     </div>
   );

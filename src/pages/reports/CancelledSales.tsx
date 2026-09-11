@@ -9,7 +9,7 @@ import { useDocumentMeta } from "@/hooks/useDocumentMeta";
 import { useReport } from "@/services/report/hooks";
 import { SummaryCard } from "@/components/app";
 import { currencyFormat } from "@/utils";
-import { Banknote, ArrowUpCircle, Landmark } from "lucide-react";
+import { ArrowUpCircle, Landmark } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const THEMES: Record<string, any> = {
@@ -24,13 +24,7 @@ const OverviewCards = ({ data }: { data: any | null }) => {
   if (!data) return null;
 
   return (
-    <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-4'>
-      <SummaryCard
-        label='Total Qty'
-        value={data.total_qty}
-        icon={Banknote}
-        theme={THEMES.orange}
-      />
+    <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-4 mb-4'>
       <SummaryCard
         label='Total Discount'
         value={currencyFormat(data.total_discount)}

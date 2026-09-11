@@ -24,6 +24,9 @@ export interface CashierMapHistory {
   latitude: number;
   longitude: number;
   created_at: string;
+  /** Penjualan yang terjadi selagi device berada di titik ini (sampai titik berikutnya). */
+  total_charges: number;
+  total_transactions: number;
 }
 
 /** Recency device operator: online (<=5 menit) | stale (5-15 menit) | offline. */
@@ -46,16 +49,13 @@ export interface CashierMapRow {
 export interface CashierReportRow {
   cashier_id: string;
   cashier_name: string;
-  username: string;
-  role: string;
-  outlet_id: string;
-  outlet_name: string;
+  /** "Online" bila operator punya sesi kasir terbuka, selain itu "Offline". */
+  status: string;
   total_sales: number;
   omzet: number;
   total_outstanding: number;
   outstanding_amount: number;
   total_session: number;
-  active_session: number;
   aov: number;
   cancelled_count: number;
 }

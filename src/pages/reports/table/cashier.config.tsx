@@ -22,27 +22,25 @@ const createTableConfig = ({
   onRowClick,
   columns: {
     cashier_name: {
-      title: "Kasir / Operator",
+      title: "Kasir",
       sortable: false,
       component: (row: CashierReportRow) => (
         <span className='font-medium'>{row.cashier_name || "-"}</span>
       ),
     },
-    role: {
-      title: "Role",
+    status: {
+      title: "Status",
       sortable: false,
       component: (row: CashierReportRow) => (
-        <Badge variant={row.role === "manager" ? "primary" : "info"}>
-          {row.role || "-"}
+        <Badge
+          variant={
+            String(row.status).toLowerCase() === "online" ? "success" : "default"
+          }
+        >
+          {row.status || "-"}
         </Badge>
       ),
     },
-    username: {
-      title: "Username",
-      sortable: false,
-      component: (row: CashierReportRow) => row.username || "-",
-    },
-    outlet_name: { title: "Outlet", sortable: false },
     total_sales: {
       title: "Transaksi",
       sortable: false,
@@ -63,7 +61,7 @@ const createTableConfig = ({
       class: "text-end font-mono",
     },
     outstanding_amount: {
-      title: "Nilai Outstanding",
+      title: "Total Outstanding",
       sortable: false,
       headerClass: "!text-end",
       class: "text-end font-mono",
@@ -75,18 +73,6 @@ const createTableConfig = ({
       sortable: false,
       headerClass: "!text-end",
       class: "text-end font-mono",
-    },
-    active_session: {
-      title: "Sesi Aktif",
-      sortable: false,
-      headerClass: "!text-end",
-      class: "text-end font-mono",
-      component: (row: CashierReportRow) =>
-        row.active_session > 0 ? (
-          <Badge variant='success'>{row.active_session}</Badge>
-        ) : (
-          <span className='text-base-content/40'>0</span>
-        ),
     },
     aov: {
       title: "AOV",

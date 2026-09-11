@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useMemo } from "react";
+import { Suspense, lazy, useEffect, useMemo } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
-import dayjs, { type Dayjs } from "dayjs";
 import clsx from "clsx";
 import {
   Ban,
@@ -13,7 +12,6 @@ import {
 } from "lucide-react";
 import { Page } from "@/components/app/layout";
 import { SummaryCard } from "@/components/app";
-import { DatePicker } from "@/components/ui";
 import { useLazyGetCashierReportQuery } from "@/services/report/api";
 import { useDocumentMeta } from "@/hooks/useDocumentMeta";
 import { useAppSelector } from "@/hooks";
@@ -38,24 +36,37 @@ const THEMES: Record<string, any> = {
   cyan: { text: "text-cyan-500", iconBg: "#cffafe", wave: "#06b6d4" },
 };
 
-const TABS: {
+// Lazy — tab peta memuat mapbox-gl yang besar, jangan masuk bundle utama.
+const CashierMapsSection = lazy(() =>
+  import("./sections/CashierMapsSection").then((m) => ({
+    default: m.CashierMapsSection,
+  })),
+);
+
+// Label tab disamakan dengan judul halaman report masing-masing.
+// `brand: "outlet" | "mitra" | "all"` menyaring tab yang relevan dengan tipe
+// brand — cermin dari gating menu sidebar (Saldo Membership = outlet,
+// Mitra Maps = mitra).
+type ReportTab = {
   value: string;
   label: string;
   Section: React.ComponentType<ReportSectionProps>;
-}[] = [
-  { value: "product-sales", label: "Product Sales", Section: ProductSalesSection },
-  { value: "product-item", label: "Product Item", Section: ProductItemSection },
-  { value: "outstanding", label: "Outstanding", Section: OutstandingSection },
-  { value: "cancel-order", label: "Cancel Order", Section: CancelledSalesSection },
-  { value: "cash-control", label: "Cash Control", Section: CashControlSection },
-  { value: "settlement", label: "Settlement", Section: SettlementSection },
-  { value: "saldo-log", label: "Saldo Log", Section: SaldoMembershipSection },
+  brand: "all" | "outlet" | "mitra";
+};
+
+const TABS: ReportTab[] = [
+  { value: "product-sales", label: "Penjualan Harian", Section: ProductSalesSection, brand: "all" },
+  { value: "product-item", label: "Penjualan Menu", Section: ProductItemSection, brand: "all" },
+  { value: "outstanding", label: "Outstanding Bills", Section: OutstandingSection, brand: "all" },
+  { value: "cancel-order", label: "Penjualan Dibatalkan", Section: CancelledSalesSection, brand: "all" },
+  { value: "cash-control", label: "Cash Control", Section: CashControlSection, brand: "all" },
+  { value: "settlement", label: "Settlement", Section: SettlementSection, brand: "all" },
+  { value: "saldo-log", label: "Saldo Membership", Section: SaldoMembershipSection, brand: "outlet" },
+  { value: "mitra-maps", label: "Mitra Maps", Section: CashierMapsSection, brand: "mitra" },
 ];
 
 const SummaryCashier = ({ data }: { data: any | null }) => {
   if (!data) return null;
-
-  const active = Number(data.active_session) > 0;
 
   return (
     <div className='grid grid-cols-2 gap-3 mb-4 sm:gap-4 lg:grid-cols-6'>
@@ -85,7 +96,7 @@ const SummaryCashier = ({ data }: { data: any | null }) => {
       />
       <SummaryCard
         label='Total Sesi'
-        value={`${data.total_session ?? 0}${active ? ` (${data.active_session} aktif)` : ""}`}
+        value={data.total_session ?? 0}
         icon={History}
         theme={THEMES.purple}
       />
@@ -104,7 +115,14 @@ export function CashierDetail() {
   const [params, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const brandType = useAppSelector((s) => s.auth.session?.brand?.type);
-  const title = brandType?.toLowerCase() === "mitra" ? "Laporan Mitra" : "Laporan Kasir";
+  const isMitra = brandType?.toLowerCase() === "mitra";
+  const title = isMitra ? "Laporan Mitra" : "Laporan Kasir";
+
+  // Tab disaring mengikuti tipe brand (cermin gating menu sidebar).
+  const tabs = useMemo(
+    () => TABS.filter((t) => t.brand === "all" || t.brand === brandType?.toLowerCase()),
+    [brandType],
+  );
 
   const startDate = params.get("start_date") ?? "";
   const endDate = params.get("end_date") ?? "";
@@ -142,56 +160,39 @@ export function CashierDetail() {
     setSearchParams(next, { replace: true });
   };
 
-  const dateRange = useMemo(() => {
-    if (!startDate || !endDate) return undefined;
-    return [dayjs(startDate), dayjs(endDate)] as [Dayjs, Dayjs];
-  }, [startDate, endDate]);
+  const active = tabs.find((t) => t.value === activeTab) ?? tabs[0];
+
+  // Nilai awal filter tiap tab — diambil dari periode yang dibawa halaman list.
+  // Filter selengkapnya ada di dalam masing-masing tab (tiap laporan beda).
+  const sectionFilter = useMemo(() => {
+    if (active.value === "settlement") {
+      return startDate ? { periode: startDate.slice(0, 4) } : {};
+    }
+    return { start_date: startDate, end_date: endDate };
+  }, [active.value, startDate, endDate]);
 
   if (!id) return null;
 
   const cashier = cashierResponse?.data?.[0];
-  const active = TABS.find((t) => t.value === activeTab) ?? TABS[0];
   const Section = active.Section;
-  const isSettlement = active.value === "settlement";
+
+  // Header hanya menampilkan status operator ("Online"/"Offline").
+  const subtitle = cashier?.status ? String(cashier.status) : "";
 
   return (
     <Page className='h-full flex flex-col min-h-0 bg-slate-50'>
       <Page.Header
         category='Report'
         title={`${title} — ${cashier?.cashier_name ?? "…"}`}
-        subtitle={
-          cashier
-            ? `${cashier.role} • ${cashier.outlet_name}${
-                Number(cashier.active_session) > 0 ? " • sedang bertugas" : ""
-              }`
-            : ""
-        }
+        subtitle={subtitle}
         backTo={() => navigate(-1)}
-        action={
-          <DatePicker
-            mode='range'
-            value={dateRange}
-            onChange={(date) => {
-              if (Array.isArray(date)) {
-                setQuery({
-                  start_date: date[0]?.format("YYYY-MM-DD") ?? "",
-                  end_date: date[1]?.format("YYYY-MM-DD") ?? "",
-                });
-              } else {
-                setQuery({ start_date: "", end_date: "" });
-              }
-            }}
-            placeholder='Pilih periode'
-            inputClassName='!h-9 !min-h-0 !py-0 !shadow-sm'
-          />
-        }
       />
 
       <Page.Body className='flex-1 flex flex-col min-h-0'>
         <SummaryCashier data={cashier} />
 
         <div className='mb-4 flex flex-wrap items-center gap-1 border-b border-slate-200'>
-          {TABS.map((tab) => {
+          {tabs.map((tab) => {
             const isActive = tab.value === active.value;
             return (
               <button
@@ -211,15 +212,18 @@ export function CashierDetail() {
           })}
         </div>
 
-        <Section
-          key={`${active.value}-${id}-${startDate}-${endDate}`}
-          tableName={`cashier_detail_${id}_${active.value}`}
-          lockedFilter={{ cashier_id: id }}
-          filter={
-            isSettlement ? {} : { start_date: startDate, end_date: endDate }
+        <Suspense
+          fallback={
+            <div className='flex-1 min-h-0 rounded-xl bg-slate-100 animate-pulse' />
           }
-          showFilter={isSettlement}
-        />
+        >
+          <Section
+            key={`${active.value}-${id}`}
+            tableName={`cashier_detail_${id}_${active.value}`}
+            lockedFilter={{ cashier_id: id }}
+            filter={sectionFilter}
+          />
+        </Suspense>
       </Page.Body>
     </Page>
   );

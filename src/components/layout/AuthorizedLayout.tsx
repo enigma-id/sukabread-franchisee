@@ -131,12 +131,17 @@ const getMenuSections = (
       label: "Laporan",
       items: [
         {
-          label: "Product Sales",
+          label: type === "mitra" ? "Laporan Mitra" : "Laporan Kasir",
+          path: "/report/cashier",
+          icon: <UsersRound size={16} />,
+        },
+        {
+          label: "Penjualan Harian",
           path: "/report/product-sales",
           icon: <Receipt size={16} />,
         },
         {
-          label: "Product Item",
+          label: "Penjualan Menu",
           path: "/report/product-item",
           icon: <Receipt size={16} />,
         },
@@ -146,7 +151,7 @@ const getMenuSections = (
           icon: <Receipt size={16} />,
         },
         {
-          label: "Outstanding",
+          label: "Outstanding Bills",
           path: "/report/outstanding",
           icon: <Banknote size={16} />,
         },
@@ -159,11 +164,6 @@ const getMenuSections = (
           label: "Cash Control",
           path: "/report/cash-control",
           icon: <FileBarChart size={16} />,
-        },
-        {
-          label: type === "mitra" ? "Laporan Mitra" : "Laporan Kasir",
-          path: "/report/cashier",
-          icon: <UsersRound size={16} />,
         },
         ...(type !== "outlet"
           ? []
@@ -178,7 +178,7 @@ const getMenuSections = (
           ? []
           : [
               {
-                label: "Outlet Maps",
+                label: "Mitra Maps",
                 path: "/report/cashier-maps",
                 icon: <MapPinned size={16} />,
               },
