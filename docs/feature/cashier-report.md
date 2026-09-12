@@ -27,7 +27,7 @@ Nambah menu **Laporan Kasir** (di brand `mitra` labelnya **Laporan Mitra**) deng
   - `top_cashiers` — top 5 operator. Item: `cashier_id, cashier_name, role, total_transactions, total_revenue, aov`. Query param `metric`: `revenue` (default) | `transactions` | `aov`.
   - `cashier_live_map` — posisi device terakhir **semua** operator outlet (tanpa syarat punya sesi aktif). Item `CashierDeviceItem`:
     `cashier_id, cashier_name, last_activity_at, last_battery_health, last_latitude, last_longitude`.
-    Recency device (`online`/`stale`/`offline`) **diturunkan di FE** dari `last_activity_at` (`deviceStatusFromTime`) — backend tidak lagi mengirim `status`/`role`/`last_seen`.
+    Recency device (`online`/`stale`/`offline`) **diturunkan di FE** dari `last_activity_at` (`deviceStatusFromTime`) — backend tidak lagi mengirim `status`/`role`/`last_seen`. Ambang: `online` ≤10 mnt, `stale` 10–30 mnt, `offline` >30 mnt (disamakan dengan flag `uncertain` BE).
   - `withdrawal_terbaru` **dihapus** dari response (`DashboardFranchisePortal`).
 - **Proxy franchisor** (untuk portal franchisor, bukan franchisee): `GET /report/franchise/cashier`(+`/summary`) + permission `frontend.franchisor.report.mitra.cashier`. Tidak dipakai FE ini.
 - Doc backend: `franq/docs/feature/outlet-dashboard-and-cashier-report.md`.
@@ -146,7 +146,7 @@ export function CashierDetail() {
   - `saldo-log` (Saldo Membership) → hanya brand **outlet**.
   - `mitra-maps` (Mitra Maps) → hanya brand **mitra**.
   - Sisanya `all`. Tab yang tidak relevan tidak dirender; kalau `?tab=` menunjuk tab yang tersaring, otomatis jatuh ke tab pertama.
-- **Tab "Mitra Maps"** memakai section `sections/CashierMapsSection.tsx`: fetch `/report/cashier-maps?cashier_id=<id>` (satu baris per **sesi**, `opened` maupun `closed`), auto-refresh 1 menit, dropdown **pilih sesi**, render `CashierLiveMap`, plus ringkas omset/battery/rentang sesi. Komponen ini **di-lazy-load** (`React.lazy` + `Suspense`) dan **tidak** diekspor dari barrel `sections/` supaya `mapbox-gl` tidak ikut ke bundle utama — terverifikasi muncul sebagai chunk `CashierMapsSection-*.js` terpisah.
+- **Tab "Mitra Maps"** memakai `sections/CashierMapsSection.tsx` (tipis, membungkus panel bersama `sections/CashierSessionsPanel.tsx`): opsi sesi dari `/sales/session?cashier_id=<id>`, jejak sesi terpilih dari `/report/cashier-maps?cashier_id=<id>&sales_session_id=<sid>`, auto-refresh 1 menit, dropdown **pilih sesi**, render `CashierLiveMap`, plus ringkas omset/battery/rentang sesi. Komponen ini **di-lazy-load** (`React.lazy` + `Suspense`) dan **tidak** diekspor dari barrel `sections/` supaya `mapbox-gl` tidak ikut ke bundle utama — terverifikasi muncul sebagai chunk `CashierMapsSection-*.js` + `CashierSessionsPanel-*.js` terpisah.
 - **Tab**: label disamakan dengan judul halaman report masing-masing (mis. "Penjualan Menu", bukan "Product Item"). Implementasinya tab bar inline (bukan komponen `Tabs` — root-nya `overflow-hidden` dan bakal memotong dropdown filter yang tidak pakai portal). Item tab hanya mengubah search param `tab`; section aktif dirender di bawahnya.
 
 ```tsx
@@ -335,11 +335,12 @@ Catatan: titik `uncertain` (terakhir sesi `opened` yang >30 menit tanpa log baru
 - Auto-refresh: dashboard ikut `periode`; widget live tidak polling sendiri (menghindari refetch `/dashboard` yang berat) — refresh saat periode berubah / reload.
 
 **d. `CashierMaps.tsx` → "Mitra Maps" (menu & judul halaman).**
-Halaman ini memakai **dua endpoint**:
+Halaman ini memakai **tiga sumber data**:
 - `/report/cashier-device` → daftar **semua** operator outlet + posisi device terakhirnya (list kiri). Recency (`online`/`stale`/`offline`) diturunkan FE dari `last_activity_at`.
-- `/report/cashier-maps?cashier_id=<id>` → satu baris per **sesi** operator terpilih (`opened`/`closed`) + jejak GPS sesi. Ada dropdown **pilih sesi**; peta menggambar jejak sesi yang dipilih (`items={selected ? [selected] : []}`).
+- `/sales/session?cashier_id=<id>` → opsi **pilih sesi** (daftar sesi penjualan operator, terbaru dulu; default = sesi terakhir).
+- `/report/cashier-maps?cashier_id=<id>&sales_session_id=<sid>` → jejak GPS **satu sesi** terpilih (backend memfilter via `sales_session_id`).
 
-Keduanya auto-refresh tiap 1 menit. `CashierLiveMap` dipakai bersama dashboard & tab detail — menerima baris sesi (punya `historys`) maupun baris device (cuma posisi terakhir, digambar satu titik). Wording menu/judul: **"Mitra Maps"**.
+Semua auto-refresh tiap 1 menit. Panel peta (dropdown sesi + ringkasan + `CashierLiveMap`) diekstrak ke `sections/CashierSessionsPanel.tsx` dan dipakai bersama halaman ini & tab detail. `CashierLiveMap` menerima baris sesi (punya `historys`) maupun baris device (cuma posisi terakhir, digambar satu titik). Wording menu/judul: **"Mitra Maps"**.
 
 ---
 
@@ -404,7 +405,7 @@ Tidak ada perubahan backend (semua sudah disiapkan backend). Tidak ada dependenc
 10. **Dashboard**: **Top Kasir** muncul di **semua tipe brand** (outlet & mitra), **Live Mitra** hanya brand `mitra` dan posisinya paling atas full width; kartu "Penarikan Terbaru" hilang di kedua tipe brand; kartu Payment Method / Top Member / Top Menu / Peak Hours menampilkan "Belum ada transaksi" saat kosong.
 11. **Live map**: marker satu per titik history (semua ukuran sama); titik terkini warna status + label nama kasir, titik sebelumnya biru; popup menampilkan **transaksi & omzet per titik**; bundle dashboard tetap ramping (widget di-lazy-load).
 12. **Role gating**: login sebagai `cashier` → list kasir & live map hanya berisi baris dirinya sendiri; login `manager`/owner → semua operator outlet.
-13. **`CashierMaps.tsx`** (menu "Mitra Maps"): list kiri = **semua** operator outlet dari `/report/cashier-device` (status recency/battery/aktivitas terakhir); pilih operator → dropdown **pilih sesi** (`/report/cashier-maps`), peta menggambar jejak sesi terpilih.
+13. **`CashierMaps.tsx`** (menu "Mitra Maps"): list kiri = **semua** operator outlet dari `/report/cashier-device` (status recency/battery/koordinat/aktivitas terakhir); pilih operator → dropdown **pilih sesi** (opsi dari `/sales/session`), peta menggambar jejak sesi terpilih via `/report/cashier-maps?sales_session_id=`.
 14. **Filter kasir**: di ketujuh halaman Laporan, pilih satu kasir → tabel + kartu ringkasan ikut terfilter; Clear mengembalikan semua. Di tab detail kasir, field kasir tidak muncul (terkunci).
 15. **Label tab detail** = judul halaman report (Penjualan Harian, Penjualan Menu, Outstanding Bills, Penjualan Dibatalkan, Cash Control, Settlement, Saldo Membership, Mitra Maps).
 
@@ -422,4 +423,4 @@ Tidak ada perubahan backend (semua sudah disiapkan backend). Tidak ada dependenc
 - Gate widget Live Mitra memakai `data?.cashier_live_map?.length` (backend hanya mengisi untuk mitra). Top Kasir **tanpa gate brand** karena backend mengisi untuk semua tipe.
 - **Filter Settlement tetap inline** (YearPicker + SelectCashier), tidak dibungkus panel — YearPicker adalah kontrol utama halaman itu, sayang kalau disembunyikan di balik dropdown.
 - `SelectCashier` memanggil `GET /user` (limit 100) sekali untuk me-resolve nama dari `cashier_id` yang tersimpan, lalu paginasi/search saat dropdown dibuka — jadi filter bisa direstor dari state/URL tanpa kehilangan label.
-- **`CashierMaps.tsx` (Mitra Maps)** pakai `/report/cashier-device` untuk daftar operator (semua operator, bukan cuma sesi `opened`) dan `/report/cashier-maps` per sesi untuk peta. Recency device diturunkan di FE (`deviceStatusFromTime`, timestamp WIB) karena backend tidak mengirim `status`/`role`/`last_seen`.
+- **`CashierMaps.tsx` (Mitra Maps)** pakai `/report/cashier-device` untuk daftar operator (semua operator, bukan cuma sesi `opened`), `/sales/session?cashier_id=` untuk opsi dropdown sesi, dan `/report/cashier-maps?sales_session_id=` untuk peta sesi terpilih. Recency device diturunkan di FE (`deviceStatusFromTime`, timestamp WIB) karena backend tidak mengirim `status`/`role`/`last_seen`.

@@ -2,7 +2,8 @@ import type { CashierDeviceStatus } from "@/services/types/reports";
 
 /**
  * Status recency device operator (dari `max(sales_session_device_log.created_at)`):
- * `online` ≤5 menit, `stale` 5–15 menit, `offline` >15 menit / belum ada log.
+ * `online` ≤10 menit, `stale` 10–30 menit, `offline` >30 menit / belum ada log.
+ * Batas 30 menit disamakan dengan flag `uncertain` di backend.
  */
 export const DEVICE_STATUS_COLOR: Record<string, string> = {
   online: "#10b981",
@@ -35,7 +36,7 @@ export const deviceStatusFromTime = (
   if (Number.isNaN(parsed)) return "offline";
 
   const minutes = (Date.now() - parsed) / 60000;
-  if (minutes <= 5) return "online";
-  if (minutes <= 15) return "stale";
+  if (minutes <= 10) return "online";
+  if (minutes <= 30) return "stale";
   return "offline";
 };
