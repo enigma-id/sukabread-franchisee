@@ -3,7 +3,9 @@ import { useMemo, useState } from "react";
 import dayjs, { Dayjs } from "dayjs";
 
 import { DatePicker, RemoteSelect, SelectCashier } from "@/components/ui";
+import clsx from "clsx";
 import TableFilters from "@/components/ui/table/filter";
+import { FILTER_INPUT_CLASS } from "@/components/ui/table/filter.styles";
 
 interface TableFilterProps {
   table: {
@@ -63,91 +65,84 @@ const TableFilter: React.FC<TableFilterProps> = ({ table }) => {
     return undefined;
   });
 
-  const buildFilters = () => ({
-    reference_type: referenceType?.value ?? "",
-    status: status?.value ?? "",
-    cashier_id: cashierId ?? "",
-    start_date: dateRange?.[0]?.format("YYYY-MM-DD") ?? "",
-    end_date: dateRange?.[1]?.format("YYYY-MM-DD") ?? "",
-  });
-
-  const isDirty = useMemo(() => {
-    return (
-      ((referenceType?.value ?? "") !== (current.reference_type || "")) ||
-      ((status?.value ?? "") !== (current.status || "")) ||
-      ((cashierId ?? "") !== (current.cashier_id || "")) ||
-      ((dateRange?.[0]?.format("YYYY-MM-DD") ?? "") !==
-        (current.start_date || "")) ||
-      ((dateRange?.[1]?.format("YYYY-MM-DD") ?? "") !==
-        (current.end_date || ""))
-    );
-  }, [referenceType, status, cashierId, dateRange, current]);
-
-  const anyActive = useMemo(
-    () =>
-      !!current.reference_type ||
-      !!current.cashier_id ||
-      (current.status && current.status !== "completed") ||
-      !!current.start_date ||
-      !!current.end_date,
-    [current],
-  );
-
-  const handleClear = () => {
-    setReferenceType(null);
-    setStatus({ label: "Completed", value: "completed" });
-    setCashierId(null);
-    setDateRange(undefined);
+  // Filter langsung diterapkan tiap kontrol berubah (tanpa tombol Apply).
+  const apply = (updates: Record<string, unknown> = {}) =>
     table.filter({
-      reference_type: "",
-      status: "completed",
-      cashier_id: "",
-      start_date: "",
-      end_date: "",
+      reference_type: referenceType?.value ?? "",
+      status: status?.value ?? "completed",
+      cashier_id: cashierId ?? "",
+      start_date: dateRange?.[0]?.format("YYYY-MM-DD") ?? "",
+      end_date: dateRange?.[1]?.format("YYYY-MM-DD") ?? "",
+      ...updates,
     });
-  };
-
-  const handleFilter = () => table.filter(buildFilters());
 
   return (
-    <TableFilters
-      isActive={anyActive}
-      isDirty={isDirty}
-      handleClear={handleClear}
-      handleFilter={handleFilter}
-    >
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 items-end">
+    <TableFilters>
+      <div
+        className={clsx(
+          "grid grid-cols-1 gap-3 items-end",
+          // Kasir disembunyikan saat dikunci → jangan sisakan track kosong.
+          lockedCashier ? "lg:grid-cols-3" : "lg:grid-cols-2",
+        )}
+      >
         <RemoteSelect
-          label="Tipe"
           placeholder="Filter Tipe"
+          inputClassName={FILTER_INPUT_CLASS}
           data={referenceTypeOptions}
           value={referenceType}
-          onChange={(opt) => setReferenceType(opt)}
-          onClear={() => setReferenceType(null)}
+          onChange={(opt) => {
+            setReferenceType(opt);
+            apply({ reference_type: opt?.value ?? "" });
+          }}
+          onClear={() => {
+            setReferenceType(null);
+            apply({ reference_type: "" });
+          }}
           getLabel={(item: { label: string }) => item?.label ?? ""}
           renderItem={(item: { label: string }) => item?.label}
         />
         <RemoteSelect
-          label="Status"
           placeholder="Filter Status"
+          inputClassName={FILTER_INPUT_CLASS}
           data={statusOptions}
           value={status}
-          onChange={(opt) => setStatus(opt)}
-          onClear={() => setStatus({ label: "Completed", value: "completed" })}
+          onChange={(opt) => {
+            setStatus(opt);
+            apply({ status: opt?.value ?? "completed" });
+          }}
+          onClear={() => {
+            setStatus({ label: "Completed", value: "completed" });
+            apply({ status: "completed" });
+          }}
           getLabel={(item: { label: string }) => item?.label ?? ""}
           renderItem={(item: { label: string }) => item?.label}
         />
-        <SelectCashier value={cashierId} onChange={setCashierId} hidden={lockedCashier} />
+        <SelectCashier
+          value={cashierId}
+          onChange={(id) => {
+            setCashierId(id);
+            apply({ cashier_id: id ?? "" });
+          }}
+          hidden={lockedCashier}
+          inputClassName={FILTER_INPUT_CLASS}
+        />
         <DatePicker
-          label="Rentang Tanggal"
           mode="range"
           value={dateRange}
           onChange={(date) => {
-            if (Array.isArray(date)) {
-              setDateRange(date as [Dayjs | null, Dayjs | null]);
+            if (!Array.isArray(date)) return;
+            const range = date as [Dayjs | null, Dayjs | null];
+            setDateRange(range);
+            // Apply hanya saat rentang lengkap atau dikosongkan.
+            if ((range[0] && range[1]) || (!range[0] && !range[1])) {
+              apply({
+                start_date: range[0]?.format("YYYY-MM-DD") ?? "",
+                end_date: range[1]?.format("YYYY-MM-DD") ?? "",
+              });
             }
           }}
           placeholder="Filter Tanggal"
+          inputClassName={FILTER_INPUT_CLASS}
         />
       </div>
     </TableFilters>

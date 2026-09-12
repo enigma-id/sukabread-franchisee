@@ -26,7 +26,7 @@ import { SummaryCard } from "@/components/app";
 import { MonthPicker } from "@/components/ui";
 import dayjs from "dayjs";
 import { useDashboard } from "@/services/dashboard/hooks";
-import { currencyFormat, deviceStatusColor } from "@/utils";
+import { currencyFormat, deviceStatusColor, deviceStatusFromTime } from "@/utils";
 import { useDocumentMeta } from "@/hooks/useDocumentMeta";
 import type { DashboardData } from "@/services/types";
 import SalesChart from "@/components/app/SalesChart";
@@ -252,7 +252,11 @@ export function Dashboard() {
                 >
                   <span
                     className='h-2 w-2 rounded-full'
-                    style={{ background: deviceStatusColor(op.status) }}
+                    style={{
+                      background: deviceStatusColor(
+                        deviceStatusFromTime(op.last_activity_at),
+                      ),
+                    }}
                   />
                   {op.cashier_name}
                 </button>

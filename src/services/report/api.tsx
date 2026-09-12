@@ -131,10 +131,18 @@ export const reportApi = createApi({
 
     /**
      * GET /report/cashier-maps
-     * List cashier GPS history per outlet (mitra)
+     * Satu baris per SESI operator (opened/closed) + jejak GPS sesi (mitra)
      */
     getCashierMaps: builder.query({
       query: (params) => ({ url: "/report/cashier-maps", params }),
+    }),
+
+    /**
+     * GET /report/cashier-device
+     * Semua operator outlet + posisi device terakhirnya (mitra)
+     */
+    getCashierDevice: builder.query({
+      query: (params) => ({ url: "/report/cashier-device", params }),
     }),
 
     /**
@@ -171,6 +179,7 @@ export const {
   useLazyGetSaldoLogQuery,
   useLazyGetSaldoLogSummaryQuery,
   useLazyGetCashierMapsQuery,
+  useLazyGetCashierDeviceQuery,
   useLazyGetCashierReportQuery,
   useLazyGetCashierReportSummaryQuery,
 } = reportApi;

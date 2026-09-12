@@ -7,7 +7,9 @@ import { DatePicker, RemoteSelect, SelectCashier } from "@/components/ui";
 import { useCatalog } from "@/services/catalog/hooks";
 import { ChevronDown } from "lucide-react";
 import type { CatalogOutlet } from "@/services/types";
+import clsx from "clsx";
 import TableFilters from "@/components/ui/table/filter";
+import { FILTER_INPUT_CLASS } from "@/components/ui/table/filter.styles";
 
 interface TableFilterProps {
   table: {
@@ -47,45 +49,15 @@ const TableFilter: React.FC<TableFilterProps> = ({ table }) => {
     return undefined;
   });
 
-  const buildFilters = () => ({
-    catalog_id: catalog?.catalog_id ?? "",
-    cashier_id: cashierId ?? "",
-    start_date: dateRange ? dateRange[0]?.format("YYYY-MM-DD") ?? "" : "",
-    end_date: dateRange ? dateRange[1]?.format("YYYY-MM-DD") ?? "" : "",
-  });
-
-  const isDirty = useMemo(() => {
-    const f = buildFilters();
-    return (
-      String(f.catalog_id || "") !== String(current.catalog_id || "") ||
-      String(f.cashier_id || "") !== String(current.cashier_id || "") ||
-      String(f.start_date || "") !== String(current.start_date || "") ||
-      String(f.end_date || "") !== String(current.end_date || "")
-    );
-  }, [catalog, cashierId, dateRange, current]);
-
-  const anyActive = useMemo(
-    () =>
-      !!current.catalog_id ||
-      !!current.cashier_id ||
-      !!current.start_date ||
-      !!current.end_date,
-    [current],
-  );
-
-  const handleClear = () => {
-    setCatalog(null);
-    setCashierId(null);
-    setDateRange(undefined);
+  // Filter langsung diterapkan tiap kontrol berubah (tanpa tombol Apply).
+  const apply = (updates: Record<string, unknown> = {}) =>
     table.filter({
-      catalog_id: "",
-      cashier_id: "",
-      start_date: "",
-      end_date: "",
+      catalog_id: catalog?.catalog_id ?? "",
+      cashier_id: cashierId ?? "",
+      start_date: dateRange?.[0]?.format("YYYY-MM-DD") ?? "",
+      end_date: dateRange?.[1]?.format("YYYY-MM-DD") ?? "",
+      ...updates,
     });
-  };
-
-  const handleFilter = () => table.filter(buildFilters());
 
   useEffect(() => {
     getCatalog({ page: 1, limit: 100 });
@@ -106,20 +78,27 @@ const TableFilter: React.FC<TableFilterProps> = ({ table }) => {
   }, [current.catalog_id, getResult?.data?.data]);
 
   return (
-    <TableFilters
-      isActive={anyActive}
-      isDirty={isDirty}
-      handleClear={handleClear}
-      handleFilter={handleFilter}
-    >
-      <div className='grid grid-cols-1 lg:grid-cols-2 gap-3'>
+    <TableFilters>
+      <div
+        className={clsx(
+          "grid grid-cols-1 gap-3 items-end",
+          // Kasir disembunyikan saat dikunci → jangan sisakan track kosong.
+          lockedCashier ? "lg:grid-cols-2" : "lg:grid-cols-3",
+        )}
+      >
         <RemoteSelect
           placeholder='Catalog: All'
-          inputClassName='!bg-white !border-gray-200 !h-9 !min-h-0 !py-0 !shadow-sm hover:!bg-gray-50 !text-gray-700 cursor-pointer !rounded-lg text-sm font-medium'
+          inputClassName={FILTER_INPUT_CLASS}
           suffix={<ChevronDown className='text-gray-400 w-4 h-4' />}
           value={catalog}
-          onChange={setCatalog}
-          onClear={() => setCatalog(null)}
+          onChange={(opt) => {
+            setCatalog(opt);
+            apply({ catalog_id: opt?.catalog_id ?? "" });
+          }}
+          onClear={() => {
+            setCatalog(null);
+            apply({ catalog_id: "" });
+          }}
           fetchData={(page, search) =>
             getCatalog({
               page: page || 1,
@@ -135,22 +114,30 @@ const TableFilter: React.FC<TableFilterProps> = ({ table }) => {
         {!lockedCashier && (
           <SelectCashier
             value={cashierId}
-            onChange={setCashierId}
-            inputClassName='!bg-white !border-gray-200 !h-9 !min-h-0 !py-0 !shadow-sm hover:!bg-gray-50 !text-gray-700 cursor-pointer !rounded-lg text-sm font-medium'
+            onChange={(id) => {
+              setCashierId(id);
+              apply({ cashier_id: id ?? "" });
+            }}
+            inputClassName={FILTER_INPUT_CLASS}
           />
         )}
         <DatePicker
           mode='range'
           value={dateRange}
           onChange={(date) => {
-            let newRange: [Dayjs | null, Dayjs | null] = [null, null];
-            if (date && typeof date !== "string" && !("format" in date)) {
-              newRange = date as [Dayjs | null, Dayjs | null];
+            if (!Array.isArray(date)) return;
+            const range = date as [Dayjs | null, Dayjs | null];
+            setDateRange(range);
+            // Apply hanya saat rentang lengkap atau dikosongkan.
+            if ((range[0] && range[1]) || (!range[0] && !range[1])) {
+              apply({
+                start_date: range[0]?.format("YYYY-MM-DD") ?? "",
+                end_date: range[1]?.format("YYYY-MM-DD") ?? "",
+              });
             }
-            setDateRange(newRange);
           }}
           placeholder='Select Date Range'
-          inputClassName='!bg-white !border-gray-200 !h-9 !min-h-0 !py-0 !shadow-sm hover:!bg-gray-50 !text-gray-700 cursor-pointer !rounded-lg text-sm font-medium'
+          inputClassName={FILTER_INPUT_CLASS}
         />
       </div>
     </TableFilters>

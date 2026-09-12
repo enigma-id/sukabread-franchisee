@@ -8,12 +8,17 @@ import type {
 import "mapbox-gl/dist/mapbox-gl.css";
 import { MapPin } from "lucide-react";
 import clsx from "clsx";
-import type { CashierMapHistory, CashierMapRow } from "@/services/types";
+import type {
+  CashierDeviceStatus,
+  CashierLiveRow,
+  CashierMapHistory,
+} from "@/services/types";
 import {
   DEVICE_STATUS_COLOR,
   DEVICE_STATUS_LABEL,
   currencyFormat,
   deviceStatusColor,
+  deviceStatusFromTime,
   deviceStatusLabel,
 } from "@/utils";
 
@@ -26,10 +31,33 @@ const HISTORY_COLOR = "#3b82f6";
 /** Radius marker (px). Semua titik sama besar. */
 const MARKER_RADIUS = 12;
 
-const validHistory = (row?: CashierMapRow): CashierMapHistory[] =>
+const validHistory = (row?: CashierLiveRow): CashierMapHistory[] =>
   (row?.historys ?? []).filter(
     (p) => typeof p.latitude === "number" && typeof p.longitude === "number",
   );
+
+/**
+ * Titik yang digambar untuk satu baris: jejak `historys` kalau ada, kalau tidak
+ * satu titik di posisi device terakhir (`last_latitude`/`last_longitude`) —
+ * dipakai baris dari `/report/cashier-device`.
+ */
+const rowPoints = (row: CashierLiveRow): CashierMapHistory[] => {
+  const history = validHistory(row);
+  if (history.length > 0) return history;
+
+  const { last_latitude, last_longitude } = row;
+  if (!last_latitude || !last_longitude) return [];
+
+  return [
+    {
+      latitude: last_latitude,
+      longitude: last_longitude,
+      created_at: row.last_activity_at ?? "",
+      total_charges: 0,
+      total_transactions: 0,
+    },
+  ];
+};
 
 const escapeHtml = (value: unknown) =>
   String(value ?? "-").replace(/[&<>"']/g, (c) => {
@@ -49,18 +77,20 @@ const escapeHtml = (value: unknown) =>
 
 /** Satu titik GPS milik seorang operator. */
 interface CashierPoint {
-  row: CashierMapRow;
+  row: CashierLiveRow;
   point: CashierMapHistory;
   /** Urutan titik pada history operator (0-based). */
   index: number;
   /** Titik terakhir = posisi terkini operator. */
   isLatest: boolean;
+  /** Recency device untuk baris ini (dari log terakhir) — warna marker terkini. */
+  status: CashierDeviceStatus;
   /** Kunci unik fitur di map (operator + urutan titik). */
   key: string;
 }
 
-const buildPopupHtml = ({ row, point, index, isLatest }: CashierPoint) => {
-  const color = deviceStatusColor(row.status);
+const buildPopupHtml = ({ row, point, index, isLatest, status }: CashierPoint) => {
+  const color = deviceStatusColor(status);
   const pointCharges = point.total_charges ?? 0;
   const pointTrx = point.total_transactions ?? 0;
 
@@ -74,13 +104,8 @@ const buildPopupHtml = ({ row, point, index, isLatest }: CashierPoint) => {
     <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 10px;">
       <span style="width: 7px; height: 7px; border-radius: 50%; background: ${color}; box-shadow: 0 0 0 3px ${color}22;"></span>
       <span style="font-size: 11px; font-weight: 700; color: ${color}; text-transform: uppercase;">
-        ${escapeHtml(deviceStatusLabel(row.status))}
+        ${escapeHtml(deviceStatusLabel(status))}
       </span>
-      ${
-        row.last_seen
-          ? `<span style="font-size: 10px; color: #9ca3af; margin-left: auto;">${escapeHtml(row.last_seen)}</span>`
-          : ""
-      }
     </div>
 
     <div style="display: flex; flex-direction: column; gap: 4px; font-size: 11px; color: #4b5563;">
@@ -94,13 +119,15 @@ const buildPopupHtml = ({ row, point, index, isLatest }: CashierPoint) => {
         point.created_at
           ? `<div style="display: flex; justify-content: space-between; gap: 12px;">
               <span style="color: #9ca3af;">Waktu</span>
-              <span style="font-weight: 600; color: #6b7280;">${escapeHtml(point.created_at)}</span>
+              <span style="font-weight: 600; color: #6b7280;">${escapeHtml(point.created_at)}${
+                point.uncertain ? " (±)" : ""
+              }</span>
             </div>`
           : ""
       }
       <div style="display: flex; justify-content: space-between; gap: 12px;">
         <span style="color: #9ca3af;">Battery</span>
-        <span style="font-weight: 700; color: #1f2937;">${escapeHtml(row.battery_health || "-")}</span>
+        <span style="font-weight: 700; color: #1f2937;">${escapeHtml(row.last_battery_health || "-")}</span>
       </div>
     </div>
 
@@ -126,9 +153,12 @@ const buildPopupHtml = ({ row, point, index, isLatest }: CashierPoint) => {
 };
 
 interface CashierLiveMapProps {
-  /** Daftar operator yang sedang bertugas (session opened). */
-  items: CashierMapRow[];
-  /** Operator yang jejaknya digambar. */
+  /**
+   * Baris yang digambar: sesi operator (punya `historys`) atau operator +
+   * posisi device terakhir saja. Lihat `CashierLiveRow`.
+   */
+  items: CashierLiveRow[];
+  /** ID operator yang jejaknya digambar. */
   selectedId?: string | null;
   /** Dipanggil saat marker operator diklik. */
   onSelect?: (cashierId: string) => void;
@@ -152,11 +182,17 @@ export function CashierLiveMap({
   const points = useMemo<CashierPoint[]>(
     () =>
       items.flatMap((row) => {
-        const history = validHistory(row);
+        const history = rowPoints(row);
+        // Recency dari log device terakhir: titik terakhir jejak, atau
+        // `last_activity_at` untuk baris yang cuma punya posisi terakhir.
+        const status = deviceStatusFromTime(
+          row.last_activity_at ?? history[history.length - 1]?.created_at,
+        );
         return history.map((point, index) => ({
           row,
           point,
           index,
+          status,
           isLatest: index === history.length - 1,
           key: `${row.cashier_id}-${index}`,
         }));
@@ -232,14 +268,14 @@ export function CashierLiveMap({
     const mapInstance = map.current;
 
     const markerFeatures: GeoJSONFeatureType[] = points.map(
-      ({ row, point, key, isLatest }) => ({
+      ({ row, point, key, isLatest, status }) => ({
         type: "Feature",
         properties: {
           key,
           cashierId: row.cashier_id,
           // Posisi terkini pakai warna status device; titik lama pakai warna
           // history (biru) supaya operator kelihatan sudah berpindah.
-          color: isLatest ? deviceStatusColor(row.status) : HISTORY_COLOR,
+          color: isLatest ? deviceStatusColor(status) : HISTORY_COLOR,
           radius: MARKER_RADIUS,
           opacity: isLatest ? 1 : 0.85,
           // Label nama hanya di titik terkini → satu label per operator.

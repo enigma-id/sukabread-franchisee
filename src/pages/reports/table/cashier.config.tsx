@@ -74,13 +74,6 @@ const createTableConfig = ({
       headerClass: "!text-end",
       class: "text-end font-mono",
     },
-    aov: {
-      title: "AOV",
-      sortable: false,
-      headerClass: "!text-end",
-      class: "text-end font-mono",
-      component: (row: CashierReportRow) => currencyFormat(row.aov),
-    },
     cancelled_count: {
       title: "Dibatalkan",
       sortable: false,

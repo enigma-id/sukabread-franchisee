@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useMemo, useState } from "react";
 import { SelectCashier, YearPicker } from "@/components/ui";
+import { FILTER_INPUT_CLASS } from "@/components/ui/table/filter.styles";
 
 interface TableFilterProps {
   table: {
@@ -38,19 +39,21 @@ const TableFilter: React.FC<TableFilterProps> = ({ table }) => {
       <YearPicker
         value={current.periode ?? ""}
         onChange={(val) => applyFilters({ periode: val })}
-        inputClassName='!h-9 !min-h-0 !py-0'
+        inputClassName={FILTER_INPUT_CLASS}
       />
-      <div className='w-60'>
-        <SelectCashier
-          value={cashierId}
-          onChange={(id) => {
-            setCashierId(id);
-            applyFilters({ cashier_id: id ?? "" });
-          }}
-          hidden={lockedCashier}
-          inputClassName='!h-9 !min-h-0 !py-0'
-        />
-      </div>
+      {/* Wrapper ikut disembunyikan saat kasir dikunci, biar tidak sisa space. */}
+      {!lockedCashier && (
+        <div className='w-60'>
+          <SelectCashier
+            value={cashierId}
+            onChange={(id) => {
+              setCashierId(id);
+              applyFilters({ cashier_id: id ?? "" });
+            }}
+            inputClassName={FILTER_INPUT_CLASS}
+          />
+        </div>
+      )}
     </div>
   );
 };

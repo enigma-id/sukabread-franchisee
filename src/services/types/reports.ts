@@ -27,22 +27,54 @@ export interface CashierMapHistory {
   /** Penjualan yang terjadi selagi device berada di titik ini (sampai titik berikutnya). */
   total_charges: number;
   total_transactions: number;
+  /** Titik terakhir sesi `opened` yang rentangnya >30 mnt tanpa log baru (omzet tetap dihitung). */
+  uncertain?: boolean;
 }
 
 /** Recency device operator: online (<=5 menit) | stale (5-15 menit) | offline. */
 export type CashierDeviceStatus = "online" | "stale" | "offline";
 
+/** Baris `GET /report/cashier-maps` — satu baris per SESI operator. */
 export interface CashierMapRow {
   cashier_id: string;
   cashier_name: string;
-  role: string;
   session_id: string;
   started_at: string;
-  battery_health: string;
-  last_seen: string;
-  status: CashierDeviceStatus;
+  /** Kosong (`""`) selama sesi masih `opened`. */
+  finished_at: string;
+  /** Status sales_session: `opened` | `closed`. */
+  status: string;
   total_charges: number;
+  last_latitude: number;
+  last_longitude: number;
+  last_battery_health: string;
   historys: CashierMapHistory[];
+}
+
+/** Baris `GET /report/cashier-device` — semua operator + posisi device terakhir. */
+export interface CashierDeviceRow {
+  cashier_id: string;
+  cashier_name: string;
+  /** Kapan device terakhir melapor (WIB); kosong kalau belum pernah kirim device. */
+  last_activity_at?: string;
+  last_battery_health?: string;
+  last_latitude: number;
+  last_longitude: number;
+}
+
+/**
+ * Bentuk minimal yang bisa digambar `CashierLiveMap`: kirim `historys` untuk
+ * jejak perjalanan, atau cukup `last_latitude`/`last_longitude` untuk satu titik
+ * posisi terakhir. Dipenuhi oleh `CashierMapRow` maupun `CashierDeviceRow`.
+ */
+export interface CashierLiveRow {
+  cashier_id: string;
+  cashier_name: string;
+  last_battery_health?: string;
+  last_activity_at?: string;
+  last_latitude?: number;
+  last_longitude?: number;
+  historys?: CashierMapHistory[];
 }
 
 // Laporan per-operator (cashier + manager)

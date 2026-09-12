@@ -4,6 +4,7 @@ import dayjs, { Dayjs } from "dayjs";
 
 import { DatePicker } from "@/components/ui";
 import TableFilters from "@/components/ui/table/filter";
+import { FILTER_INPUT_CLASS } from "@/components/ui/table/filter.styles";
 
 interface TableFilterProps {
   table: {
@@ -32,49 +33,26 @@ const TableFilter: React.FC<TableFilterProps> = ({ table }) => {
     return undefined;
   });
 
-  const buildFilters = () => ({
-    start_date: dateRange?.[0]?.format("YYYY-MM-DD") ?? "",
-    end_date: dateRange?.[1]?.format("YYYY-MM-DD") ?? "",
-  });
-
-  const isDirty = useMemo(() => {
-    const f = buildFilters();
-    return (
-      String(f.start_date || "") !== String(current.start_date || "") ||
-      String(f.end_date || "") !== String(current.end_date || "")
-    );
-  }, [dateRange, current]);
-
-  const anyActive = useMemo(
-    () => !!current.start_date || !!current.end_date,
-    [current],
-  );
-
-  const handleClear = () => {
-    setDateRange(undefined);
-    table.filter({ start_date: "", end_date: "" });
-  };
-
-  const handleFilter = () => table.filter(buildFilters());
-
   return (
-    <TableFilters
-      isActive={anyActive}
-      isDirty={isDirty}
-      handleClear={handleClear}
-      handleFilter={handleFilter}
-    >
-      <div className='grid grid-cols-1 gap-3'>
+    <TableFilters>
+      <div className='grid grid-cols-1 gap-3 items-end'>
         <DatePicker
-          label='Rentang Tanggal'
           mode='range'
           value={dateRange}
           onChange={(date) => {
-            if (Array.isArray(date)) {
-              setDateRange(date as [Dayjs | null, Dayjs | null]);
+            if (!Array.isArray(date)) return;
+            const range = date as [Dayjs | null, Dayjs | null];
+            setDateRange(range);
+            // Apply hanya saat rentang lengkap atau dikosongkan.
+            if ((range[0] && range[1]) || (!range[0] && !range[1])) {
+              table.filter({
+                start_date: range[0]?.format("YYYY-MM-DD") ?? "",
+                end_date: range[1]?.format("YYYY-MM-DD") ?? "",
+              });
             }
           }}
           placeholder='Filter Tanggal'
+          inputClassName={FILTER_INPUT_CLASS}
         />
       </div>
     </TableFilters>

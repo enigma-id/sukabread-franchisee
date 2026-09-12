@@ -4,7 +4,6 @@ import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import clsx from "clsx";
 import {
   Ban,
-  BarChart2,
   History,
   Receipt,
   ShoppingCart,
@@ -23,6 +22,7 @@ import {
   ProductItemSection,
   ProductSalesSection,
   SaldoMembershipSection,
+  SalesSessionSection,
   SettlementSection,
   type ReportSectionProps,
 } from "./sections";
@@ -33,7 +33,6 @@ const THEMES: Record<string, any> = {
   red: { text: "text-red-500", iconBg: "#fee2e2", wave: "#ef4444" },
   purple: { text: "text-purple-500", iconBg: "#f3e8ff", wave: "#a855f7" },
   orange: { text: "text-orange-500", iconBg: "#ffedd5", wave: "#f97316" },
-  cyan: { text: "text-cyan-500", iconBg: "#cffafe", wave: "#06b6d4" },
 };
 
 // Lazy — tab peta memuat mapbox-gl yang besar, jangan masuk bundle utama.
@@ -55,6 +54,7 @@ type ReportTab = {
 };
 
 const TABS: ReportTab[] = [
+  { value: "sales", label: "Sesi", Section: SalesSessionSection, brand: "all" },
   { value: "product-sales", label: "Penjualan Harian", Section: ProductSalesSection, brand: "all" },
   { value: "product-item", label: "Penjualan Menu", Section: ProductItemSection, brand: "all" },
   { value: "outstanding", label: "Outstanding Bills", Section: OutstandingSection, brand: "all" },
@@ -69,7 +69,7 @@ const SummaryCashier = ({ data }: { data: any | null }) => {
   if (!data) return null;
 
   return (
-    <div className='grid grid-cols-2 gap-3 mb-4 sm:gap-4 lg:grid-cols-6'>
+    <div className='grid grid-cols-2 gap-3 mb-4 sm:gap-4 lg:grid-cols-5'>
       <SummaryCard
         label='Omzet'
         value={currencyFormat(data.omzet ?? 0)}
@@ -83,16 +83,10 @@ const SummaryCashier = ({ data }: { data: any | null }) => {
         theme={THEMES.blue}
       />
       <SummaryCard
-        label='Nilai Outstanding'
+        label='Total Outstanding'
         value={currencyFormat(data.outstanding_amount ?? 0)}
         icon={Receipt}
         theme={THEMES.red}
-      />
-      <SummaryCard
-        label='AOV'
-        value={currencyFormat(data.aov ?? 0)}
-        icon={BarChart2}
-        theme={THEMES.cyan}
       />
       <SummaryCard
         label='Total Sesi'
@@ -167,6 +161,10 @@ export function CashierDetail() {
   const sectionFilter = useMemo(() => {
     if (active.value === "settlement") {
       return startDate ? { periode: startDate.slice(0, 4) } : {};
+    }
+    // Tab Penjualan = daftar sesi `/sales/session` → rentangnya `start_at`/`end_at`.
+    if (active.value === "sales") {
+      return { start_at: startDate, end_at: endDate };
     }
     return { start_date: startDate, end_date: endDate };
   }, [active.value, startDate, endDate]);

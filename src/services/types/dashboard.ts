@@ -1,4 +1,4 @@
-import type { CashierMapRow } from "./reports";
+import type { CashierDeviceRow } from "./reports";
 
 export interface TopMenu {
   menu_name: string;
@@ -80,6 +80,6 @@ export interface DashboardData {
   top_member?: TopMember[];
   /** Section mitra: top 5 operator by metrik terpilih. */
   top_cashiers?: TopCashier[];
-  /** Section mitra: posisi device operator yang sedang bertugas (session opened). */
-  cashier_live_map?: CashierMapRow[];
+  /** Section mitra: posisi device terakhir semua operator outlet. */
+  cashier_live_map?: CashierDeviceRow[];
 }
