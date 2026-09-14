@@ -19,7 +19,6 @@ import {
   currencyFormat,
   deviceStatusColor,
   deviceStatusFromTime,
-  deviceStatusLabel,
 } from "@/utils";
 
 const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN || "";
@@ -89,8 +88,7 @@ interface CashierPoint {
   key: string;
 }
 
-const buildPopupHtml = ({ row, point, index, isLatest, status }: CashierPoint) => {
-  const color = deviceStatusColor(status);
+const buildPopupHtml = ({ row, point, index, isLatest }: CashierPoint) => {
   const pointCharges = point.total_charges ?? 0;
   const pointTrx = point.total_transactions ?? 0;
 
@@ -101,13 +99,6 @@ const buildPopupHtml = ({ row, point, index, isLatest, status }: CashierPoint) =
         row.cashier_name,
       )}</div>
     </div>
-    <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 10px;">
-      <span style="width: 7px; height: 7px; border-radius: 50%; background: ${color}; box-shadow: 0 0 0 3px ${color}22;"></span>
-      <span style="font-size: 11px; font-weight: 700; color: ${color}; text-transform: uppercase;">
-        ${escapeHtml(deviceStatusLabel(status))}
-      </span>
-    </div>
-
     <div style="display: flex; flex-direction: column; gap: 4px; font-size: 11px; color: #4b5563;">
       <div style="display: flex; justify-content: space-between; gap: 12px;">
         <span style="color: #9ca3af;">Titik</span>
@@ -201,7 +192,10 @@ export function CashierLiveMap({
   );
 
   const trail = useMemo(
-    () => (selectedId ? validHistory(items.find((r) => r.cashier_id === selectedId)) : []),
+    () =>
+      selectedId
+        ? validHistory(items.find((r) => r.cashier_id === selectedId))
+        : [],
     [items, selectedId],
   );
 
@@ -453,7 +447,9 @@ export function CashierLiveMap({
             <p className='text-xs font-medium text-slate-400'>
               Mapbox token belum dikonfigurasi
             </p>
-            <code className='text-[10px] text-slate-400'>VITE_MAPBOX_TOKEN</code>
+            <code className='text-[10px] text-slate-400'>
+              VITE_MAPBOX_TOKEN
+            </code>
           </div>
         </div>
       )}
