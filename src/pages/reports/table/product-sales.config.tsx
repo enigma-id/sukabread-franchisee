@@ -5,14 +5,17 @@ import type { ProductSalesRow } from "@/services/types/reports";
 
 const createTableConfig = ({
   filter,
+  lockedFilter,
   onRowClick,
 }: {
   filter?: Record<string, unknown>;
+  lockedFilter?: Record<string, unknown>;
   onRowClick?: (row: ProductSalesRow) => void;
 }) => ({
   ...config,
   url: "/report/product-sales",
   filter,
+  lockedFilter,
   onRowClick,
   columns: {
     date: {
@@ -20,6 +23,7 @@ const createTableConfig = ({
       sortable: true,
       component: (row: ProductSalesRow) => formatDate(row.date),
     },
+    cashier_name: { title: "Kasir", sortable: true },
     channel: { title: "Channel", sortable: true },
     payment: { title: "Payment", sortable: true },
     code: { title: "Code", sortable: true },
@@ -54,8 +58,9 @@ const createTableConfig = ({
     action: {
       title: "",
       width: 40,
+      sortable: false,
       component: () => (
-        <ChevronRight size={16} className="text-base-content/30" />
+        <ChevronRight size={16} className='text-base-content/30' />
       ),
     },
   },

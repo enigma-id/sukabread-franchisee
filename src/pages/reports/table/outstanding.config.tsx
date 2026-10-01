@@ -5,12 +5,18 @@ import type { OutstandingBill } from "@/services/types/reports";
 
 const createTableConfig = ({
   filter,
+  lockedFilter,
+  onRowClick,
 }: {
   filter?: Record<string, unknown>;
+  lockedFilter?: Record<string, unknown>;
+  onRowClick?: (row: OutstandingBill) => void;
 }) => ({
   ...config,
   url: "/report/outstanding",
   filter,
+  lockedFilter,
+  onRowClick,
   columns: {
     code: {
       title: "Code",

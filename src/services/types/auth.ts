@@ -12,6 +12,24 @@ export interface AuthUser extends User {
   token?: string;
 }
 
+/**
+ * Relasi `brand` yang dikembalikan pada response login (entity.Session).
+ * `type` membedakan tipe brand: "outlet" (Sales Request internal)
+ * vs "mitra" (redirect ke app order eksternal).
+ */
+export interface SessionBrand {
+  id: string;
+  ref_id?: string;
+  type?: string | null;
+  name: string;
+  address?: string;
+  phone?: string;
+  email?: string;
+  is_active?: boolean;
+  created_at?: string;
+  updated_at?: string;
+}
+
 export interface LoginRequest {
   identifier: string;
   password: string;

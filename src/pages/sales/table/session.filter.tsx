@@ -3,6 +3,7 @@ import { useMemo, useState } from "react";
 import dayjs, { Dayjs } from "dayjs";
 
 import { DatePicker } from "@/components/ui";
+import { FILTER_INPUT_CLASS } from "@/components/ui/table/filter.styles";
 
 interface TableFilterProps {
   table: {
@@ -68,7 +69,7 @@ const TableFilter: React.FC<TableFilterProps> = ({ table }) => {
           value={dateRange}
           onChange={handleDateChange}
           placeholder="Date: All Time"
-          inputClassName="!bg-white !border-gray-200 !h-9 !min-h-0 !py-0 !shadow-sm hover:!bg-gray-50 !text-gray-700 cursor-pointer !rounded-lg text-sm font-medium"
+          inputClassName={FILTER_INPUT_CLASS}
         />
       </div>
     </div>

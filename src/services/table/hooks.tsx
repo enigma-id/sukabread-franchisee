@@ -86,7 +86,11 @@ const useTable = <T = unknown,>(
           const responseData = res.data as unknown as Record<string, unknown>;
           const nestedData = responseData[state.dataKey];
           data = Array.isArray(nestedData) ? (nestedData as T[]) : [];
-          total = data.length;
+          // Jika response membawa total di level yang sama (mis. sales_orders + total),
+          // pakai itu; fallback ke panjang array untuk report non-paginate.
+          const nestedTotal =
+            typeof responseData.total === "number" ? responseData.total : null;
+          total = nestedTotal ?? data.length;
         } else {
           // Standard array response
           data = isSuccess && Array.isArray(res?.data) ? (res.data as T[]) : [];

@@ -2,7 +2,10 @@
 import { useMemo, useState } from "react";
 import dayjs, { Dayjs } from "dayjs";
 
-import { DatePicker } from "@/components/ui";
+import { DatePicker, SelectCashier } from "@/components/ui";
+import clsx from "clsx";
+import TableFilters from "@/components/ui/table/filter";
+import { FILTER_INPUT_CLASS } from "@/components/ui/table/filter.styles";
 
 interface TableFilterProps {
   table: {
@@ -10,6 +13,7 @@ interface TableFilterProps {
     State: {
       loading: boolean;
       filter: any;
+      lockedFilter?: Record<string, any>;
     };
   };
 }
@@ -18,6 +22,13 @@ const TableFilter: React.FC<TableFilterProps> = ({ table }) => {
   const current = useMemo(
     () => table.State?.filter ?? {},
     [table.State?.filter],
+  );
+
+  // Kasir dikunci di konteks drill-down (mis. tab detail kasir).
+  const lockedCashier = !!table.State?.lockedFilter?.cashier_id;
+
+  const [cashierId, setCashierId] = useState<string | null>(
+    () => (current.cashier_id as string) || null,
   );
 
   const [dateRange, setDateRange] = useState<
@@ -31,45 +42,53 @@ const TableFilter: React.FC<TableFilterProps> = ({ table }) => {
     return undefined;
   });
 
-  const applyFilters = (updates: any) => {
-    const filters = {
-      start_date: dateRange ? dateRange[0]?.format("YYYY-MM-DD") : "",
-      end_date: dateRange ? dateRange[1]?.format("YYYY-MM-DD") : "",
+  // Filter langsung diterapkan tiap kontrol berubah (tanpa tombol Apply).
+  const apply = (updates: Record<string, unknown> = {}) =>
+    table.filter({
+      cashier_id: cashierId ?? "",
+      start_date: dateRange?.[0]?.format("YYYY-MM-DD") ?? "",
+      end_date: dateRange?.[1]?.format("YYYY-MM-DD") ?? "",
       ...updates,
-    };
-    table.filter(filters);
-  };
-
-  const handleDateChange = (
-    date: Dayjs | [Dayjs | null, Dayjs | null] | null,
-  ) => {
-    let newRange: [Dayjs | null, Dayjs | null] = [null, null];
-    if (date && typeof date !== "string" && !("format" in date)) {
-      newRange = date as [Dayjs | null, Dayjs | null];
-    }
-
-    setDateRange(newRange);
-
-    if ((newRange[0] && newRange[1]) || (!newRange[0] && !newRange[1])) {
-      applyFilters({
-        start_date: newRange[0]?.format("YYYY-MM-DD") || "",
-        end_date: newRange[1]?.format("YYYY-MM-DD") || "",
-      });
-    }
-  };
+    });
 
   return (
-    <div className="flex flex-row items-center gap-3 w-full shrink-0">
-      <div className="w-70">
+    <TableFilters>
+      <div
+        className={clsx(
+          "grid grid-cols-1 gap-3 items-end",
+          // Kasir disembunyikan saat dikunci → jangan sisakan track kosong.
+          lockedCashier ? "lg:grid-cols-1" : "lg:grid-cols-2",
+        )}
+      >
+        <SelectCashier
+          value={cashierId}
+          onChange={(id) => {
+            setCashierId(id);
+            apply({ cashier_id: id ?? "" });
+          }}
+          hidden={lockedCashier}
+          inputClassName={FILTER_INPUT_CLASS}
+        />
         <DatePicker
-          mode="range"
+          mode='range'
           value={dateRange}
-          onChange={handleDateChange}
-          placeholder="Select Date Range"
-          inputClassName="!bg-white !border-gray-200 !h-9 !min-h-0 !py-0 !shadow-sm hover:!bg-gray-50 !text-gray-700 cursor-pointer !rounded-lg text-sm font-medium"
+          onChange={(date) => {
+            if (!Array.isArray(date)) return;
+            const range = date as [Dayjs | null, Dayjs | null];
+            setDateRange(range);
+            // Apply hanya saat rentang lengkap atau dikosongkan.
+            if ((range[0] && range[1]) || (!range[0] && !range[1])) {
+              apply({
+                start_date: range[0]?.format("YYYY-MM-DD") ?? "",
+                end_date: range[1]?.format("YYYY-MM-DD") ?? "",
+              });
+            }
+          }}
+          placeholder='Filter Tanggal'
+          inputClassName={FILTER_INPUT_CLASS}
         />
       </div>
-    </div>
+    </TableFilters>
   );
 };
 

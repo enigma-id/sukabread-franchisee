@@ -92,47 +92,73 @@ export const reportApi = createApi({
     }),
 
     /**
-     * GET /report/cancelled-product-sales
-     * List cancelled product sales (so.status = 'cancelled')
+     * GET /report/cancel-order
+     * List cancelled sales (so.status = 'cancelled')
      */
-    getCancelledProductSales: builder.query({
+    getCancelledSales: builder.query({
       query: (params) => ({
-        url: "/report/cancelled-product-sales",
+        url: "/report/cancel-order",
         params,
       }),
     }),
 
     /**
-     * GET /report/cancelled-product-sales/summary
-     * Get cancelled product sales summary
+     * GET /report/cancelled-order/summary
+     * Get cancelled sales summary
      */
-    getCancelledProductSalesSummary: builder.query({
+    getCancelledSalesSummary: builder.query({
       query: (params) => ({
-        url: "/report/cancelled-product-sales/summary",
+        url: "/report/cancel-order/summary",
         params,
       }),
     }),
 
     /**
-     * GET /report/topup-cancelled
-     * List cancelled topup data with pagination
+     * GET /report/saldo-log
+     * List member saldo mutation log with pagination
      */
-    getTopupCancelled: builder.query({
-      query: (params) => ({
-        url: "/report/topup-cancelled",
-        params,
-      }),
+    getSaldoLog: builder.query({
+      query: (params) => ({ url: "/report/saldo-log", params }),
     }),
 
     /**
-     * GET /report/topup-cancelled/summary
-     * Get cancelled topup summary
+     * GET /report/saldo-log/summary
+     * Get member saldo mutation log summary
      */
-    getTopupCancelledSummary: builder.query({
-      query: (params) => ({
-        url: "/report/topup-cancelled/summary",
-        params,
-      }),
+    getSaldoLogSummary: builder.query({
+      query: (params) => ({ url: "/report/saldo-log/summary", params }),
+    }),
+
+    /**
+     * GET /report/cashier-maps
+     * Satu baris per SESI operator (opened/closed) + jejak GPS sesi (mitra)
+     */
+    getCashierMaps: builder.query({
+      query: (params) => ({ url: "/report/cashier-maps", params }),
+    }),
+
+    /**
+     * GET /report/cashier-device
+     * Semua operator outlet + posisi device terakhirnya (mitra)
+     */
+    getCashierDevice: builder.query({
+      query: (params) => ({ url: "/report/cashier-device", params }),
+    }),
+
+    /**
+     * GET /report/cashier
+     * List laporan per-operator (cashier + manager) dengan angka ringkasan
+     */
+    getCashierReport: builder.query({
+      query: (params) => ({ url: "/report/cashier", params }),
+    }),
+
+    /**
+     * GET /report/cashier/summary
+     * Agregat laporan per-operator (tanpa cashier_id = seluruh operator)
+     */
+    getCashierReportSummary: builder.query({
+      query: (params) => ({ url: "/report/cashier/summary", params }),
     }),
   }),
 });
@@ -148,8 +174,12 @@ export const {
   useLazyGetCashControlSummaryQuery,
   useLazyGetProductItemQuery,
   useLazyGetProductItemSummaryQuery,
-  useLazyGetCancelledProductSalesQuery,
-  useLazyGetCancelledProductSalesSummaryQuery,
-  useLazyGetTopupCancelledQuery,
-  useLazyGetTopupCancelledSummaryQuery,
+  useLazyGetCancelledSalesQuery,
+  useLazyGetCancelledSalesSummaryQuery,
+  useLazyGetSaldoLogQuery,
+  useLazyGetSaldoLogSummaryQuery,
+  useLazyGetCashierMapsQuery,
+  useLazyGetCashierDeviceQuery,
+  useLazyGetCashierReportQuery,
+  useLazyGetCashierReportSummaryQuery,
 } = reportApi;

@@ -15,6 +15,8 @@ export * from "./url";
 export * from "./permission";
 export * from "./errors";
 export * from "./cn";
+export * from "./outletType";
+export * from "./deviceStatus";
 
 // Convenience alias
 export const formatCurrency = currencyFormat;
@@ -145,6 +147,8 @@ export function getTypeVariant(
     sales_order: "success",
     withdrawal: "warning",
     pos: "info",
+    cash: "info",
+    transfer: "success",
   };
   return variantMap[normalized] || "default";
 }

@@ -60,7 +60,7 @@ export function OutletCatalog() {
     <Page className="h-full flex flex-col min-h-0 bg-slate-50">
       <Page.Header
         category="Settings"
-        title="Manajemen Katalog Outlet"
+        title="Manajemen Katalog"
         subtitle="Kelola ketersediaan menu dan batasan stok untuk outlet Anda."
       />
       <Page.Body className="flex-1 flex flex-col min-h-0">

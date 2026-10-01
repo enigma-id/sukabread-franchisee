@@ -4,12 +4,18 @@ import type { CashControlRow } from "@/services/types/reports";
 
 const createTableConfig = ({
   filter,
+  lockedFilter,
+  onRowClick,
 }: {
   filter?: Record<string, unknown>;
+  lockedFilter?: Record<string, unknown>;
+  onRowClick?: (row: CashControlRow) => void;
 }) => ({
   ...config,
   url: "/report/cash-control",
   filter,
+  lockedFilter,
+  onRowClick,
   columns: {
     transaction_date: {
       title: "Tanggal",

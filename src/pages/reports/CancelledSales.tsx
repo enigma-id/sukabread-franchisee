@@ -3,13 +3,13 @@ import { useEffect, useMemo } from "react";
 import { Page } from "@/components/app/layout";
 import useTable from "@/services/table/hooks";
 import type { TableConfig } from "@/services/table/const";
-import createTableConfig from "./table/cancelled-product-sales.config";
-import TableFilter from "./table/cancelled-product-sales.filter";
+import createTableConfig from "./table/cancelled-sales.config";
+import TableFilter from "./table/cancelled-sales.filter";
 import { useDocumentMeta } from "@/hooks/useDocumentMeta";
 import { useReport } from "@/services/report/hooks";
 import { SummaryCard } from "@/components/app";
 import { currencyFormat } from "@/utils";
-import { Banknote, ArrowUpCircle, Landmark } from "lucide-react";
+import { ArrowUpCircle, Landmark } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const THEMES: Record<string, any> = {
@@ -24,13 +24,7 @@ const OverviewCards = ({ data }: { data: any | null }) => {
   if (!data) return null;
 
   return (
-    <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-4'>
-      <SummaryCard
-        label='Total Qty'
-        value={data.total_qty}
-        icon={Banknote}
-        theme={THEMES.orange}
-      />
+    <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-4 mb-4'>
       <SummaryCard
         label='Total Discount'
         value={currencyFormat(data.total_discount)}
@@ -60,7 +54,7 @@ export function CancelledProductSales() {
   }, [navigate]);
 
   const Table = useTable(
-    "report_cancelled_product_sales",
+    "report_cancelled_sales",
     tableConfig as TableConfig<unknown>,
   );
 
@@ -73,16 +67,15 @@ export function CancelledProductSales() {
   }, [Table.State?.lockedFilter, Table.State?.filter, Table.State?.textSearch]);
 
   const currentFilterString = JSON.stringify(currentFilter);
-  const { cancelledProductSalesSummary, cancelledProductSalesSummaryResult } =
-    useReport();
+  const { cancelledSalesSummary, cancelledSalesSummaryResult } = useReport();
 
   useEffect(() => {
     if (Table.State) {
-      cancelledProductSalesSummary(JSON.parse(currentFilterString));
+      cancelledSalesSummary(JSON.parse(currentFilterString));
     }
   }, [currentFilterString, Table.State !== undefined]);
 
-  const summary = cancelledProductSalesSummaryResult.data?.data;
+  const summary = cancelledSalesSummaryResult.data?.data;
 
   return (
     <Page className='h-full flex flex-col min-h-0 bg-slate-50'>

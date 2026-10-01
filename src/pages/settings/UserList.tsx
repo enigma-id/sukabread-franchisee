@@ -1,7 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useMemo, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useMemo, useEffect, useState } from "react";
 import { Button } from "@/components/ui";
 import { useUser } from "@/services/user/hooks";
 import { Plus } from "lucide-react";
@@ -11,6 +10,7 @@ import { Page } from "@/components/app/layout";
 import createTableConfig from "./table/user.config";
 import { useDocumentMeta } from "@/hooks/useDocumentMeta";
 import { Modal, useEnigmaUI } from "@/components";
+import { UserFormDrawer } from "./UserFormDrawer";
 
 export function UserList() {
   useDocumentMeta(
@@ -18,7 +18,6 @@ export function UserList() {
     "Kelola pengguna dan hak akses.",
   );
   const { openModal, closeModal, showToast } = useEnigmaUI();
-  const navigate = useNavigate();
   const {
     remove,
     removeResult,
@@ -27,6 +26,19 @@ export function UserList() {
     deactivate,
     deactivateResult,
   } = useUser();
+
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<any>(null);
+
+  const openForm = (user: any = null) => {
+    setSelectedUser(user);
+    setDrawerOpen(true);
+  };
+
+  const closeForm = () => {
+    setDrawerOpen(false);
+    setSelectedUser(null);
+  };
 
   const { isLoading: isDeleting, isSuccess: isDeleteSuccess } = removeResult;
   const { isSuccess: isActivateSuccess } = activateResult;
@@ -42,7 +54,7 @@ export function UserList() {
 
   const tableConfig = useMemo(() => {
     return createTableConfig({
-      onClick: (row: any) => navigate(`/setting/user/${row?.id}/update`),
+      onClick: (row: any) => openForm(row),
       onRemove: (row: any) => {
         openDelete(row);
       },
@@ -138,7 +150,7 @@ export function UserList() {
             variant="primary"
             shape="wide"
             size="md"
-            onClick={() => navigate("/setting/user/create")}
+            onClick={() => openForm()}
           >
             <Plus className="w-4 h-4 mr-2" />
             Buat User
@@ -153,6 +165,13 @@ export function UserList() {
         />
         <Table.Pagination />
       </Page.Body>
+
+      <UserFormDrawer
+        open={drawerOpen}
+        onClose={closeForm}
+        user={selectedUser}
+        onSaved={() => Table.boot()}
+      />
     </Page>
   );
 }

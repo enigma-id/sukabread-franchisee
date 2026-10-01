@@ -2,11 +2,11 @@ import { NavLink, Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/hooks";
 import { signout } from "@/services/auth/slice";
+import { isCompanyOutlet } from "@/utils/outletType";
 import {
   ExternalLink,
   LayoutDashboard,
   ShoppingCart,
-  Users,
   Package,
   History,
   PackageOpen,
@@ -17,13 +17,14 @@ import {
   Banknote,
   Receipt,
   Landmark,
-  Settings,
   User,
   UsersRound,
   LogOut,
   Menu,
   X,
   ChevronDown,
+  Store,
+  MapPinned,
 } from "lucide-react";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -48,144 +49,173 @@ interface MenuSection {
 }
 
 // ─── Menu Config ──────────────────────────────────────────────────────────────
-const menuSections: MenuSection[] = [
-  {
-    label: "Beranda",
-    items: [
-      {
-        label: "Dashboard",
-        path: "/dashboard",
-        icon: <LayoutDashboard size={18} />,
-      },
-    ],
-  },
-  {
-    label: "Transaksi",
-    items: [
-      {
-        label: "Penjualan",
-        path: "/sales/session",
-        icon: <ShoppingCart size={18} />,
-      },
-      {
-        label: "Pembelian",
-        path: "/purchase",
-        icon: <PackageOpen size={18} />,
-        external: true,
-      },
-    ],
-  },
-  {
-    label: "Inventory",
-    items: [
-      {
-        label: "Daftar Stok",
-        path: "/stock",
-        icon: <Package size={18} />,
-      },
-      {
-        label: "Log Stok",
-        path: "/stock/log",
-        icon: <History size={18} />,
-      },
-    ],
-  },
-  {
-    label: "Keuangan",
-    items: [
-      {
-        label: "Penarikan",
-        path: "/withdrawal",
-        icon: <Wallet size={18} />,
-      },
-      {
-        label: "Topup Saldo",
-        path: "/outlet-topup",
-        icon: <ArrowUpDown size={18} />,
-      },
-      {
-        label: "Log Saldo",
-        path: "/setting/outlet/balance-log",
-        icon: <WalletCards size={18} />,
-      },
-    ],
-  },
-  {
-    label: "Pelanggan",
-    items: [
-      {
-        label: "Membership",
-        path: "/membership",
-        icon: <Users size={18} />,
-      },
-    ],
-  },
-  {
-    label: "Laporan",
-    items: [
-      {
-        label: "Product Sales",
-        path: "/report/product-sales",
-        icon: <Receipt size={16} />,
-      },
-      {
-        label: "Product Item",
-        path: "/report/product-item",
-        icon: <Receipt size={16} />,
-      },
-      {
-        label: "Penjualan Dibatalkan",
-        path: "/report/cancelled-product-sales",
-        icon: <Receipt size={16} />,
-      },
-      {
-        label: "Topup Dibatalkan",
-        path: "/report/topup-cancelled",
-        icon: <Receipt size={16} />,
-      },
-      {
-        label: "Outstanding",
-        path: "/report/outstanding",
-        icon: <Banknote size={16} />,
-      },
-      {
-        label: "Settlement",
-        path: "/report/settlement",
-        icon: <Landmark size={16} />,
-      },
-      {
-        label: "Cash Control",
-        path: "/report/cash-control",
-        icon: <FileBarChart size={16} />,
-      },
-    ],
-  },
-  {
-    label: "Pengaturan",
-    items: [
-      {
-        label: "Outlet",
-        path: "/setting/outlet",
-        icon: <Settings size={18} />,
-      },
-      {
-        label: "Katalog Outlet",
-        path: "/setting/catalog",
-        icon: <Package size={18} />,
-      },
-      {
-        label: "Manajemen User",
-        path: "/setting/user",
-        icon: <UsersRound size={18} />,
-      },
-      {
-        label: "Profile",
-        path: "/auth/me",
-        icon: <User size={18} />,
-      },
-    ],
-  },
-];
+// Saat brand bertipe "outlet", menu Pembelian mengarah ke halaman Sales Request
+// internal, menu Topup Saldo disembunyikan (khusus mitra), dan laporan
+// Saldo Membership tampil. Saat "mitra", laporan Outlet Maps tampil.
+const getMenuSections = (
+  isOutlet: boolean,
+  brandType?: string | null,
+): MenuSection[] => {
+  const type = brandType?.toLowerCase();
+  const hideTopup = type === "outlet";
+  // Menu "Outlet" (Pengaturan) khusus brand bertipe "outlet"
+  const hideOutlet = type !== "outlet";
+
+  return [
+    {
+      label: "Beranda",
+      items: [
+        {
+          label: "Dashboard",
+          path: "/dashboard",
+          icon: <LayoutDashboard size={18} />,
+        },
+      ],
+    },
+    {
+      label: "Transaksi",
+      items: [
+        {
+          label: "Penjualan",
+          path: "/sales/session",
+          icon: <ShoppingCart size={18} />,
+        },
+        {
+          label: "Pembelian",
+          path: "/purchase",
+          icon: <PackageOpen size={18} />,
+          ...(isOutlet ? {} : { external: true }),
+        },
+      ],
+    },
+    {
+      label: "Inventory",
+      items: [
+        {
+          label: "Daftar Stok",
+          path: "/stock",
+          icon: <Package size={18} />,
+        },
+        {
+          label: "Log Stok",
+          path: "/stock/log",
+          icon: <History size={18} />,
+        },
+      ],
+    },
+    {
+      label: "Keuangan",
+      items: [
+        {
+          label: "Penarikan",
+          path: "/withdrawal",
+          icon: <Wallet size={18} />,
+        },
+        ...(hideTopup
+          ? []
+          : [
+              {
+                label: "Topup Saldo",
+                path: "/outlet-topup",
+                icon: <ArrowUpDown size={18} />,
+              },
+            ]),
+        {
+          label: "Log Saldo",
+          path: "/setting/outlet/balance-log",
+          icon: <WalletCards size={18} />,
+        },
+      ],
+    },
+    {
+      label: "Laporan",
+      items: [
+        {
+          label: type === "mitra" ? "Laporan Mitra" : "Laporan Kasir",
+          path: "/report/cashier",
+          icon: <UsersRound size={16} />,
+        },
+        {
+          label: "Penjualan Harian",
+          path: "/report/product-sales",
+          icon: <Receipt size={16} />,
+        },
+        {
+          label: "Penjualan Menu",
+          path: "/report/product-item",
+          icon: <Receipt size={16} />,
+        },
+        {
+          label: "Penjualan Dibatalkan",
+          path: "/report/cancelled-product-sales",
+          icon: <Receipt size={16} />,
+        },
+        {
+          label: "Outstanding Bills",
+          path: "/report/outstanding",
+          icon: <Banknote size={16} />,
+        },
+        {
+          label: "Settlement",
+          path: "/report/settlement",
+          icon: <Landmark size={16} />,
+        },
+        {
+          label: "Cash Control",
+          path: "/report/cash-control",
+          icon: <FileBarChart size={16} />,
+        },
+        ...(type !== "outlet"
+          ? []
+          : [
+              {
+                label: "Saldo Membership",
+                path: "/report/saldo-membership",
+                icon: <WalletCards size={16} />,
+              },
+            ]),
+        ...(type !== "mitra"
+          ? []
+          : [
+              {
+                label: "Mitra Maps",
+                path: "/report/cashier-maps",
+                icon: <MapPinned size={16} />,
+              },
+            ]),
+      ],
+    },
+    {
+      label: "Pengaturan",
+      items: [
+        ...(hideOutlet
+          ? []
+          : [
+              {
+                label: "Outlet",
+                path: "/setting/outlet",
+                icon: <Store size={18} />,
+              },
+            ]),
+        {
+          label: "Katalog",
+          path: "/setting/catalog",
+          icon: <Package size={18} />,
+        },
+        {
+          label: "User",
+          path: "/setting/user",
+          icon: <UsersRound size={18} />,
+        },
+        {
+          label: "Profile",
+          path: "/auth/me",
+          icon: <User size={18} />,
+        },
+      ],
+    },
+  ];
+};
 
 // ─── Sub Components ───────────────────────────────────────────────────────────
 function SidebarSection({
@@ -368,6 +398,9 @@ export function AuthorizedLayout() {
   const user = useAppSelector((s) => s.auth.session);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
+  const isOutlet = isCompanyOutlet(user?.brand);
+  const menuSections = getMenuSections(isOutlet, user?.brand?.type);
+
   const handleSignOut = () => {
     dispatch(signout());
     navigate("/login");
@@ -469,14 +502,11 @@ export function AuthorizedLayout() {
             <div className='flex-1 min-w-0'>
               <div className='flex items-center gap-2'>
                 <p className='text-[14px] font-bold text-base-content truncate leading-tight'>
-                  {user?.user?.name ?? "Demo"}
+                  {user?.user?.name ?? ""}
                 </p>
-                <span className='text-[8px] font-black bg-primary text-primary-content px-1.5 py-0.5 rounded uppercase tracking-wider'>
-                  Admin
-                </span>
               </div>
               <p className='text-[11px] text-base-content/70 truncate mt-1 font-semibold tracking-wide'>
-                {user?.user?.username ?? "demo@franchisee..."}
+                {user?.outlet?.name ?? ""}
               </p>
             </div>
 

@@ -41,11 +41,12 @@ const persistConfig = {
     "catalogApi",
     "profileApi",
     "outletApi",
-    "membershipApi",
-    "stockApi",
+      "stockApi",
+    "ingredientApi",
     "withdrawalApi",
     "paymentMethodApi",
     "outletTopupApi",
+    "salesRequestApi",
   ],
 };
 

@@ -5,51 +5,33 @@ import type { CancelledProductSalesRow } from "@/services/types/reports";
 
 const createTableConfig = ({
   filter,
+  lockedFilter,
   onRowClick,
 }: {
   filter?: Record<string, unknown>;
+  lockedFilter?: Record<string, unknown>;
   onRowClick?: (row: CancelledProductSalesRow) => void;
 }) => ({
   ...config,
-  url: "/report/cancelled-product-sales",
+  url: "/report/cancel-order",
   filter,
+  lockedFilter,
   onRowClick,
   columns: {
     cancelled_at: {
       title: "Cancelled At",
       sortable: true,
       component: (row: CancelledProductSalesRow) => (
-        <span className="text-sm">
-          {row?.cancelled_at ? formatDateTime(row.cancelled_at) : "-"}
-        </span>
+        <>{row?.cancelled_at ? formatDateTime(row.cancelled_at) : "-"}</>
       ),
     },
+    cashier_name: { title: "Kasir", sortable: true },
     code: {
       title: "Order Code",
       sortable: true,
       component: (row: CancelledProductSalesRow) => (
-        <span className="font-medium uppercase text-sm">{row?.code ?? "-"}</span>
+        <span className='font-medium uppercase '>{row?.code ?? "-"}</span>
       ),
-    },
-    menu: {
-      title: "Menu",
-      sortable: true,
-      component: (row: CancelledProductSalesRow) => (
-        <span className="font-semibold text-sm">{row?.menu ?? "-"}</span>
-      ),
-    },
-    quantity: {
-      title: "QTY",
-      align: "center",
-      class: "text-center font-semibold",
-      component: (row: CancelledProductSalesRow) => row?.quantity ?? 0,
-    },
-    unit_nett: {
-      title: "Unit Price",
-      align: "right",
-      class: "text-right font-mono font-medium",
-      component: (row: CancelledProductSalesRow) =>
-        currencyFormat(row?.unit_nett),
     },
     discount: {
       title: "Discount",
@@ -59,7 +41,7 @@ const createTableConfig = ({
         currencyFormat(row?.discount),
     },
     total_nett: {
-      title: "Total Price",
+      title: "Total Charges",
       align: "right",
       class: "text-right font-mono font-medium",
       component: (row: CancelledProductSalesRow) =>
@@ -69,21 +51,21 @@ const createTableConfig = ({
       title: "Cancelled Reason",
       sortable: true,
       component: (row: CancelledProductSalesRow) => (
-        <span className="text-sm capitalize">{row?.cancelled_reason ?? "-"}</span>
+        <span className='capitalize'>{row?.cancelled_reason ?? "-"}</span>
       ),
     },
     cancelled_by: {
       title: "Cancelled By",
       sortable: true,
       component: (row: CancelledProductSalesRow) => (
-        <span className="text-sm uppercase">{row?.cancelled_by ?? "-"}</span>
+        <span className='uppercase'>{row?.cancelled_by ?? "-"}</span>
       ),
     },
     action: {
       title: "",
       width: 40,
       component: () => (
-        <ChevronRight size={16} className="text-base-content/30" />
+        <ChevronRight size={16} className='text-base-content/30' />
       ),
     },
   },
