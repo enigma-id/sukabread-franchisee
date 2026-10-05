@@ -46,7 +46,7 @@ export interface SessionSummary {
   session_id: string;
   sales: {
     total_sales: number;
-    subtotal_nett_non_bagi_hasil: number;
+    subtotal_nett_bagi_hasil: number;
     total_discount: number;
     total_after_discount: number;
     total_service: number;

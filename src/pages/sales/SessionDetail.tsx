@@ -51,7 +51,7 @@ export function SessionDetail() {
 
   const grandTotal = session.summary?.sales?.grand_total ?? 0;
   const subtotalNetSales =
-    session.summary?.sales?.subtotal_nett_non_bagi_hasil ?? 0;
+    session.summary?.sales?.subtotal_nett_bagi_hasil ?? 0;
   const totalService = session.summary?.sales?.total_service ?? 0;
   const totalDiscount = session.summary?.sales?.total_discount ?? 0;
   const totalSales = session.summary?.sales?.total_sales ?? 0;
@@ -194,7 +194,7 @@ export function SessionDetail() {
                 </dd>
               </div>
               <div className="info-row">
-                <dt className="info-label">Subtotal Net Sales</dt>
+                <dt className="info-label">Subtotal Nett Sales</dt>
                 <dd className="info-value mono">
                   {currencyFormat(subtotalNetSales)}
                 </dd>
