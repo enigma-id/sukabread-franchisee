@@ -1,11 +1,20 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
-import { Input, Button, Drawer } from "@/components/ui";
+import { Input, Button, Drawer, Select } from "@/components/ui";
 import { useUser } from "@/services/user/hooks";
 import { useAppSelector } from "@/hooks";
 
 /** Password statik default untuk user baru (di-generate sistem, bukan input user). */
 const DEFAULT_PASSWORD = "sukabread123";
+
+/** Role default untuk user baru brand outlet. */
+const DEFAULT_ROLE = "cashier";
+
+/** Pilihan role untuk user brand outlet. */
+const ROLE_OPTIONS = [
+  { label: "Manager", value: "manager" },
+  { label: "Kasir", value: "cashier" },
+];
 
 /**
  * Form user dalam drawer — dipakai untuk "Buat User" (mode create)
@@ -34,7 +43,11 @@ export function UserFormDrawer({
         key={user?.id ?? "create"}
         isUpdate={isUpdate}
         userId={user?.id}
-        initial={{ name: user?.name ?? "", username: user?.username ?? "" }}
+        initial={{
+          name: user?.name ?? "",
+          username: user?.username ?? "",
+          role: user?.role,
+        }}
         onClose={onClose}
         onSaved={onSaved}
       />
@@ -51,19 +64,22 @@ function UserFormContent({
 }: {
   isUpdate: boolean;
   userId?: string;
-  initial: { name: string; username: string };
+  initial: { name: string; username: string; role?: string };
   onClose: () => void;
   onSaved?: () => void;
 }) {
+  const brandType = useAppSelector((s) => s.auth.session?.brand?.type);
+  const isMitra = brandType?.toLowerCase() === "mitra";
+  const isOutlet = brandType?.toLowerCase() === "outlet";
+
   const [form, setForm] = useState({
     name: initial.name,
     username: initial.username,
-    password: isUpdate ? "" : DEFAULT_PASSWORD,
-    confirm_password: isUpdate ? "" : DEFAULT_PASSWORD,
+    password: isUpdate ? "" : isOutlet ? "" : DEFAULT_PASSWORD,
+    confirm_password: isUpdate ? "" : isOutlet ? "" : DEFAULT_PASSWORD,
+    role: initial.role ?? DEFAULT_ROLE,
   });
   const FormState = useAppSelector((s) => s.form);
-  const brandType = useAppSelector((s) => s.auth.session?.brand?.type);
-  const isMitra = brandType?.toLowerCase() === "mitra";
   const { create, createResult, update, updateResult } = useUser();
 
   const result = isUpdate ? updateResult : createResult;
@@ -76,17 +92,22 @@ function UserFormContent({
   }
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
   ) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const payload: Record<string, unknown> = { ...form };
+    // Role hanya berlaku untuk brand outlet; mitra tetap seperti semula.
+    if (!isOutlet) delete payload.role;
     if (isUpdate && userId) {
-      update({ id: userId, payload: form });
+      update({ id: userId, payload });
     } else {
-      create(form);
+      create(payload);
     }
   };
 
@@ -116,6 +137,21 @@ function UserFormContent({
 
       {/* Body */}
       <div className='flex-1 overflow-y-auto p-5 space-y-4'>
+        {isOutlet && (
+          <Select
+            name='role'
+            label='Role'
+            required
+            value={form.role}
+            onChange={handleChange}
+            options={ROLE_OPTIONS}
+            error={
+              typeof FormState?.errors?.role === "string"
+                ? FormState.errors.role
+                : undefined
+            }
+          />
+        )}
         <Input
           name='name'
           type='text'
@@ -146,12 +182,13 @@ function UserFormContent({
               : undefined
           }
         />
-        {isUpdate ? (
+        {isUpdate || isOutlet ? (
           <>
             <Input
               name='password'
               type='password'
-              label='Password Baru (opsional)'
+              label={isUpdate ? "Password Baru (opsional)" : "Password"}
+              required={isOutlet && !isUpdate}
               value={form.password}
               onChange={handleChange}
               placeholder='Masukkan password'
@@ -165,7 +202,10 @@ function UserFormContent({
             <Input
               name='confirm_password'
               type='password'
-              label='Konfirmasi Password Baru'
+              label={
+                isUpdate ? "Konfirmasi Password Baru" : "Konfirmasi Password"
+              }
+              required={isOutlet && !isUpdate}
               value={form.confirm_password}
               onChange={handleChange}
               placeholder='Ulangi password'
@@ -177,7 +217,9 @@ function UserFormContent({
               autoComplete='new-password'
             />
             <p className='text-xs text-base-content/50'>
-              Password minimal 8 karakter. Kosongkan jika tidak diubah.
+              {isUpdate
+                ? "Password minimal 6 karakter. Kosongkan jika tidak diubah."
+                : "Password minimal 6 karakter."}
             </p>
           </>
         ) : (
